@@ -5,7 +5,7 @@ const path = require('path');
 // Serve the HTML page
 http.createServer((req, res) => {
   if (req.url === '/' && req.method === 'GET') {
-    fs.readFile('index.html', (err, content) => {
+    fs.readFile('client\\index.html', (err, content) => {
       if (err) throw err;
       res.writeHead(200, { 'Content-Type': 'text/html' });
       res.end(content);
