@@ -1,4 +1,5 @@
 node_modules/
+spotify-profile-demo/
 .env
 # Logs
 logs
