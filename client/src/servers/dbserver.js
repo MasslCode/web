@@ -12,21 +12,17 @@ const { Pool } = pkg;
 // Set up the connection pool
 const pool = new Pool({
   connectionString: process.env.DATABASE_URL, // Environment variable for the database URL
-  ssl: {
-    rejectUnauthorized: false, // Enable this if you're connecting to a hosted DB requiring SSL
-  },
+  ssl: false,
 });
 
-// Function to query the database
-export const queryDatabase = async (query, params) => {
-  try {
-    const result = await pool.query(query, params);
-    return result.rows;
-  } catch (error) {
-    console.error('Database query error:', error);
-    throw error;
-  }
-};
+console.log('Database server has started. Connection pool is ready.');
+
+pool.connect()
+  .then(() => console.log('Database connected successfully.'))
+  .catch((err) => {
+    console.error('Failed to connect to the database:', err);
+    process.exit(1); // Exit with error code
+  });
 
 // Gracefully shut down the pool when the app exits
 process.on('SIGINT', async () => {
