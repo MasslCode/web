@@ -1,18 +1,28 @@
 /* eslint-disable no-unused-vars */
-import pkg from 'pg';
-import { pool } from "../servers/dbserver.js"
 
 export const handleInputText = async (text) => {
     console.log("Text received: ", text);
-    const query= `
-        SELECT * FROM albums;`;
-
     try 
     {
-       const result = await pool.query(query);
-       console.log(result);
+       const result = await fetch('http://localhost:4999/api/albums');
+       if (!result.ok) {
+        throw new Error('Failed to fetch albums');
+      }
+       const allAlbums = await result.json();
+       console.log(allAlbums);
+       //return allAlbums;
     } catch (err) 
     {
        console.error("There was an error displaying db data.")
+    }
+
+    try{
+      fetch(`http://localhost:3001/api/search-albums?query=${text}`)
+         .then((res) => res.json())
+         .then((albums) => console.log(albums))
+         .catch((error) => console.error("Error fetching albums:", error));
+    } catch (err)
+    {
+      console.error("issue fetching local api endpoint");
     }
 }
