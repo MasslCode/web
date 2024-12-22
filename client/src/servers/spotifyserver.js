@@ -24,7 +24,7 @@ app.get("/api/search-albums", async (req, res) => {
 
   try {
     const token = getSpotifyToken();
-    const response = await axios.get("https://api.spotify.com/v1/albums/", {
+    const response = await axios.get("https://api.spotify.com/v1/search/", {
       headers: {
         Authorization: `Bearer ${token}`,
       },
