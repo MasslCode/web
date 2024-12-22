@@ -1,4 +1,5 @@
 /* eslint-disable react/prop-types */
+import { Box, List, ListItem, ListItemText, ListItemButton } from "@mui/material";
 import { useEffect, useState } from "react"
 
 export default function Albumlist({ query })
@@ -33,16 +34,15 @@ return (
         <p>No albums found.</p>
       ) : (
         albums.map((album, index) => (
-          <div key={index} style={{ border: "1px solid #ddd", margin: "10px", padding: "10px" }}>
-            <h3>{album.title}</h3>
-            <p>
-              <strong>Artist:</strong> {album.artist}
-            </p>
-            <p>
-              <strong>Release Date:</strong> {album.release_date}
-            </p>
-            <img src={album.cover_image} alt={`${album.title} cover`} style={{ width: "100px" }} />
-          </div>
+            <List key={index}>
+              <ListItem alignItems="flex-start">
+                <ListItemText primary={album.title}/>
+                <ListItemText primary={album.artist}/>              
+                <ListItemButton>
+                  <img src={album.cover_image} alt={`${album.title} cover`} style={{ width: "100px" }} />
+                </ListItemButton>
+              </ListItem>
+            </List>
         ))
       )}
     </div>

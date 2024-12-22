@@ -4,7 +4,7 @@ import { useState } from "react"
 import TextSearch from './TextSearch';
 import Albumlist from './Albumlist';
 
-export default function TempDrawer(){
+export default function TempDrawer(props){
     const [open, setOpen] = useState(false);
     const [query, setQuery] = useState('');
 
@@ -17,8 +17,8 @@ export default function TempDrawer(){
       };  
     
     return (
-        <div>
-            <Button onClick={toggleDrawer(true)}>Search for an album</Button>
+        <div id={props.id}>
+            <Button onClick={toggleDrawer(true)}>Search for an album online</Button>
             <Drawer open={open} onClose={toggleDrawer(false)}>
                 <Box sx={{ width: 300, padding: 2 }}>
                     <h2>Search album online</h2>
