@@ -1,5 +1,5 @@
 /* eslint-disable react/prop-types */
-import { Box, List, ListItem, ListItemText, ListItemButton } from "@mui/material";
+import { Typography, List, ListItemText, ListItemButton } from "@mui/material";
 import { useEffect, useState } from "react"
 
 export default function Albumlist({ query })
@@ -34,14 +34,32 @@ return (
         <p>No albums found.</p>
       ) : (
         albums.map((album, index) => (
-            <List key={index}>
-              <ListItem alignItems="flex-start">
-                <ListItemText primary={album.title}/>
-                <ListItemText primary={album.artist}/>              
-                <ListItemButton>
-                  <img src={album.cover_image} alt={`${album.title} cover`} style={{ width: "100px" }} />
-                </ListItemButton>
-              </ListItem>
+            <List 
+              key={index} 
+              sx={{ 
+                width: '100%', 
+                maxWidth: 360, 
+                bgcolor: 'background.paper',
+                padding: '8px',
+                marginBottom: '8px',
+                borderRadius: '8px',
+                boxShadow: '0 2px 4px rgba(0, 0, 0. 0.1)',
+              }}>
+              <ListItemButton 
+                sx={{ 
+                  display: 'flex', 
+                  alignItems: 'flex-start', 
+                  gap: '12px', 
+                  '&:hover': {
+                    backgroundColor: 'rgba(90, 243, 230, 0.2)',
+                    }, 
+                  }}>
+                <img src={album.cover_image} alt={`${album.title} cover`} style={{ width: "55px", height: "55px", borderRadius: "4px", objectFit: "cover" }} />
+              <div style={{ display: 'flex', flexDirection: 'column' }}>
+                <Typography variant="body1" sx={{ fontWeight: 'bold', fontSize: '1rem', marginBottom: '4px' }}>{album.title}</Typography>
+                <Typography variant="body2" sx={{ color: 'text.secondary', fontSize: '0.9rem' }}>{album.artist}</Typography>
+              </div>
+              </ListItemButton>
             </List>
         ))
       )}
