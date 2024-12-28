@@ -1,20 +1,42 @@
 /* eslint-disable react/prop-types */
-import { Typography, List, ListItemText, ListItemButton } from "@mui/material";
+import { Typography, List, ListItemButton } from "@mui/material";
 import { useEffect, useState } from "react"
+import { addAlbum } from "../features/browsedb.js"
+import ScoreDialog from "./ScoreDialog.jsx";
 
 export default function Albumlist({ query })
 {
+    const [dialogOpen, setDialogOpen] = useState(false);
+    const [selectedAlbum, setSelectedAlbum] = useState(null);
     const [albums, setAlbums] = useState([]);
 
+    const handleAlbumClick = (album) => {
+      setSelectedAlbum(album);
+      setDialogOpen(true);
+    };
+
+    const handleDialogClose = () => {
+      setDialogOpen(false);
+      setSelectedAlbum(null);
+    }
+
+    const handleDialogSave = (album) => {
+      console.log("Saving album: ", album);
+      handleDialogClose;
+    }
     useEffect(() => {
         const fetchAlbums = async () => {
             try {
                 const response = await fetch(`http://localhost:3001/api/search-albums?query=${query}`);
                 const rawAlbums = await response.json();
-                const formattedAlbums = rawAlbums.map((album) => ({
+                console.log(rawAlbums);
+                const formattedAlbums = rawAlbums
+                  .filter((album) => (album.total_tracks > 5) && (album.album_type !== "compilation"))
+                  .map((album) => ({
+                    id: album.id,
                     title: album.name,
                     artist: album.artists.map((artist) => artist.name).join(' - '),
-                    release_date: album.release_date,
+                    release_year: new Date(album.release_date).getFullYear(),
                     cover_image: album.images[0]?.url,
                   }));
                 setAlbums(formattedAlbums);
@@ -39,19 +61,20 @@ return (
               sx={{ 
                 width: '100%', 
                 maxWidth: 360, 
-                bgcolor: 'background.paper',
+                backgroundColor: 'rgb(155, 167, 219)',
                 padding: '8px',
                 marginBottom: '8px',
                 borderRadius: '8px',
                 boxShadow: '0 2px 4px rgba(0, 0, 0. 0.1)',
               }}>
-              <ListItemButton 
+              <ListItemButton
+                onClick={() => handleAlbumClick(album)}
                 sx={{ 
                   display: 'flex', 
                   alignItems: 'flex-start', 
                   gap: '12px', 
                   '&:hover': {
-                    backgroundColor: 'rgba(90, 243, 230, 0.2)',
+                    backgroundColor: 'rgba(248, 215, 108, 0.16)',
                     }, 
                   }}>
                 <img src={album.cover_image} alt={`${album.title} cover`} style={{ width: "55px", height: "55px", borderRadius: "4px", objectFit: "cover" }} />
@@ -62,7 +85,15 @@ return (
               </ListItemButton>
             </List>
         ))
+        
       )}
+      <ScoreDialog 
+        open={dialogOpen}
+        album={selectedAlbum}
+        onClose={handleDialogClose}
+        onSave={handleDialogSave}
+        albumID={selectedAlbum?.id}
+      />
     </div>
   );
 }

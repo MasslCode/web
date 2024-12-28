@@ -20,7 +20,11 @@ export default function TempDrawer(props){
         <div id={props.id}>
             <Button onClick={toggleDrawer(true)}>Search for an album online</Button>
             <Drawer open={open} onClose={toggleDrawer(false)}>
-                <Box sx={{ width: 300, padding: 2 }}>
+                <Box sx={{
+                    width: 300, 
+                    padding: 2,
+                    backgroundColor: 'rgb(155, 167, 219)'
+                    }}>
                     <h2>Search album online</h2>
                     <TextSearch query={query} onQueryChange={handleQueryChange} />
                     <Albumlist query={query} />

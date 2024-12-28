@@ -21,7 +21,6 @@ app.get("/api/search-albums", async (req, res) => {
   {
     return res.status(400).json({error: "Query parameter is required"});
   }
-
   try {
     const token = getSpotifyToken();
     const response = await axios.get("https://api.spotify.com/v1/search/", {
@@ -39,6 +38,34 @@ app.get("/api/search-albums", async (req, res) => {
   } catch (error) {
     console.error("Error searching albums: ", error.response?.data || error.message);
     res.status(500).json({error: "Failed to search albums on Spotify"});
+  }
+})
+
+app.get("/api/fetch-songs", async (req, res) => {
+  const { albumId } = req.query;
+  if (!albumId)
+  {
+    return res.status(400).json({error: "Album ID is requried"});
+  }
+  try {
+    const token = getSpotifyToken();
+    console.log(albumId);
+    const encodeurl = encodeURIComponent(albumId);
+    const url = `https://api.spotify.com/v1/albums/${encodeurl}/tracks`;
+    console.log(url);
+    const response = await axios.get(`https://api.spotify.com/v1/albums/${albumId}/tracks`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+      params: {
+        limit: 30,
+      },
+
+    });
+
+    res.json(response.data.items);
+  } catch (error) {
+    console.error("Error searching album with given ID => ", error.response?.data || error.message)
   }
 })
 
