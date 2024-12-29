@@ -1,7 +1,6 @@
 /* eslint-disable react/prop-types */
 import { Typography, List, ListItemButton } from "@mui/material";
 import { useEffect, useState } from "react"
-import { addAlbum } from "../features/browsedb.js"
 import ScoreDialog from "./ScoreDialog.jsx";
 
 export default function Albumlist({ query })
@@ -17,7 +16,6 @@ export default function Albumlist({ query })
 
     const handleDialogClose = () => {
       setDialogOpen(false);
-      setSelectedAlbum(null);
     }
 
     const handleDialogSave = (album) => {
@@ -91,6 +89,7 @@ return (
         open={dialogOpen}
         album={selectedAlbum}
         onClose={handleDialogClose}
+        TransitionProps={{ onExited: () => setSelectedAlbum(null) }}
         onSave={handleDialogSave}
         albumID={selectedAlbum?.id}
       />

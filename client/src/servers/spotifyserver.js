@@ -30,7 +30,7 @@ app.get("/api/search-albums", async (req, res) => {
       params: {
         q: query,
         type: "album",
-        limit: 10,
+        limit: 20,
       },
     });
 
