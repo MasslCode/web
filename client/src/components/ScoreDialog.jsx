@@ -3,16 +3,86 @@ import { Button, Dialog, DialogActions, DialogContent, DialogTitle, IconButton, 
 import CloseIcon from '@mui/icons-material/Close';
 import { useEffect, useState } from "react"
 import SongRating from "./Rating";
+import { getColorForValue } from '../utils/colors';
 
-export default function ScoreDialog({open, album, onClose, onSave, albumID})
+export default function ScoreDialog({open, album, onClose, albumID})
 {
     const [songs, setSongs] = useState([]);
+    const [songColors, setSongColors] = useState([]);
 
+    const handleRatingChange = (index, ratingColor) => {
+        setSongColors((prevRatings) => {
+            const newRatings = [...prevRatings];
+            newRatings[index] = ratingColor;
+            return newRatings;
+        });
+    };
+
+    const handleSave = async () => {
+        const validRatings = songs.filter((_, index) => (songColors[index] || 0) > 0);
+
+        const album_total_rating = validRatings.reduce((acc, song, index) => {
+            const rating = songColors[songs.indexOf(song)] || 0;
+            return acc + rating;
+        }, 0);
+
+        const averageRating = validRatings.length > 0 ? album_total_rating / validRatings.length : 0;
+
+        console.log(averageRating);
+        
+        const payload = {
+            album: {
+                id: albumID,
+                title: album?.title,
+                artist: album?.artist,
+                release_year: album?.release_year,
+                average_rating: parseFloat(averageRating.toFixed(2)),
+                cover_image: album?.cover_image,
+            },
+            
+            songs: songs.map((song, index) => ({
+                id: song.id,
+                title: song.title,
+                duration_in_sec: song.duration_in_sec,
+                track_number: song.track_number,
+                rating: songColors[index] || 0,
+            })),
+        };
+        console.log("Payload: ", payload);
+
+        try {
+            const response = await fetch('http://localhost:4999/api/save-album', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload),
+            })
+            if (response.ok) {
+                console.log('Album and songs saved successfully!', payload.album.average_rating);
+                onClose(); // Close the dialog after saving
+              } else {
+                console.error('Failed to save album:', response.statusText);
+              }
+        } catch (error) {
+            console.error('Error saving album:', error);
+        }
+    }
         useEffect(() => {
             const fetchSongs = async () => {
                 try {
+                    
                     console.log(albumID);
                     const response = await fetch(`http://localhost:3001/api/fetch-songs?albumId=${albumID}`);
+                    if (!response.ok) {
+                        if (response.status === 503) 
+                        {
+                          const responseBody = await response.json();
+                          const retryAfter = responseBody.retryAfter;
+                          console.warn(`Rate-limited. Retrying after ${retryAfter} seconds.`);
+                          setTimeout(() => fetchSongs(albumID), retryAfter * 1000);
+                          return;
+                        }
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                      }
                     const rawSongs = await response.json();
                     console.log(rawSongs);
                     const formattedSongs = rawSongs.map((song) => ({
@@ -24,16 +94,19 @@ export default function ScoreDialog({open, album, onClose, onSave, albumID})
                     }))
                     setSongs(formattedSongs);
                     console.log(formattedSongs);
+
+                    const defaultColors = new Array(formattedSongs.length).fill('black');
+                    setSongColors(defaultColors);
                 } catch (error) {
                     console.error("Error fetching our API endpoint:", error);
                 }
             };
 
-            if(albumID)
+            if(albumID && open)
             {
                 fetchSongs();
             }
-        }, [albumID]);
+        }, [albumID, open]);
     return (
         <Dialog 
             open={open}
@@ -45,8 +118,7 @@ export default function ScoreDialog({open, album, onClose, onSave, albumID})
                     maxHeight: '90vh',
                     overflow: 'hidden',
                 }
-            }}
-        >
+            }}>
             <DialogTitle
                 sx={{
                     display: 'flex',
@@ -102,22 +174,34 @@ export default function ScoreDialog({open, album, onClose, onSave, albumID})
                 <List>
                     {songs.map((song, index) => (
                   <ListItem
-                        key={index}
+                        key={song.id}
                         sx={{
                             display: 'flex',
                             justifyContent: 'space-between',
                             alignItems: 'center',
                             padding: '8px 0'
                         }}>
-                    <Typography variant="body1" sx={{ fontWeight: 'bold', fontSize: '1.1rem' }}>{song.title}</Typography>
-                    <SongRating />
+                    <Typography 
+                        variant="body1" 
+                        sx={{ 
+                            fontWeight: 'bold', 
+                            fontSize: '1.1rem',
+                            color: getColorForValue(songColors[index]),
+                            }}>
+                        {song.title}
+                    </Typography>
+                    <SongRating
+                        onRatingChange={(newRating) => {
+                            handleRatingChange(index, newRating);
+                        }}
+                    />
                   </ListItem>
                   ))}
                 </List>
             </DialogContent>
             <DialogActions>
                 <Button onClick={onClose}> Cancel </Button>
-                <Button variant="contained" onClick={onSave}> Save </Button>
+                <Button variant="contained" onClick={handleSave}> Save </Button>
             </DialogActions>               
         </Dialog>
     );

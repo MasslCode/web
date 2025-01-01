@@ -1,9 +1,11 @@
+/* eslint-disable react/prop-types */
 import { Box, Tooltip } from "@mui/material";
 import { useState } from "react";
 import AlbumIcon from '@mui/icons-material/Album';
 import ScoreDialog from "./ScoreDialog";
+import { getColorForValue } from "../utils/colors.js";
 
-export default function SongRating({ rating, setRating })
+export default function SongRating({ onRatingChange })
 {
 
     const ratingOptions = [
@@ -15,23 +17,13 @@ export default function SongRating({ rating, setRating })
         { key: 'Interlude', value: 0 },
     ];
 
-
-    const getColorForValue = (value) => {
-        if (value == 10) return 'magenta';
-        if (value == 8) return 'blue';
-        if (value == 6) return 'green';
-        if (value == 4) return 'orange';
-        if (value == 2) return 'red';
-        return 'black';
-    }
-
     const passColors = (value) => {
-        setRating(value);
+        onRatingChange(value);
     }
     return (
         <Box>
             {ratingOptions.map((option) => (
-              <Tooltip key={option.value} title={option.key} arrow>
+              <Tooltip key={option.value} title={option.key} placement="top" >
                 <AlbumIcon
                     sx={{
                        color: getColorForValue(option.value),

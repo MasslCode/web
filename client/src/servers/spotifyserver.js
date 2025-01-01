@@ -50,22 +50,36 @@ app.get("/api/fetch-songs", async (req, res) => {
   try {
     const token = getSpotifyToken();
     console.log(albumId);
-    const encodeurl = encodeURIComponent(albumId);
-    const url = `https://api.spotify.com/v1/albums/${encodeurl}/tracks`;
-    console.log(url);
     const response = await axios.get(`https://api.spotify.com/v1/albums/${albumId}/tracks`, {
       headers: {
         Authorization: `Bearer ${token}`,
       },
       params: {
         limit: 30,
-      },
-
+      },  
     });
 
     res.json(response.data.items);
   } catch (error) {
-    console.error("Error searching album with given ID => ", error.response?.data || error.message)
+    if (error.response?.status === 429)
+    {
+      const retryAfter = error.response.headers['retry-after'];
+      console.log('Spotify Retry-After Header:', retryAfter);
+      console.warn(`You're rate limited. Retrying after ${retryAfter} seconds.`);
+
+      // Send a 503 Service Unavailable with Retry-After header to the client
+      res.setHeader('Retry-After', retryAfter);
+      return res.status(503).json({
+        error: "Rate limited by Spotify API. Please try again later.",
+        retryAfter: parseInt(retryAfter, 10),
+      });
+      
+    }
+    else{
+      console.error("Error searching album with given ID => ", error.response?.data || error.message);
+      res.status(500).json({ error: "Failed to fetch songs" });
+    }
+    
   }
 })
 

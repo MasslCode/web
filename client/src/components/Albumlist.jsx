@@ -8,6 +8,7 @@ export default function Albumlist({ query })
     const [dialogOpen, setDialogOpen] = useState(false);
     const [selectedAlbum, setSelectedAlbum] = useState(null);
     const [albums, setAlbums] = useState([]);
+    const [songColors, setSongColors] = useState([]);
 
     const handleAlbumClick = (album) => {
       setSelectedAlbum(album);
@@ -92,6 +93,7 @@ return (
         TransitionProps={{ onExited: () => setSelectedAlbum(null) }}
         onSave={handleDialogSave}
         albumID={selectedAlbum?.id}
+        setSongColors={setSongColors}
       />
     </div>
   );
