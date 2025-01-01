@@ -30,17 +30,17 @@ app.post('/api/save-album', async (req, res) => {
     }
   try {
     const albumQuery = `INSERT INTO albums (id, title, artist, release_year, average_rating, cover_image)
-                        VALUES (?, ?, ?, ?, ?, ?)
-                        ON DUPLICATE KEY UPDATE
-                        title=VALUES(title),
-                        artist=VALUES(artist),
-                        release_year=VALUES(release_year),
-                        average_rating=VALUES(average_rating),
-                        cover_image=VALUES(cover_image)`;
+                        VALUES ($1, $2, $3, $4, $5, $6)
+                        ON CONFLICT (id) DO UPDATE
+                        SET title = EXCLUDED.title,
+                            artist = EXCLUDED.artist,
+                            release_year = EXCLUDED.release_year,
+                            average_rating = EXCLUDED.average_rating,
+                            cover_image = EXCLUDED.cover_image`;
 
     console.log("Starting insert query for album");
 
-    await pool.execute(albumQuery, [
+    await pool.query(albumQuery, [
       album.id,
       album.title,
       album.artist,
@@ -52,12 +52,18 @@ app.post('/api/save-album', async (req, res) => {
     console.log("After album insert");
 
     console.log("Starting insert query for songs");
-    const songQueries = songs.map((song) => {
+    
       const songQuery = `INSERT INTO songs (id, album_id, title, duration_in_sec, track_number, rating)
-                         VALUES (?, ?, ?, ?, ?, ?)
-                         ON DUPLICATE KEY UPDATE
-                         rating=VALUES(rating)`;
-      return pool.execute(songQuery, [
+                         VALUES ($1, $2, $3, $4, $5, $6)
+                         ON CONFLICT (id) DO UPDATE
+                         SET album_id = EXCLUDED.album_id,
+                             title = EXCLUDED.title,
+                             duration_in_sec = EXCLUDED.duration_in_sec,
+                             track_number = EXCLUDED.track_number,
+                             rating = EXCLUDED.rating`;
+
+    for (const song of songs) {
+      await pool.query(songQuery, [
         song.id,
         album.id,
         song.title,
@@ -65,11 +71,8 @@ app.post('/api/save-album', async (req, res) => {
         song.track_number,
         song.rating,
       ]);
-    });
-    console.log("After song insert");
-    console.log("execute promise all");
-    await Promise.all(songQueries);
-
+    }
+    console.log("Queries finished. Checking for success...");
     res.status(200).json({ message: 'Album and songs saved successfully!' });
   } catch (error) {
     console.error('Error adding album and songs:', error);
