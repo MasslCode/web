@@ -1,30 +1,34 @@
-import { useEffect } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import '../assets/Home.css';
 //import { useState } from 'react';
 import TempDrawer from "../components/TempDrawer.jsx"
-import { Box } from "@mui/material";
+import Albumdisplay from '../components/Albumdisplay.jsx';
 
 export default function Homepage()
 {
-        useEffect(() => {
-            const fetchAlbumList = async () => {
-                try {
-                    const response = await fetch("http://localhost:4999/api/albums");
-                    const albumlist = await response.json();
-                    console.log(albumlist);
-                } catch (error) {
-                    console.error("Error fetching Albumlist:", error);
-                }
-            };
-            fetchAlbumList();
-        })
+    const [albums, setAlbums] = useState([]);
+
+    
+        const fetchAlbumList = useCallback(async () => {
+            try {
+                const response = await fetch("http://localhost:4999/api/albums");
+                const albumlist = await response.json();
+                console.log(albumlist);
+                setAlbums(albumlist);
+            } catch (error) {
+                console.error("Error fetching Albumlist:", error);
+            }
+        }, []);
+
+    useEffect(() => {
+        fetchAlbumList();
+    }, [fetchAlbumList]);
+
     return (
         <div>
             <h1 id="uber">Alben</h1>
-            <TempDrawer id="drawer1"/>
-            <Box>
-
-            </Box>
+            <TempDrawer id="drawer1" onSuccess={fetchAlbumList}/>
+            <Albumdisplay albums={albums}/>
         </div>
     )
 }

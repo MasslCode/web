@@ -3,12 +3,11 @@ import { Typography, List, ListItemButton } from "@mui/material";
 import { useEffect, useState } from "react"
 import ScoreDialog from "./ScoreDialog.jsx";
 
-export default function Albumlist({ query })
+export default function Albumlist({ query, onSuccess })
 {
     const [dialogOpen, setDialogOpen] = useState(false);
     const [selectedAlbum, setSelectedAlbum] = useState(null);
     const [albums, setAlbums] = useState([]);
-    const [songColors, setSongColors] = useState([]);
 
     const handleAlbumClick = (album) => {
       setSelectedAlbum(album);
@@ -19,10 +18,6 @@ export default function Albumlist({ query })
       setDialogOpen(false);
     }
 
-    const handleDialogSave = (album) => {
-      console.log("Saving album: ", album);
-      handleDialogClose;
-    }
     useEffect(() => {
         const fetchAlbums = async () => {
             try {
@@ -91,9 +86,8 @@ return (
         album={selectedAlbum}
         onClose={handleDialogClose}
         TransitionProps={{ onExited: () => setSelectedAlbum(null) }}
-        onSave={handleDialogSave}
         albumID={selectedAlbum?.id}
-        setSongColors={setSongColors}
+        onSuccess={onSuccess}
       />
     </div>
   );

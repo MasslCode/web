@@ -5,7 +5,7 @@ import { useEffect, useState } from "react"
 import SongRating from "./Rating";
 import { getColorForValue } from '../utils/colors';
 
-export default function ScoreDialog({open, album, onClose, albumID})
+export default function ScoreDialog({open, album, onClose, albumID, onSuccess})
 {
     const [songs, setSongs] = useState([]);
     const [songColors, setSongColors] = useState([]);
@@ -21,7 +21,7 @@ export default function ScoreDialog({open, album, onClose, albumID})
     const handleSave = async () => {
         const validRatings = songs.filter((_, index) => (songColors[index] || 0) > 0);
 
-        const album_total_rating = validRatings.reduce((acc, song, index) => {
+        const album_total_rating = validRatings.reduce((acc, song) => {
             const rating = songColors[songs.indexOf(song)] || 0;
             return acc + rating;
         }, 0);
@@ -58,6 +58,10 @@ export default function ScoreDialog({open, album, onClose, albumID})
             })
             if (response.ok) {
                 console.log('Album and songs saved successfully!', payload.album.average_rating);
+                if(onSuccess) {
+                    onSuccess();
+                    console.log("onsavesuccess called...");
+                }              
                 onClose(); // Close the dialog after saving
               } else {
                 console.error('Failed to save album:', response.statusText);
@@ -107,6 +111,9 @@ export default function ScoreDialog({open, album, onClose, albumID})
                 fetchSongs();
             }
         }, [albumID, open]);
+
+        if(!open) return null;
+        
     return (
         <Dialog 
             open={open}

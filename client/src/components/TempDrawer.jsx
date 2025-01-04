@@ -28,7 +28,7 @@ export default function TempDrawer(props){
                     }}>
                     <h2>Search album online</h2>
                     <TextSearch query={query} onQueryChange={handleQueryChange} />
-                    <Albumlist query={query} />
+                    <Albumlist query={query} onSuccess={props.onSuccess}/>
                 </Box>
             </Drawer>
         </div>

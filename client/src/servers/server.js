@@ -15,6 +15,7 @@ app.get('/api/albums', async (req, res) => {
   try {
     const result = await pool.query('SELECT * FROM albums;');
     res.json(result.rows); // Send the rows as JSON
+    console.log("displaying albums");
   } catch (error) {
     console.error('Error fetching albums:', error);
     res.status(500).json({ error: 'Database query failed.' });
