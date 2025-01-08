@@ -5,14 +5,14 @@ import Grid from '@mui/material/Grid2';
 export default function Albumdisplay( {albums} )
 {
     return (
-        <Box sx={{ padding: 4 }}>
-            <Grid container spacing={4}>
+        <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', padding: 4 }}>
+            <Grid container spacing={4} justifyContent="center" >
                 {albums.map((album, index) => (
                     <Grid item xs={12} sm={6} md={4} key={index}>
-                        <Card sx={{ maxWidth: 300, margin: 'auto', borderRadius: 2, boxShadow: 3}}>
+                        <Card sx={{ maxWidth: 300, height: 500, margin: 'auto', borderRadius: 2, boxShadow: 3}}>
                             <CardMedia 
                                 component="img"
-                                height="200"
+                                height="300"
                                 image={album.cover_image || "https://via.placeholder.com/150"}
                                 alt={album.title}
                                 sx={{ borderRadius: '4px'}}
@@ -21,7 +21,13 @@ export default function Albumdisplay( {albums} )
                                 <Typography
                                     variant="h6"
                                     component="div"
-                                    sx={{ fontWeight: 'bold', textAlign: 'center', marginBottom: 1 }}>
+                                    gutterBottom
+                                    sx={{ 
+                                        fontSize: `${Math.max(1, 2.5 - album.title.length * 0.05)}rem`,
+                                        fontWeight: 'bold',
+                                        textAlign: 'center',
+                                        wordWrap: 'break-word',
+                                        marginBottom: 1 }}>
                                 {album.title}
                                 </Typography>
                                 <Typography
@@ -36,7 +42,7 @@ export default function Albumdisplay( {albums} )
                                     sx={{ textAlign: 'center', marginTop: 1 }}>
                                 {`Rating: ${album.average_rating.toFixed(1) || 'N/A'}`}
                                 </Typography>
-                            </CardContent>                  
+                            </CardContent>
                         </Card>
                     </Grid>
                 ))}
