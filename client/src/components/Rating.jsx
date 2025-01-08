@@ -3,7 +3,7 @@ import { Box, Tooltip } from "@mui/material";
 import { useState } from "react";
 import AlbumIcon from '@mui/icons-material/Album';
 import ScoreDialog from "./ScoreDialog";
-import { getColorForValue } from "../utils/colors.js";
+import { getColorForValue } from "../../../backend/colors.js";
 
 export default function SongRating({ onRatingChange })
 {
