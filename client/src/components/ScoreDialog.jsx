@@ -3,7 +3,7 @@ import { Button, Dialog, DialogActions, DialogContent, DialogTitle, IconButton, 
 import CloseIcon from '@mui/icons-material/Close';
 import { useEffect, useState } from "react"
 import SongRating from "./Rating";
-import { getColorForValue } from '../utils/colors';
+import { getColorForValue } from '../../../backend/colors';
 
 export default function ScoreDialog({open, album, onClose, albumID, onSuccess})
 {
