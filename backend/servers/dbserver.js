@@ -12,7 +12,7 @@ const { Pool } = pkg;
 // Set up the connection pool
 const pool = new Pool({
   connectionString: process.env.DATABASE_URL, // Environment variable for the database URL
-  ssl: false,
+  ssl: true,
 });
 
 console.log('Database server has started. Connection pool is ready.');
