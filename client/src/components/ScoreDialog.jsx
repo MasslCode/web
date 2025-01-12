@@ -10,6 +10,8 @@ export default function ScoreDialog({open, album, onClose, albumID, onSuccess})
     const [songs, setSongs] = useState([]);
     const [songColors, setSongColors] = useState([]);
 
+    const BASE_URL = "https://albums-ink9.onrender.com";
+
     const handleRatingChange = (index, ratingColor) => {
         setSongColors((prevRatings) => {
             const newRatings = [...prevRatings];
@@ -51,7 +53,7 @@ export default function ScoreDialog({open, album, onClose, albumID, onSuccess})
         console.log("Payload: ", payload);
 
         try {
-            const response = await fetch('http://localhost:4999/api/save-album', {
+            const response = await fetch(`${BASE_URL}/api/save-album`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(payload),
@@ -75,7 +77,7 @@ export default function ScoreDialog({open, album, onClose, albumID, onSuccess})
                 try {
                     
                     console.log(albumID);
-                    const response = await fetch(`http://localhost:3001/api/fetch-songs?albumId=${albumID}`);
+                    const response = await fetch(`${BASE_URL}/api/fetch-songs?albumId=${albumID}`);
                     if (!response.ok) {
                         if (response.status === 503) 
                         {

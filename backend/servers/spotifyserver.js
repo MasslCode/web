@@ -86,7 +86,7 @@ app.get("/api/fetch-songs", async (req, res) => {
 app.get('') 
   // Start the server
   app.listen(PORT, () => {
-    console.log(`Server is running on http://localhost:${PORT}`);
+    console.log(`Server is running on PORT:${PORT}`);
   });
 
   
