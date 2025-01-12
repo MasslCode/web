@@ -18,7 +18,7 @@ export default function Albumlist({ query, onSuccess })
       setDialogOpen(false);
     }
 
-    const BASE_URL = "https://albums-ink9.onrender.com";
+    const BASE_URL = "https://web-u92g.onrender.com";
 
     useEffect(() => {
         const fetchAlbums = async () => {
