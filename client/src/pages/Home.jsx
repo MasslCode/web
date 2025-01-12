@@ -8,10 +8,11 @@ export default function Homepage()
 {
     const [albums, setAlbums] = useState([]);
 
+    const BASE_URL = "https://albums-ink9.onrender.com";
     
         const fetchAlbumList = useCallback(async () => {
             try {
-                const response = await fetch("http://localhost:4999/api/albums");
+                const response = await fetch(`${BASE_URL}/api/albums`);
                 const albumlist = await response.json();
                 console.log(albumlist);
                 setAlbums(albumlist);
