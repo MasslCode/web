@@ -10,7 +10,7 @@ export default function ScoreDialog({open, album, onClose, albumID, onSuccess})
     const [songs, setSongs] = useState([]);
     const [songColors, setSongColors] = useState([]);
 
-    const BASE_URL = "https://albums-ink9.onrender.com";
+    const BASE_URL = "https://web-u92g.onrender.com";
 
     const handleRatingChange = (index, ratingColor) => {
         setSongColors((prevRatings) => {
