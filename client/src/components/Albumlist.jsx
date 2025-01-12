@@ -18,10 +18,12 @@ export default function Albumlist({ query, onSuccess })
       setDialogOpen(false);
     }
 
+    const BASE_URL = "https://albums-ink9.onrender.com";
+
     useEffect(() => {
         const fetchAlbums = async () => {
             try {
-                const response = await fetch(`http://localhost:3001/api/search-albums?query=${query}`);
+                const response = await fetch(`${BASE_URL}/api/search-albums?query=${query}`);
                 const rawAlbums = await response.json();
                 console.log(rawAlbums);
                 const formattedAlbums = rawAlbums
