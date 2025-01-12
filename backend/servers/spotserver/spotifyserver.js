@@ -9,7 +9,7 @@ import { ensureSpotifyToken, getSpotifyToken } from "../spotifyAuth.js";
 dotenv.config();
 
 const app = express();
-const PORT = process.env.SPOTIFY_SERVER_PORT; 
+const PORT = process.env.SPOTIFY_SERVER_PORT || 3001; 
 
 app.use(cors());
 

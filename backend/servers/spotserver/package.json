@@ -5,11 +5,9 @@
   "main": "server.js",
   "type": "module",
   "scripts": {
-    "start:dbserver": "node servers/dbserver.js",
-    "start:server": "node servers/server.js",
-    "start:spotifyserver": "node servers/spotifyserver.js",
-    "start": "npm run start:server",
-    "start:all": "concurrently \"npm run start:dbserver\" \"npm run start:server\""
+    "start:spotifyserver": "node servers/spotserver/spotifyserver.js",
+    "start": "npm run start:spotifyserver",
+    "start:all": "concurrently \"npm run start:spotifyserver\""
   },
   "dependencies": {
     "axios": "^1.7.9",
