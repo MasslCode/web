@@ -5,7 +5,7 @@
   "main": "server.js",
   "type": "module",
   "scripts": {
-    "start:spotifyserver": "node servers/spotserver/spotifyserver.js",
+    "start:spotifyserver": "node spotifyserver.js",
     "start": "npm run start:spotifyserver",
     "start:all": "concurrently \"npm run start:spotifyserver\""
   },
