@@ -11,6 +11,7 @@ export default function ScoreDialog({open, album, onClose, albumID, onSuccess})
     const [songColors, setSongColors] = useState([]);
 
     const BASE_URL = "https://web-u92g.onrender.com";
+    const BASE_URL_DB = "https://albums-ink9.onrender.com";
 
     const handleRatingChange = (index, ratingColor) => {
         setSongColors((prevRatings) => {
@@ -53,7 +54,7 @@ export default function ScoreDialog({open, album, onClose, albumID, onSuccess})
         console.log("Payload: ", payload);
 
         try {
-            const response = await fetch(`${BASE_URL}/api/save-album`, {
+            const response = await fetch(`${BASE_URL_DB}/api/save-album`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(payload),
