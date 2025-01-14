@@ -2,12 +2,14 @@
 import { Typography, List, ListItemButton } from "@mui/material";
 import { useEffect, useState } from "react"
 import ScoreDialog from "./ScoreDialog.jsx";
+import CircularProgress from '@mui/material/CircularProgress';
 
 export default function Albumlist({ query, onSuccess })
 {
     const [dialogOpen, setDialogOpen] = useState(false);
     const [selectedAlbum, setSelectedAlbum] = useState(null);
     const [albums, setAlbums] = useState([]);
+    const [loading, setLoading] = useState(false);
 
     const handleAlbumClick = (album) => {
       setSelectedAlbum(album);
@@ -22,6 +24,7 @@ export default function Albumlist({ query, onSuccess })
 
     useEffect(() => {
         const fetchAlbums = async () => {
+            setLoading(true);
             try {
                 const response = await fetch(`${BASE_URL}/api/search-albums?query=${query}`);
                 const rawAlbums = await response.json();
@@ -38,6 +41,8 @@ export default function Albumlist({ query, onSuccess })
                 setAlbums(formattedAlbums);
             } catch (error) {
                 console.error("Error fetching albums:" , error);
+            } finally {
+                setLoading(false);
             }
         };
 
@@ -48,7 +53,11 @@ export default function Albumlist({ query, onSuccess })
 
 return (
     <div>
-      {albums.length === 0 ? (
+      {loading ? (
+          <div style={{ display: 'flex', justifyContent: 'center', marginTop: '20px' }}>
+            <CircularProgress />
+          </div>
+      ) : albums.length === 0 ? (
         <p>No albums found.</p>
       ) : (
         albums.map((album, index) => (
