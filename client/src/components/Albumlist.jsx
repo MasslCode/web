@@ -53,14 +53,11 @@ export default function Albumlist({ query, onSuccess })
 
 return (
     <div>
-      {loading ? (
-          <div style={{ display: 'flex', justifyContent: 'center', marginTop: '20px' }}>
-            <CircularProgress />
-          </div>
-      ) : albums.length === 0 ? (
+      {albums.length === 0 && !loading ? (
         <p>No albums found.</p>
       ) : (
-        albums.map((album, index) => (
+        <div>
+        {albums.map((album, index) => (
             <List 
               key={index} 
               sx={{ 
@@ -89,8 +86,13 @@ return (
               </div>
               </ListItemButton>
             </List>
-        ))
-        
+        ))}
+        {loading && (
+            <div style={{ display: 'flex', justifyContent: 'center', marginTop: '10px' }}>
+                <CircularProgress size={24} />
+            </div>
+          )}
+        </div>
       )}
       <ScoreDialog 
         open={dialogOpen}
