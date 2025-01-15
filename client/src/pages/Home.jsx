@@ -4,21 +4,26 @@ import CircularProgress from '@mui/material/CircularProgress';
 //import { useState } from 'react';
 import TempDrawer from "../components/TempDrawer.jsx"
 import Albumdisplay from '../components/Albumdisplay.jsx';
+import { Pagination } from '@mui/material';
 
 export default function Homepage()
 {
     const [loading, setLoading] = useState(false);
     const [albums, setAlbums] = useState([]);
+    const [currentPage, setCurrentPage] = useState(1);
+    const [totalPages, setTotalPages] = useState(5);
 
     const BASE_URL = "https://albums-ink9.onrender.com";
     
-        const fetchAlbumList = useCallback(async () => {
+        const fetchAlbumList = useCallback(async (page = 1) => {
             setLoading(true);
             try {
-                const response = await fetch(`${BASE_URL}/api/albums`);
-                const albumlist = await response.json();
-                console.log(albumlist);
-                setAlbums(albumlist);
+                const response = await fetch(`${BASE_URL}/api/albums?page=${page}&limit=20`);
+                const data = await response.json();
+                
+                setAlbums(data.albums);
+                setTotalPages(data.totalPages);
+                setCurrentPage(page);
             } catch (error) {
                 console.error("Error fetching Albumlist:", error);
             } finally {
@@ -27,8 +32,12 @@ export default function Homepage()
         }, []);
 
     useEffect(() => {
-        fetchAlbumList();
-    }, [fetchAlbumList]);
+        fetchAlbumList(currentPage);
+    }, [fetchAlbumList, currentPage]);
+
+    const handlePageChange = (event, value) => {
+        fetchAlbumList(value);
+      };
 
     return (
         <div>
@@ -41,6 +50,15 @@ export default function Homepage()
             ) : (
             <Albumdisplay albums={albums}/>
             )}
+            <Pagination 
+                count={totalPages}
+                page={currentPage}
+                onChange={handlePageChange}
+                color="primary"
+                variant="outlined"
+                shape="rounded"
+                style={{ marginBottom: '20px' }}
+            ></Pagination>
         </div>
     )
 }

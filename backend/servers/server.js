@@ -12,10 +12,16 @@ app.use(cors());
 
 // Endpoint to fetch albums
 app.get('/api/albums', async (req, res) => {
+  const { page = 1, limit = 20 } = req.query;
+  const offset = (page - 1) * limit;
   try {
-    const result = await pool.query('SELECT * FROM albums;');
-    res.json(result.rows); // Send the rows as JSON
-    console.log("displaying albums");
+    const result = await pool.query('SELECT * FROM albums ORDER BY average_rating LIMIT $1 OFFSET $2', [limit, offset]);
+
+    const albumCount = await pool.query('SELECT COUNT(*) FROM albums');
+    const totalCount = parseInt(albumCount.rows[0], 10);
+    const totalPages = Math.ceil(totalCount / limit);
+
+    res.json({ albums: result.rows, totalPages }); // Send the rows as JSON
   } catch (error) {
     console.error('Error fetching albums:', error);
     res.status(500).json({ error: 'Database query failed.' });
