@@ -1,16 +1,19 @@
 import { useEffect, useState, useCallback } from 'react';
 import '../assets/Home.css';
+import CircularProgress from '@mui/material/CircularProgress';
 //import { useState } from 'react';
 import TempDrawer from "../components/TempDrawer.jsx"
 import Albumdisplay from '../components/Albumdisplay.jsx';
 
 export default function Homepage()
 {
+    const [loading, setLoading] = useState(false);
     const [albums, setAlbums] = useState([]);
 
     const BASE_URL = "https://albums-ink9.onrender.com";
     
         const fetchAlbumList = useCallback(async () => {
+            setLoading(true);
             try {
                 const response = await fetch(`${BASE_URL}/api/albums`);
                 const albumlist = await response.json();
@@ -18,6 +21,8 @@ export default function Homepage()
                 setAlbums(albumlist);
             } catch (error) {
                 console.error("Error fetching Albumlist:", error);
+            } finally {
+                setLoading(false);
             }
         }, []);
 
@@ -29,7 +34,13 @@ export default function Homepage()
         <div>
             <h1 id="uber">Alben</h1>
             <TempDrawer id="drawer1" onSuccess={fetchAlbumList}/>
+            {loading ? (
+                <div style={{ display: 'flex', justifyContent: 'center', marginTop: '20px' }}>
+                    <CircularProgress />
+                </div>
+            ) : (
             <Albumdisplay albums={albums}/>
+            )}
         </div>
     )
 }

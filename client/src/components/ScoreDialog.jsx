@@ -4,11 +4,13 @@ import CloseIcon from '@mui/icons-material/Close';
 import { useEffect, useState } from "react"
 import SongRating from "./Rating";
 import { getColorForValue } from '../../../backend/colors';
+import CircularProgress from '@mui/material/CircularProgress';
 
 export default function ScoreDialog({open, album, onClose, albumID, onSuccess})
 {
     const [songs, setSongs] = useState([]);
     const [songColors, setSongColors] = useState([]);
+    const [loading, setLoading] = useState(false);
 
     const BASE_URL = "https://web-u92g.onrender.com";
     const BASE_URL_DB = "https://albums-ink9.onrender.com";
@@ -52,7 +54,7 @@ export default function ScoreDialog({open, album, onClose, albumID, onSuccess})
             })),
         };
         console.log("Payload: ", payload);
-
+        setLoading(true);
         try {
             const response = await fetch(`${BASE_URL_DB}/api/save-album`, {
                 method: 'POST',
@@ -71,6 +73,8 @@ export default function ScoreDialog({open, album, onClose, albumID, onSuccess})
               }
         } catch (error) {
             console.error('Error saving album:', error);
+        } finally {
+            setLoading(false);
         }
     }
         useEffect(() => {
@@ -78,6 +82,7 @@ export default function ScoreDialog({open, album, onClose, albumID, onSuccess})
                 try {
                     
                     console.log(albumID);
+                    setLoading(true);
                     const response = await fetch(`${BASE_URL}/api/fetch-songs?albumId=${albumID}`);
                     if (!response.ok) {
                         if (response.status === 503) 
@@ -106,6 +111,8 @@ export default function ScoreDialog({open, album, onClose, albumID, onSuccess})
                     setSongColors(defaultColors);
                 } catch (error) {
                     console.error("Error fetching our API endpoint:", error);
+                } finally {
+                    setLoading(false);
                 }
             };
 
@@ -209,10 +216,11 @@ export default function ScoreDialog({open, album, onClose, albumID, onSuccess})
                   ))}
                 </List>
             </DialogContent>
+            
             <DialogActions>
                 <Button onClick={onClose}> Cancel </Button>
                 <Button variant="contained" onClick={handleSave}> Save </Button>
             </DialogActions>               
-        </Dialog>
+        </Dialog> 
     );
 }
