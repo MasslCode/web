@@ -11,7 +11,7 @@ export default function Homepage()
     const [loading, setLoading] = useState(false);
     const [albums, setAlbums] = useState([]);
     const [currentPage, setCurrentPage] = useState(1);
-    const [totalPages, setTotalPages] = useState(5);
+    const [totalPages, setTotalPages] = useState(1);
 
     const BASE_URL = "https://albums-ink9.onrender.com";
     
