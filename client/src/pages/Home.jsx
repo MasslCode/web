@@ -41,6 +41,7 @@ export default function Homepage()
 
     return (
         <div>
+            <div>
             <h1 id="uber">Alben</h1>
             <TempDrawer id="drawer1" onSuccess={fetchAlbumList}/>
             {loading ? (
@@ -50,6 +51,7 @@ export default function Homepage()
             ) : (
             <Albumdisplay albums={albums}/>
             )}
+            </div>
             <Pagination 
                 count={totalPages}
                 page={currentPage}
