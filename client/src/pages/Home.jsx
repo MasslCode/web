@@ -44,16 +44,9 @@ export default function Homepage()
             <div>
             <h1 id="uber">Alben</h1>
             <TempDrawer id="drawer1" onSuccess={fetchAlbumList}/>
-            {loading ? (
-                <div style={{ display: 'flex', justifyContent: 'center', marginTop: '20px' }}>
-                    <CircularProgress />
-                </div>
-            ) : (
+            {loading && <CircularProgress />}
             <Albumdisplay albums={albums}/>
-            )}
             </div>
-
-            {!loading ? (
             <Pagination 
                 count={totalPages}
                 page={currentPage}
@@ -63,8 +56,6 @@ export default function Homepage()
                 shape="rounded"
                 style={{ marginBottom: '20px' }}
             ></Pagination>
-        ) : ( <div></div>
-        )}
         </div>
     )
 }
