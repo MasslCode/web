@@ -52,6 +52,8 @@ export default function Homepage()
             <Albumdisplay albums={albums}/>
             )}
             </div>
+
+            {!loading ? (
             <Pagination 
                 count={totalPages}
                 page={currentPage}
@@ -61,6 +63,8 @@ export default function Homepage()
                 shape="rounded"
                 style={{ marginBottom: '20px' }}
             ></Pagination>
+        ) : ( <div></div>
+        )}
         </div>
     )
 }
