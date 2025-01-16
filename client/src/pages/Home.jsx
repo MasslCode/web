@@ -37,6 +37,11 @@ export default function Homepage()
 
     const handlePageChange = (event, value) => {
         fetchAlbumList(value);
+        window.scrollTo({
+            top: 0,
+            left: 0,
+            behavior: "smooth",
+          });
       };
 
     return (
