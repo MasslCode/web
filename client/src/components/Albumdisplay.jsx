@@ -11,11 +11,19 @@ export default function Albumdisplay({albums, loading })
             <Grid container spacing={4} justifyContent="center" >
                 {loading ? cardSkeletons.map((_, index) => (
                     <Grid item xs={12} sm={6} md={4} lg={3} key={index}>
-                        <Card>
-                            <Skeleton variant="rectangular" height={300}></Skeleton>
+                        <Card
+                          sx={{
+                            maxWidth: 300,
+                            height: 500,
+                            margin: 'auto',
+                            borderRadius: 2,
+                            boxShadow: 3
+                          }}>
+                            <Skeleton variant="rectangular" height={300} sx={{ margin: 'auto', marginBottom: 1 }}></Skeleton>
                             <CardContent>
-                                <Skeleton variant="text" width="60%"></Skeleton>
-                                <Skeleton variant="text" width="80%"></Skeleton>
+                                <Skeleton variant="text" height={40} width="80%" sx={{ margin: 'auto', marginBottom: 1 }}></Skeleton>
+                                <Skeleton variant="text" height={20} width="60%" sx={{ margin: 'auto', marginBottom: 1 }}></Skeleton>
+                                <Skeleton variant="text" height={20} width="40%" sx={{ margin: 'auto' }}></Skeleton>
                             </CardContent>
                         </Card>
                     </Grid>
