@@ -1,14 +1,27 @@
 /* eslint-disable react/prop-types */
-import { Card, CardMedia, CardContent, Typography, Box } from '@mui/material';
+import { Card, CardMedia, CardContent, Typography, Box, Skeleton } from '@mui/material';
 import Grid from '@mui/material/Grid2';
 
-export default function Albumdisplay( {albums} )
+export default function Albumdisplay({albums, loading })
 {
+    const cardSkeletons = Array.from({ length: 20 });
+
     return (
         <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', padding: 4 }}>
             <Grid container spacing={4} justifyContent="center" >
-                {albums.map((album, index) => (
-                    <Grid item xs={12} sm={6} md={4} key={index}>
+                {loading ? cardSkeletons.map((_, index) => (
+                    <Grid item xs={12} sm={6} md={4} lg={3} key={index}>
+                        <Card>
+                            <Skeleton variant="rectangular" height={300}></Skeleton>
+                            <CardContent>
+                                <Skeleton variant="text" width="60%"></Skeleton>
+                                <Skeleton variant="text" width="80%"></Skeleton>
+                            </CardContent>
+                        </Card>
+                    </Grid>
+                ))
+                : albums.map((album, index) => (
+                    <Grid item xs={12} sm={6} md={4} lg={3} key={index}>
                         <Card sx={{ maxWidth: 300, height: 500, margin: 'auto', borderRadius: 2, boxShadow: 3}}>
                             <CardMedia 
                                 component="img"
