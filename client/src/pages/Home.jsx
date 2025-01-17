@@ -56,7 +56,7 @@ export default function Homepage()
             ) : (
                 <div></div>
             )}
-            <Albumdisplay albums={albums}/>
+            <Albumdisplay albums={albums} loading={loading}/>
             </div>
             <Pagination 
                 count={totalPages}
