@@ -24,11 +24,11 @@ export default function Albumdisplay({albums, loading })
                             flexDirection: 'column',
                             justifyContent: 'space-between',
                           }}>
-                            <Skeleton variant="rectangular" width="100%" height={300} sx={{ borderRadius: '4px' }}></Skeleton>
+                            <Skeleton animation="wave" variant="rectangular" width="100%" height={300} sx={{ borderRadius: '4px' }}></Skeleton>
                             <CardContent sx={{ width: '100%', textAlign: 'center', flexGrow: 1 }}>
-                                <Skeleton variant="text" height={40} width="80%" sx={{ display: 'block', margin: '0 auto 1rem' }}></Skeleton>
-                                <Skeleton variant="text" height={20} width="60%" sx={{ display: 'block', margin: '0 auto 1rem' }}></Skeleton>
-                                <Skeleton variant="text" height={20} width="40%" sx={{ display: 'block', margin: '0 auto' }}></Skeleton>
+                                <Skeleton animation="wave" variant="text" height={40} width="80%" sx={{ display: 'block', margin: '0 auto 1rem' }}></Skeleton>
+                                <Skeleton animation="wave" variant="text" height={20} width="60%" sx={{ display: 'block', margin: '0 auto 1rem' }}></Skeleton>
+                                <Skeleton animation="wave" variant="text" height={20} width="40%" sx={{ display: 'block', margin: '0 auto' }}></Skeleton>
                             </CardContent>
                         </Card>
                     </Grid>
