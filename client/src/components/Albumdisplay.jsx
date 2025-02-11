@@ -14,12 +14,17 @@ export default function Albumdisplay({albums, loading })
                         <Card
                           sx={{
                             maxWidth: 300,
+                            width: '100%',
                             height: 500,
                             margin: 'auto',
                             borderRadius: 2,
-                            boxShadow: 3
+                            boxShadow: 3,
+                            display: 'flex',
+                            flexDirection: 'column',
+                            alignItems: 'center',
+                            justifyContent: 'space-between',
                           }}>
-                            <Skeleton variant="rectangular" height={300} sx={{ borderRadius: '4px' }}></Skeleton>
+                            <Skeleton variant="rectangular" width="100%" height={300} sx={{ borderRadius: '4px' }}></Skeleton>
                             <CardContent>
                                 <Skeleton variant="text" height={40} width="80%" sx={{ margin: 'auto', marginBottom: 1 }}></Skeleton>
                                 <Skeleton variant="text" height={20} width="60%" sx={{ margin: 'auto', marginBottom: 1 }}></Skeleton>
