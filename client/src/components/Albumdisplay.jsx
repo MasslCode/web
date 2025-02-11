@@ -15,7 +15,7 @@ export default function Albumdisplay({albums, loading })
                           sx={{
                             maxWidth: 300,
                             width: '100%',
-                            minWidth: 250,
+                            minWidth: 300,
                             height: 500,
                             margin: 'auto',
                             borderRadius: 2,
