@@ -15,6 +15,7 @@ export default function Albumdisplay({albums, loading })
                           sx={{
                             maxWidth: 300,
                             width: '100%',
+                            minWidth: 250,
                             height: 500,
                             margin: 'auto',
                             borderRadius: 2,
@@ -24,10 +25,10 @@ export default function Albumdisplay({albums, loading })
                             justifyContent: 'space-between',
                           }}>
                             <Skeleton variant="rectangular" width="100%" height={300} sx={{ borderRadius: '4px' }}></Skeleton>
-                            <CardContent sx={{ width: '100%', textAlign: 'center' }}>
-                                <Skeleton variant="text" height={40} width="80%" sx={{ display: 'block', marginBottom: 1 }}></Skeleton>
-                                <Skeleton variant="text" height={20} width="60%" sx={{ display: 'block', marginBottom: 1 }}></Skeleton>
-                                <Skeleton variant="text" height={20} width="40%" sx={{ display: 'block' }}></Skeleton>
+                            <CardContent sx={{ width: '100%', textAlign: 'center', flexGrow: 1 }}>
+                                <Skeleton variant="text" height={40} width="80%" sx={{ display: 'block', margin: '0 auto 1rem' }}></Skeleton>
+                                <Skeleton variant="text" height={20} width="60%" sx={{ display: 'block', margin: '0 auto 1rem' }}></Skeleton>
+                                <Skeleton variant="text" height={20} width="40%" sx={{ display: 'block', margin: '0 auto' }}></Skeleton>
                             </CardContent>
                         </Card>
                     </Grid>
