@@ -37,10 +37,16 @@ export default function Homepage()
 
     const handlePageChange = (event, value) => {
         fetchAlbumList(value);
+        window.scrollTo({
+            top: 0,
+            left: 0,
+            behavior: "smooth",
+          });
       };
 
     return (
         <div>
+            <div>
             <h1 id="uber">Alben</h1>
             <TempDrawer id="drawer1" onSuccess={fetchAlbumList}/>
             {loading ? (
@@ -48,8 +54,10 @@ export default function Homepage()
                     <CircularProgress />
                 </div>
             ) : (
-            <Albumdisplay albums={albums}/>
+                <div></div>
             )}
+            <Albumdisplay albums={albums} loading={loading}/>
+            </div>
             <Pagination 
                 count={totalPages}
                 page={currentPage}
