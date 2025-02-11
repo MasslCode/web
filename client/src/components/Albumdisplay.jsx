@@ -21,11 +21,10 @@ export default function Albumdisplay({albums, loading })
                             boxShadow: 3,
                             display: 'flex',
                             flexDirection: 'column',
-                            alignItems: 'center',
                             justifyContent: 'space-between',
                           }}>
                             <Skeleton variant="rectangular" width="100%" height={300} sx={{ borderRadius: '4px' }}></Skeleton>
-                            <CardContent>
+                            <CardContent sx={{ width: '100%', textAlign: 'center' }}>
                                 <Skeleton variant="text" height={40} width="80%" sx={{ margin: 'auto', marginBottom: 1 }}></Skeleton>
                                 <Skeleton variant="text" height={20} width="60%" sx={{ margin: 'auto', marginBottom: 1 }}></Skeleton>
                                 <Skeleton variant="text" height={20} width="40%" sx={{ margin: 'auto' }}></Skeleton>
