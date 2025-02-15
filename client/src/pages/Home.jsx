@@ -21,11 +21,10 @@ export default function Homepage()
                 const response = await fetch(`${BASE_URL}/api/albums?page=${page}&limit=20`);
                 const data = await response.json();
                 
-                if (data.albums.length > 0)
-                {
-                    setAlbums(data.albums);
-                }
                 
+                setAlbums(data.albums);
+                
+
                 setTotalPages(data.totalPages);
                 setCurrentPage(page);
             } catch (error) {
