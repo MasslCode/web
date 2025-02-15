@@ -2,7 +2,7 @@
 import { Card, CardMedia, CardContent, Typography, Box, Skeleton, Fade } from '@mui/material';
 import Grid from '@mui/material/Grid2';
 
-export default function Albumdisplay({albums, loading })
+export default function Albumdisplay({albums, loading, currentPage })
 {
     const cardSkeletons = Array.from({ length: 20 });
 
@@ -34,9 +34,9 @@ export default function Albumdisplay({albums, loading })
                     </Grid>
                 ))
                 : null}
-            <Fade in={!loading} timeout={500}>
+            <Fade in={!loading} timeout={600} key={currentPage}>
                 <Box sx={{ width: '100%' }}> 
-                    <Grid container spacing={4}>
+                    <Grid container spacing={4} justifyContent="center">
                     {albums.map((album, index) => (
                     <Grid item xs={12} sm={6} md={4} lg={3} key={index}>
                         <Card sx={{ maxWidth: 300, height: 500, margin: 'auto', borderRadius: 2, boxShadow: 3}}>
