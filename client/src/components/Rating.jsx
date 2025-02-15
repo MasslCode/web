@@ -1,8 +1,6 @@
 /* eslint-disable react/prop-types */
 import { Box, Tooltip } from "@mui/material";
-import { useState } from "react";
 import AlbumIcon from '@mui/icons-material/Album';
-import ScoreDialog from "./ScoreDialog";
 import { getColorForValue } from "../../../backend/colors.js";
 
 export default function SongRating({ onRatingChange })
