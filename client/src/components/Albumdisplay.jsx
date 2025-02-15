@@ -34,7 +34,9 @@ export default function Albumdisplay({albums, loading })
                     </Grid>
                 ))
                 : null}
-                 <Fade in={!loading} timeout={500}>
+            <Fade in={!loading} timeout={500}>
+                <Box sx={{ width: '100%' }}> 
+                    <Grid container spacing={4}>
                     {albums.map((album, index) => (
                     <Grid item xs={12} sm={6} md={4} lg={3} key={index}>
                         <Card sx={{ maxWidth: 300, height: 500, margin: 'auto', borderRadius: 2, boxShadow: 3}}>
@@ -73,9 +75,11 @@ export default function Albumdisplay({albums, loading })
                             </CardContent>
                         </Card>
                     </Grid>
-                ))}
-                </Fade>
-            </Grid>
-        </Box>
+                    ))}
+                </Grid>
+            </Box>
+        </Fade>
+    </Grid>
+    </Box>
     );
 }
