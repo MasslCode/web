@@ -9,7 +9,7 @@ export default function Albumdisplay({albums, loading, currentPage })
 
     return (
         <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', padding: 4 }}>
-            <AlbumsSort sx={{display: 'left'}}></AlbumsSort>
+            <AlbumsSort sx={{display: 'flex'}}></AlbumsSort>
             <Grid container spacing={4} justifyContent="center" >
                 {loading && albums.length === 0 ? cardSkeletons.map((_, index) => (
                     <Grid item xs={12} sm={6} md={4} lg={3} key={index}>
