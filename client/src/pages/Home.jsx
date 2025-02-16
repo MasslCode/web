@@ -5,6 +5,7 @@ import CircularProgress from '@mui/material/CircularProgress';
 import TempDrawer from "../components/TempDrawer.jsx"
 import Albumdisplay from '../components/Albumdisplay.jsx';
 import { Pagination } from '@mui/material';
+import AlbumsSort from '../components/Albumssort.jsx';
 
 export default function Homepage()
 {
@@ -51,6 +52,7 @@ export default function Homepage()
         <div>
             <div>
             <h1 id="uber">Alben</h1>
+            <AlbumsSort></AlbumsSort>
             <TempDrawer id="drawer1" onSuccess={fetchAlbumList}/>
             {loading ? (
                 <div style={{ display: 'flex', justifyContent: 'center', marginTop: '20px' }}>
