@@ -17,7 +17,7 @@ export default function AlbumsSort()
         setSortOption(event.target.value);
     }
     return (
-        <FormControl sx={{ margin: 1, minWidth: 160 }}>
+        <FormControl sx={{ margin: 1, minWidth: 160, padding: 4 }}>
             <InputLabel id="sort-select-label">Sort by</InputLabel>
             <Select
                 labelId='sort-select-label'
