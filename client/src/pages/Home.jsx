@@ -53,7 +53,11 @@ export default function Homepage()
             <div>
             <h1 id="uber">Alben</h1>
             <TempDrawer id="drawer1" onSuccess={fetchAlbumList}/>
-            <AlbumsSort></AlbumsSort>
+            <AlbumsSort
+                sx={{
+                    padding: 4
+                }}>               
+            </AlbumsSort>
             {loading ? (
                 <div style={{ display: 'flex', justifyContent: 'center', marginTop: '20px' }}>
                     <CircularProgress />
@@ -71,6 +75,9 @@ export default function Homepage()
                 variant="outlined"
                 shape="rounded"
                 style={{ marginBottom: '20px' }}
+                sx={{
+                    padding: 4
+                }}
             ></Pagination>
         </div>
     )
