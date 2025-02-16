@@ -52,8 +52,8 @@ export default function Homepage()
         <div>
             <div>
             <h1 id="uber">Alben</h1>
-            <AlbumsSort></AlbumsSort>
             <TempDrawer id="drawer1" onSuccess={fetchAlbumList}/>
+            <AlbumsSort></AlbumsSort>
             {loading ? (
                 <div style={{ display: 'flex', justifyContent: 'center', marginTop: '20px' }}>
                     <CircularProgress />

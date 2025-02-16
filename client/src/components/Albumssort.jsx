@@ -18,7 +18,7 @@ export default function AlbumsSort()
     }
     return (
         <FormControl sx={{ margin: 1, minWidth: 160 }}>
-            <InputLabel id="sort-select-label"></InputLabel>
+            <InputLabel id="sort-select-label">Sort by</InputLabel>
             <Select
                 labelId='sort-select-label'
                 id="sort-select"
