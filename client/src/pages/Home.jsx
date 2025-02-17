@@ -13,13 +13,14 @@ export default function Homepage()
     const [albums, setAlbums] = useState([]);
     const [currentPage, setCurrentPage] = useState(1);
     const [totalPages, setTotalPages] = useState(1);
+    const [sortOption, setSortOption] = useState('RANKING DESC');
 
     const BASE_URL = "https://albums-ink9.onrender.com";
     
-        const fetchAlbumList = useCallback(async (page = 1) => {
+        const fetchAlbumList = useCallback(async (page = 1, sort = 'RANKING_DESC') => {
             setLoading(true);
             try {
-                const response = await fetch(`${BASE_URL}/api/albums?page=${page}&limit=20`);
+                const response = await fetch(`${BASE_URL}/api/albums?page=${page}&limit=20&sort=${sort}`);
                 const data = await response.json();
                 
                 if (data.albums.length > 0)
@@ -36,8 +37,8 @@ export default function Homepage()
         }, []);
 
     useEffect(() => {
-        fetchAlbumList(currentPage);
-    }, [fetchAlbumList, currentPage]);
+        fetchAlbumList(currentPage, sortOption);
+    }, [fetchAlbumList, currentPage, sortOption]);
 
     const handlePageChange = (event, value) => {
         fetchAlbumList(value);
@@ -62,7 +63,7 @@ export default function Homepage()
             )}
             <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', width: '100%' }}>
                 <Box sx={{ width: '80%', display: 'flex', justifyContent: 'flex-start', mb: 2 }}>
-                    <AlbumsSort />
+                    <AlbumsSort sortOption={sortOption} onSortChange={setSortOption}/>
                 </Box>
                 <Albumdisplay albums={albums} loading={loading} currentPage={currentPage}/>
             </Box>

@@ -1,20 +1,20 @@
 import { FormControl, InputLabel, MenuItem, Select, Box, Typography } from '@mui/material';
 import { ArrowUpward, ArrowDownward } from '@mui/icons-material';
-import React from 'react';
 
-export default function AlbumsSort()
+// eslint-disable-next-line react/prop-types
+export default function AlbumsSort({sortOption, onSortChange})
 {
-    const [sortOption, setSortOption] = React.useState('RANKING DESC');
 
     const sortOptions = [
-        { value: "RANKING ASC", label: "Ranking", icon: <ArrowUpward fontSize="small" /> },
-        { value: "RANKING DESC", label: "Ranking", icon: <ArrowDownward fontSize="small" /> },
-        { value: "DATE_ADDED ASC", label: "Date Added", icon: <ArrowUpward fontSize="small" /> },
-        { value: "DATE_ADDED DESC", label: "Date Added", icon: <ArrowDownward fontSize="small" /> }
+        { value: "RANKING_ASC", label: "Rating", icon: <ArrowUpward fontSize="small" /> },
+        { value: "RANKING_DESC", label: "Rating", icon: <ArrowDownward fontSize="small" /> },
+        { value: "DATE_ADDED_ASC", label: "Oldest", icon: <ArrowUpward fontSize="small" /> },
+        { value: "DATE_ADDED_DESC", label: "Newest", icon: <ArrowDownward fontSize="small" /> }
     ];
 
     const handleSortChange = (event) => {
-        setSortOption(event.target.value);
+        console.log(event.target.value);
+        onSortChange(event.target.value);
     }
     return (
         <FormControl sx={{ margin: 1, minWidth: 160 }}>
@@ -29,10 +29,10 @@ export default function AlbumsSort()
                 {sortOptions.map((option) => (
                     <MenuItem key={option.value} value={option.value}>
                         <Box sx={{ display: 'flex', alignment: 'center', gap: 1}}>
-                            {option.icon}
                             <Typography variant="body2">
                                 {option.label}
                             </Typography>
+                            {option.icon}
                         </Box>
                     </MenuItem>
                 ))}
