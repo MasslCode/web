@@ -4,8 +4,8 @@ import CircularProgress from '@mui/material/CircularProgress';
 //import { useState } from 'react';
 import TempDrawer from "../components/TempDrawer.jsx"
 import Albumdisplay from '../components/Albumdisplay.jsx';
-import { Pagination } from '@mui/material';
 import AlbumsSort from '../components/Albumssort.jsx';
+import { Pagination, Box } from '@mui/material';
 
 export default function Homepage()
 {
@@ -53,11 +53,6 @@ export default function Homepage()
             <div>
             <h1 id="uber">Alben</h1>
             <TempDrawer id="drawer1" onSuccess={fetchAlbumList}/>
-            <AlbumsSort
-                sx={{
-                    padding: 4
-                }}>               
-            </AlbumsSort>
             {loading ? (
                 <div style={{ display: 'flex', justifyContent: 'center', marginTop: '20px' }}>
                     <CircularProgress />
@@ -65,7 +60,12 @@ export default function Homepage()
             ) : (
                 <div></div>
             )}
-            <Albumdisplay albums={albums} loading={loading} currentPage={currentPage}/>
+            <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', width: '100%' }}>
+                <Box sx={{ width: '80%', display: 'flex', justifyContent: 'flex-start', mb: 2 }}>
+                    <AlbumsSort />
+                </Box>
+                <Albumdisplay albums={albums} loading={loading} currentPage={currentPage}/>
+            </Box>
             </div>
             <Pagination 
                 count={totalPages}
