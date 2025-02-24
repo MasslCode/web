@@ -12,11 +12,25 @@ app.use(cors());
 
 // Endpoint to fetch albums
 app.get('/api/albums', async (req, res) => {
-  const { page = 1, limit = 20 } = req.query;
+  const { page = 1, limit = 20, sort } = req.query;
   const offset = (page - 1) * limit;
   try {
-    const result = await pool.query('SELECT * FROM albums ORDER BY average_rating DESC, added_at DESC LIMIT $1 OFFSET $2', [limit, offset]);
-
+    if(sort === "RANKING_DESC")
+    {
+      const result = await pool.query('SELECT * FROM albums ORDER BY average_rating DESC, added_at DESC LIMIT $1 OFFSET $2', [limit, offset]);
+    }
+    if(sort === "RANKING_ASC")
+    {
+      const result = await pool.query('SELECT * FROM albums ORDER BY average_rating ASC, added_at DESC LIMIT $1 OFFSET $2', [limit, offset]);
+    }
+    if(sort === "DATE_ADDED_ASC")
+    {
+      const result = await pool.query('SELECT * FROM albums ORDER BY added_at ASC, average_rating DESC LIMIT $1 OFFSET $2', [limit, offset]);
+    }
+    if(sort === "DATE_ADDED_DESC")
+    {
+      const result = await pool.query('SELECT * FROM albums ORDER BY added_at DESC, average_rating DESC LIMIT $1 OFFSET $2', [limit, offset]);
+    }
     const albumCount = await pool.query('SELECT COUNT(*) FROM albums');
     const totalCount = parseInt(albumCount.rows[0].count, 10);
     const totalPages = Math.ceil(totalCount / limit);
