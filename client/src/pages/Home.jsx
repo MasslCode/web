@@ -58,7 +58,7 @@ export default function Homepage()
                 <Box sx={{ width: '80%', display: 'flex', justifyContent: 'flex-start', mb: 2 }}>
                     <AlbumsSort sortOption={sortOption} onSortChange={setSortOption}/>
                     {loading ? (
-                        <div style={{ display: 'flex', justifyContent: 'center', marginTop: '20px' }}>
+                        <div style={{ justifyContent: 'center', marginTop: '20px' }}>
                         <CircularProgress />
                         </div>
                     ) : (
