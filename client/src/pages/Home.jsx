@@ -4,7 +4,8 @@ import CircularProgress from '@mui/material/CircularProgress';
 //import { useState } from 'react';
 import TempDrawer from "../components/TempDrawer.jsx"
 import Albumdisplay from '../components/Albumdisplay.jsx';
-import { Pagination } from '@mui/material';
+import AlbumsSort from '../components/Albumssort.jsx';
+import { Pagination, Box } from '@mui/material';
 
 export default function Homepage()
 {
@@ -12,13 +13,14 @@ export default function Homepage()
     const [albums, setAlbums] = useState([]);
     const [currentPage, setCurrentPage] = useState(1);
     const [totalPages, setTotalPages] = useState(1);
+    const [sortOption, setSortOption] = useState('RANKING_DESC');
 
     const BASE_URL = "https://albums-ink9.onrender.com";
     
-        const fetchAlbumList = useCallback(async (page = 1) => {
+        const fetchAlbumList = useCallback(async (page = 1, sort = sortOption) => {
             setLoading(true);
             try {
-                const response = await fetch(`${BASE_URL}/api/albums?page=${page}&limit=20`);
+                const response = await fetch(`${BASE_URL}/api/albums?page=${page}&limit=20&sort=${sort}`);
                 const data = await response.json();
                 
                 if (data.albums.length > 0)
@@ -32,11 +34,11 @@ export default function Homepage()
             } finally {
                 setLoading(false);
             }
-        }, []);
+        }, [sortOption]);
 
     useEffect(() => {
-        fetchAlbumList(currentPage);
-    }, [fetchAlbumList, currentPage]);
+        fetchAlbumList(currentPage, sortOption);
+    }, [fetchAlbumList, currentPage, sortOption]);
 
     const handlePageChange = (event, value) => {
         fetchAlbumList(value);
@@ -52,14 +54,19 @@ export default function Homepage()
             <div>
             <h1 id="uber">Alben</h1>
             <TempDrawer id="drawer1" onSuccess={fetchAlbumList}/>
-            {loading ? (
-                <div style={{ display: 'flex', justifyContent: 'center', marginTop: '20px' }}>
-                    <CircularProgress />
-                </div>
-            ) : (
-                <div></div>
-            )}
-            <Albumdisplay albums={albums} loading={loading} currentPage={currentPage}/>
+            <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', width: '100%' }}>
+                <Box sx={{ width: '80%', display: 'flex', alignItems: 'center', position: 'relative', mb: 2 }}>
+                    <AlbumsSort sortOption={sortOption} onSortChange={setSortOption}/>
+                    {loading ? (
+                        <Box sx={{ position: 'absolute', left: '50%', transform: 'translateX(-50%)' }}>
+                            <CircularProgress />
+                        </Box>
+                    ) : (
+                        <div></div>
+                )}
+                </Box>
+                <Albumdisplay albums={albums} loading={loading} currentPage={currentPage}/>
+            </Box>
             </div>
             <Pagination 
                 count={totalPages}
@@ -69,6 +76,9 @@ export default function Homepage()
                 variant="outlined"
                 shape="rounded"
                 style={{ marginBottom: '20px' }}
+                sx={{
+                    padding: 4
+                }}
             ></Pagination>
         </div>
     )

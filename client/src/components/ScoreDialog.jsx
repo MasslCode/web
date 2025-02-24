@@ -4,12 +4,12 @@ import CloseIcon from '@mui/icons-material/Close';
 import { useEffect, useState } from "react"
 import SongRating from "./Rating";
 import { getColorForValue } from '../../../backend/colors';
-import CircularProgress from '@mui/material/CircularProgress';
 
 export default function ScoreDialog({open, album, onClose, albumID, onSuccess})
 {
     const [songs, setSongs] = useState([]);
     const [songColors, setSongColors] = useState([]);
+    // eslint-disable-next-line no-unused-vars
     const [loading, setLoading] = useState(false);
 
     const BASE_URL = "https://web-u92g.onrender.com";
