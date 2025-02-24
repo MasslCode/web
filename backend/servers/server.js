@@ -15,6 +15,7 @@ app.get('/api/albums', async (req, res) => {
   const { page = 1, limit = 20, sort } = req.query;
   const offset = (page - 1) * limit;
   try {
+    console.log(sort);
     if(sort === "RANKING_DESC")
     {
       const result = await pool.query('SELECT * FROM albums ORDER BY average_rating DESC, added_at DESC LIMIT $1 OFFSET $2', [limit, offset]);
