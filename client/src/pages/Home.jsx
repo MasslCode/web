@@ -55,12 +55,12 @@ export default function Homepage()
             <h1 id="uber">Alben</h1>
             <TempDrawer id="drawer1" onSuccess={fetchAlbumList}/>
             <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', width: '100%' }}>
-                <Box sx={{ width: '80%', display: 'flex', justifyContent: 'flex-start', mb: 2 }}>
+                <Box sx={{ width: '80%', display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
                     <AlbumsSort sortOption={sortOption} onSortChange={setSortOption}/>
                     {loading ? (
-                        <div style={{ justifyContent: 'center', marginTop: '20px' }}>
-                        <CircularProgress />
-                        </div>
+                        <Box sx={{ flexGrow: 1, display: 'flex', justifyContent: 'center' }}>
+                            <CircularProgress />
+                        </Box>
                     ) : (
                         <div></div>
                 )}
