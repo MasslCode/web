@@ -1,14 +1,27 @@
 /* eslint-disable react/prop-types */
 import { Card, CardMedia, CardContent, Typography } from '@mui/material';
 import { motion } from "framer-motion"
+import { useState } from 'react';
 
 export default function Albumcard({album})
 {
-    return(
+    const [flipped, setFlipped] = useState(false);
+
+    return (
       <motion.div
       whileHover={{ scale: 1.05 }}
+      animate={{ rotateY: flipped ? 180 : 0}}
+      transition={{ duration: 0.6 }}
+      style={{
+        perspective: 1000,
+        transformStyle: "preserve-3d",
+        cursor: "pointer",
+      }}
+      onClick={() => setFlipped(!flipped)}
       >
         <Card sx={{ maxWidth: 300, height: 500, margin: 'auto', borderRadius: 2, boxShadow: 3}}>
+            {!flipped ? (
+            <>
             <CardMedia 
                 component="img"
                 height="300"
@@ -41,7 +54,21 @@ export default function Albumcard({album})
                     sx={{ textAlign: 'center', marginTop: 1 }}>
                 {`Rating: ${album.average_rating.toFixed(1) || 'N/A'}`}
                 </Typography>
-            </CardContent>
+            </CardContent> 
+            </>
+            ) : (
+                <CardContent
+                    sx={{
+                        position: "absolute",
+                        top: 0,
+                        left: 0,
+                        right: 0,
+                        bottom: 0,
+                        backgroundColor: "white",
+                        transform: "rotateY(180deg)",
+                    }}
+                ></CardContent>
+            )}
         </Card>
     </motion.div>
     );
