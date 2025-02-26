@@ -1,5 +1,6 @@
+/* eslint-disable react/prop-types */
 import { Card, CardMedia, CardContent, Typography } from '@mui/material';
-export default function Albumcard(album)
+export default function Albumcard({album})
 {
     return(
         <Card sx={{ maxWidth: 300, height: 500, margin: 'auto', borderRadius: 2, boxShadow: 3}}>
