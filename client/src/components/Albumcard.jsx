@@ -1,23 +1,27 @@
 /* eslint-disable react/prop-types */
 import { Card, CardMedia, CardContent, Typography } from '@mui/material';
-import { motion } from "framer-motion"
+import { motion, useAnimation } from "framer-motion"
 import { useState } from 'react';
 
 export default function Albumcard({album})
 {
     const [flipped, setFlipped] = useState(false);
+    const controls = useAnimation();
+
+    const handleFlip = () => {
+        setFlipped(!flipped);
+        controls.start({ rotateY: flipped ? 180 : 0 })
+    };
 
     return (
       <motion.div
       whileHover={{ scale: 1.05 }}
-      animate={{ rotateY: flipped ? 180 : 0}}
-      transition={{ duration: 0.6 }}
       style={{
         perspective: 1000,
         transformStyle: "preserve-3d",
         cursor: "pointer",
       }}
-      onClick={() => setFlipped(!flipped)}
+      onClick={handleFlip}
       >
         <Card sx={{ maxWidth: 300, height: 500, margin: 'auto', borderRadius: 2, boxShadow: 3}}>
             {!flipped ? (
