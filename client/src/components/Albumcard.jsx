@@ -1,8 +1,13 @@
 /* eslint-disable react/prop-types */
 import { Card, CardMedia, CardContent, Typography } from '@mui/material';
+import { motion } from "framer-motion"
+
 export default function Albumcard({album})
 {
     return(
+      <motion.div
+      whileHover={{ scale: 1.05 }}
+      >
         <Card sx={{ maxWidth: 300, height: 500, margin: 'auto', borderRadius: 2, boxShadow: 3}}>
             <CardMedia 
                 component="img"
@@ -38,5 +43,6 @@ export default function Albumcard({album})
                 </Typography>
             </CardContent>
         </Card>
+    </motion.div>
     );
 }
