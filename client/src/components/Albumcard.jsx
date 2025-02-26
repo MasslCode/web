@@ -1,0 +1,42 @@
+/* eslint-disable react/prop-types */
+import { Card, CardMedia, CardContent, Typography } from '@mui/material';
+export default function Albumcard({album})
+{
+    return(
+        <Card sx={{ maxWidth: 300, height: 500, margin: 'auto', borderRadius: 2, boxShadow: 3}}>
+            <CardMedia 
+                component="img"
+                height="300"
+                image={album.cover_image || "https://via.placeholder.com/150"}
+                alt={album.title}
+                sx={{ borderRadius: '4px'}}
+            />
+            <CardContent>
+                <Typography
+                    variant="h6"
+                    component="div"
+                    gutterBottom
+                    sx={{ 
+                        fontSize: `${Math.max(1, 2.5 - album.title.length * 0.05)}rem`,
+                        fontWeight: 'bold',
+                        textAlign: 'center',
+                        wordWrap: 'break-word',
+                        marginBottom: 1 }}>
+                {album.title}
+                </Typography>
+                <Typography
+                    variant="body2"
+                    color="text.secondary"
+                    sx={{ textAlign: 'center' }}>
+                {album.artist}
+                </Typography>
+                <Typography
+                    variant="body2"
+                    color="black"
+                    sx={{ textAlign: 'center', marginTop: 1 }}>
+                {`Rating: ${album.average_rating.toFixed(1) || 'N/A'}`}
+                </Typography>
+            </CardContent>
+        </Card>
+    );
+}
