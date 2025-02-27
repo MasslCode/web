@@ -14,13 +14,13 @@ export default function Albumcard({album})
     return (
       <motion.div
       whileHover={{ scale: 1.05 }}
-      onClick={handleFlip}
       style={{
         perspective: 1000,
         cursor: "pointer",
       }}
       >
         <motion.div
+            onClick={handleFlip}
             animate={{ rotateY: flipped ? 180 : 0 }}
             transition={{ duration: 0.6 }}
             style={{
@@ -30,7 +30,7 @@ export default function Albumcard({album})
                 transformStyle: "preserve-3d",
             }}
         >
-        <Card sx={{ maxWidth: 300, height: 500, margin: 'auto', borderRadius: 2, boxShadow: 3, position: "absolute", backfaceVisibility: "hidden"}}>
+        <Card sx={{ maxWidth: 300, height: 500, margin: 'auto', borderRadius: 2, boxShadow: 3, backfaceVisibility: "hidden"}}>
             {!flipped ? (
             <>
             <CardMedia 
