@@ -1,12 +1,11 @@
 /* eslint-disable react/prop-types */
 import { Card, CardMedia, CardContent, Typography } from '@mui/material';
-import { motion, useAnimation } from "framer-motion"
+import { motion } from "framer-motion"
 import { useState } from 'react';
 
 export default function Albumcard({album})
 {
     const [flipped, setFlipped] = useState(false);
-    const controls = useAnimation();
 
     const handleFlip = () => {
         setFlipped(!flipped);
@@ -83,7 +82,7 @@ export default function Albumcard({album})
                         alignItems: "center",
                         width: "100%",
                         height: "100%",
-                        backfaceVisibility: "hidden",
+                        /* backfaceVisibility: "hidden", */
                     }}
                 ></CardContent>
             )}
