@@ -10,7 +10,6 @@ export default function Albumcard({album})
 
     const handleFlip = () => {
         setFlipped(!flipped);
-        controls.start({ rotateY: flipped ? 180 : 0 })
     };
 
     return (
@@ -18,21 +17,21 @@ export default function Albumcard({album})
       whileHover={{ scale: 1.05 }}
       style={{
         perspective: 1000,
-        transformStyle: "preserve-3d",
         cursor: "pointer",
       }}
       onClick={handleFlip}
       >
         <motion.div
-            animate={controls}
+            animate={{ rotateY: flipped ? 180 : 0 }}
             transition={{ duration: 0.6 }}
             style={{
                 position: "relative",
                 width: 300,
                 height: 500,
+                transformStyle: "preserve-3d",
             }}
         >
-        <Card sx={{ maxWidth: 300, height: 500, margin: 'auto', borderRadius: 2, boxShadow: 3}}>
+        <Card sx={{ maxWidth: 300, height: 500, margin: 'auto', borderRadius: 2, boxShadow: 3, backfaceVisibility: "hidden"}}>
             {!flipped ? (
             <>
             <CardMedia 
@@ -84,6 +83,7 @@ export default function Albumcard({album})
                         alignItems: "center",
                         width: "100%",
                         height: "100%",
+                        backfaceVisibility: "hidden",
                     }}
                 ></CardContent>
             )}
