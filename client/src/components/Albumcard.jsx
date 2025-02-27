@@ -36,10 +36,6 @@ export default function Albumcard({album})
             margin: 'auto', 
             borderRadius: 2, 
             boxShadow: 3,
-            display: flipped ? "flex" : "none",
-            alignItems: "center",
-            justifyContent: "center",
-            backgroundColor: "white",
             }}>
             {!flipped ? (
             <>
@@ -87,9 +83,9 @@ export default function Albumcard({album})
                         bottom: 0,
                         backgroundColor: "white",
                         transform: "rotateY(180deg)",
-                        display: flipped ? "flex" : "none", // ✅ Hides front when flipped
-                        alignItems: "center",
+                        display: "flex",
                         justifyContent: "center",
+                        alignItems: "center",
                         width: "100%",
                         height: "100%",
                         backfaceVisibility: "hidden",
