@@ -14,13 +14,13 @@ export default function Albumcard({album})
     return (
       <motion.div
       whileHover={{ scale: 1.05 }}
+      onClick={handleFlip}
       style={{
         perspective: 1000,
         cursor: "pointer",
       }}
       >
         <motion.div
-            onClick={handleFlip}
             animate={{ rotateY: flipped ? 180 : 0 }}
             transition={{ duration: 0.6 }}
             style={{
