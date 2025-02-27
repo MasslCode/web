@@ -26,6 +26,11 @@ export default function Albumcard({album})
         <motion.div
             animate={controls}
             transition={{ duration: 0.6 }}
+            style={{
+                position: "relative",
+                width: 300,
+                height: 500,
+            }}
         >
         <Card sx={{ maxWidth: 300, height: 500, margin: 'auto', borderRadius: 2, boxShadow: 3}}>
             {!flipped ? (
@@ -74,7 +79,11 @@ export default function Albumcard({album})
                         bottom: 0,
                         backgroundColor: "white",
                         transform: "rotateY(180deg)",
-                        minWidth: 300
+                        display: "flex",
+                        justifyContent: "center",
+                        alignItems: "center",
+                        width: "100%",
+                        height: "100%",
                     }}
                 ></CardContent>
             )}
