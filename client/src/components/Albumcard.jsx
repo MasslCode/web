@@ -30,7 +30,7 @@ export default function Albumcard({album})
                 transformStyle: "preserve-3d",
             }}
         >
-        <Card sx={{ maxWidth: 300, height: 500, margin: 'auto', borderRadius: 2, boxShadow: 3, backfaceVisibility: "hidden"}}>
+        <Card sx={{ maxWidth: 300, height: 500, margin: 'auto', borderRadius: 2, boxShadow: 3}}>
             {!flipped ? (
             <>
             <CardMedia 
