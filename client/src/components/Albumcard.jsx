@@ -70,6 +70,7 @@ export default function Albumcard({album})
                         bottom: 0,
                         backgroundColor: "white",
                         transform: "rotateY(180deg)",
+                        minWidth: 300
                     }}
                 ></CardContent>
             )}
