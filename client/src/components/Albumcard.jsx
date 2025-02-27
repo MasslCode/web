@@ -23,6 +23,10 @@ export default function Albumcard({album})
       }}
       onClick={handleFlip}
       >
+        <motion.div
+            animate={controls}
+            transition={{ duration: 0.6 }}
+        >
         <Card sx={{ maxWidth: 300, height: 500, margin: 'auto', borderRadius: 2, boxShadow: 3}}>
             {!flipped ? (
             <>
@@ -75,6 +79,7 @@ export default function Albumcard({album})
                 ></CardContent>
             )}
         </Card>
+        </motion.div>
     </motion.div>
     );
 }
