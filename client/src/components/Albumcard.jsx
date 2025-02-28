@@ -10,7 +10,7 @@ export default function Albumcard({album})
     const [buttonVisibility, setButtonVisibility] = useState(false);
 
     const toggleButton = () => {
-        setButtonVisibility(!buttonVisibility);
+        setButtonVisibility((prev) => !prev);
     };
     
     const handleFlip = () => {
@@ -24,8 +24,8 @@ export default function Albumcard({album})
         perspective: 1000,
         cursor: "pointer",
       }}
-      onHoverStart={{toggleButton}}
-      onHoverEnd={{toggleButton}}
+      onHoverStart={toggleButton}
+      onHoverEnd={toggleButton}
       >
         <motion.div
             onClick={handleFlip}
