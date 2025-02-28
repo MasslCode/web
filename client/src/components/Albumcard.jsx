@@ -1,12 +1,18 @@
 /* eslint-disable react/prop-types */
-import { Card, CardMedia, CardContent, Typography } from '@mui/material';
+import { Card, CardMedia, CardContent, Typography, Box } from '@mui/material';
 import { motion } from "framer-motion"
 import { useState } from 'react';
+import Editbutton from './Editbutton';
 
 export default function Albumcard({album})
 {
     const [flipped, setFlipped] = useState(false);
+    const [buttonVisibility, setButtonVisibility] = useState(false);
 
+    const toggleButton = () => {
+        setButtonVisibility(!buttonVisibility);
+    };
+    
     const handleFlip = () => {
         setFlipped(!flipped);
     };
@@ -18,6 +24,8 @@ export default function Albumcard({album})
         perspective: 1000,
         cursor: "pointer",
       }}
+      onHoverStart={{toggleButton}}
+      onHoverEnd={{toggleButton}}
       >
         <motion.div
             onClick={handleFlip}
@@ -71,26 +79,33 @@ export default function Albumcard({album})
                     sx={{ textAlign: 'center', marginTop: 1 }}>
                 {`Rating: ${album.average_rating.toFixed(1) || 'N/A'}`}
                 </Typography>
+                {buttonVisibility && !flipped ? (
+                <Box>
+                    <Editbutton album={album} />
+                </Box>
+                ) : (
+                null
+                )}
             </CardContent> 
             </>
             ) : (
-                <CardContent
-                    sx={{
-                        position: "absolute",
-                        top: 0,
-                        left: 0,
-                        right: 0,
-                        bottom: 0,
-                        backgroundColor: "white",
-                        transform: "rotateY(180deg)",
-                        display: "flex",
-                        justifyContent: "center",
-                        alignItems: "center",
-                        width: "100%",
-                        height: "100%",
-                        backfaceVisibility: "hidden",
-                    }}
-                ></CardContent>
+            <CardContent
+                sx={{
+                    position: "absolute",
+                    top: 0,
+                    left: 0,
+                    right: 0,
+                    bottom: 0,
+                    backgroundColor: "white",
+                    transform: "rotateY(180deg)",
+                    display: "flex",
+                    justifyContent: "center",
+                    alignItems: "center",
+                    width: "100%",
+                    height: "100%",
+                    backfaceVisibility: "hidden",
+                }}
+            ></CardContent>
             )}
         </Card>
         </motion.div>
