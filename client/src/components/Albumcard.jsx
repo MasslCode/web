@@ -7,11 +7,7 @@ import Editbutton from './Editbutton';
 export default function Albumcard({album})
 {
     const [flipped, setFlipped] = useState(false);
-    const [buttonVisibility, setButtonVisibility] = useState(false);
-
-    const toggleButton = () => {
-        setButtonVisibility((prev) => !prev);
-    };
+    const [buttonVisible, setButtonVisible] = useState(false);
     
     const handleFlip = () => {
         setFlipped(!flipped);
@@ -24,8 +20,8 @@ export default function Albumcard({album})
         perspective: 1000,
         cursor: "pointer",
       }}
-      onHoverStart={toggleButton}
-      onHoverEnd={toggleButton}
+      onHoverStart={() => setButtonVisible(true)}
+      onHoverEnd={() => setButtonVisible(false)}
       >
         <motion.div
             onClick={handleFlip}
@@ -79,7 +75,7 @@ export default function Albumcard({album})
                     sx={{ textAlign: 'center', marginTop: 1 }}>
                 {`Rating: ${album.average_rating.toFixed(1) || 'N/A'}`}
                 </Typography>
-                {buttonVisibility && !flipped ? (
+                {buttonVisible && !flipped ? (
                 <Box>
                     <Editbutton album={album} />
                 </Box>

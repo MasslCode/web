@@ -4,13 +4,14 @@ import { Edit } from "@mui/icons-material";
 
 export default function Editbutton({album})
 {
-    const handleClick = () => {
+    const handleClick = (e) => {
+        e.stopPropagation();
         console.log("album clicked: ", album);
     };
     
     return(
         <Button
-            onClick={handleClick}
+            onClick={ (e) => handleClick(e)}
             endIcon={<Edit />}
             sx={{
                 backgroundColor: "#77a9bf",
