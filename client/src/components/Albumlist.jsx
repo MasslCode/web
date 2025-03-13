@@ -38,6 +38,7 @@ export default function Albumlist({ query, onSuccess })
                     release_year: new Date(album.release_date).getFullYear(),
                     cover_image: album.images[0]?.url,
                   }));
+                console.log(formattedAlbums)
                 setAlbums(formattedAlbums);
             } catch (error) {
                 console.error("Error fetching albums:" , error);
