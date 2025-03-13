@@ -34,6 +34,8 @@ app.get("/api/search-albums", async (req, res) => {
       },
     });
 
+    const fullUrl = `https://api.spotify.com/v1/search?${new URLSearchParams(params).toString()}`;
+    console.log("called URL: ", fullUrl);
     res.json(response.data.albums.items);
   } catch (error) {
     console.error("Error searching albums: ", error.response?.data || error.message);
