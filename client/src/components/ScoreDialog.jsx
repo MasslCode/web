@@ -12,7 +12,7 @@ export default function ScoreDialog({open, album, onClose, albumID, onSuccess})
     // eslint-disable-next-line no-unused-vars
     const [loading, setLoading] = useState(false);
 
-    const BASE_URL = "https://web-u92g.onrender.com";
+    const BASE_URL = "https://spotifyserver-6pb2.onrender.com";
     const BASE_URL_DB = "https://albums-ink9.onrender.com";
 
     const handleRatingChange = (index, ratingColor) => {

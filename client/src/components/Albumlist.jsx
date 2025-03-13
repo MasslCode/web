@@ -20,7 +20,7 @@ export default function Albumlist({ query, onSuccess })
       setDialogOpen(false);
     }
 
-    const BASE_URL = "https://web-u92g.onrender.com";
+    const BASE_URL = "https://spotifyserver-6pb2.onrender.com";
 
     useEffect(() => {
         const fetchAlbums = async () => {
