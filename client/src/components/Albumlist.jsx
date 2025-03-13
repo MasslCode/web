@@ -28,6 +28,7 @@ export default function Albumlist({ query, onSuccess })
             try {
                 const response = await fetch(`${BASE_URL}/api/search-albums?query=${query}`);
                 const rawAlbums = await response.json();
+                console.log(query);
                 console.log(rawAlbums);
                 const formattedAlbums = rawAlbums
                   .filter((album) => (album.total_tracks > 5) && (album.album_type !== "compilation"))
