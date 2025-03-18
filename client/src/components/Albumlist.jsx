@@ -31,7 +31,7 @@ export default function Albumlist({ query, onSuccess })
                 console.log(query);
                 console.log(rawAlbums);
                 const formattedAlbums = rawAlbums
-                  .filter((album) => (album.total_tracks > 5) && (album.album_type !== "compilation"))
+                  .filter((album) => (album.total_tracks >= 5) && (album.album_type !== "compilation"))
                   .map((album) => ({
                     id: album.id,
                     title: album.name,
