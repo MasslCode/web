@@ -111,6 +111,14 @@ app.post('/api/save-album', async (req, res) => {
   }
 })
 
+app.put('/api/edit-album', async (req, res) => {
+  console.log("Edit-album endpoint reached: ", req.body);
+  const { album, songs } = req.body;
+    if(!album || !songs) {
+      return res.status(400).json({ error: 'Album and songs are required for editing. Check if either or both of the data is missing'});
+    }
+})
+
 app.listen(PORT, () => {
   console.log(`Server running on PORT: ${PORT}`);
 });

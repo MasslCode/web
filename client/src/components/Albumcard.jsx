@@ -19,6 +19,7 @@ export default function Albumcard({album})
       style={{
         perspective: 1000,
         cursor: "pointer",
+        willChange: "transform",
       }}
       onHoverStart={() => setButtonVisible(true)}
       onHoverEnd={() => setButtonVisible(false)}
