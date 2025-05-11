@@ -22,7 +22,6 @@ export default function Editbutton({album})
 
     useEffect(() => {
 
-
     },[]);
     
     return(
@@ -43,6 +42,7 @@ export default function Editbutton({album})
         <EditDialog 
             open={dialogOpen}
             album={selectedAlbum}
+            albumID={selectedAlbum?.id}
             close={handleDialogClose}
             TransitionProps={{ onExited: () => setSelectedAlbum(null) }}
         />

@@ -1,11 +1,24 @@
 /* eslint-disable react/prop-types */
 import { Dialog, DialogActions, DialogTitle, Button } from "@mui/material";
-export default function EditDialog({open, close, success, album, songs})
+import { useCallback, useEffect, useState } from "react";
+export default function EditDialog({open, close, success, album, albumID, songs})
 {
+    const BASE_URL_DB = "https://albums-ink9.onrender.com";
+
+    const [loading, setLoading] = useState(false);
+
+    const handleEditSave = async () => {
+        
+    };
+    const fetchSongs = useCallback(async () => {}, []);
+    useEffect(() => {
+        
+    }, [albumID, open]);
+    
     return (
         <Dialog
             open={open}
-            close={close}
+            onClose={close}
             sx={{ 
                 '& .MuiDialog-paper': {
                     width: 'auto',
@@ -25,8 +38,8 @@ export default function EditDialog({open, close, success, album, songs})
              Edit album
             </DialogTitle>
             <DialogActions>
-                <Button onClick={close}> Cancel </Button>
-                <Button variant="contained" onClick={success}> Save </Button>
+                <Button variant="contained" color="error" onClick={close}> Cancel </Button>
+                <Button variant="contained" color="success" onClick={handleEditSave}> Save </Button>
             </DialogActions>
         </Dialog>
     );
