@@ -10,10 +10,17 @@ export default function EditDialog({open, close, success, album, albumID, songs}
     const handleEditSave = async () => {
         
     };
-    const fetchSongs = useCallback(async () => {}, []);
+
+    const fetchSongs = useCallback (async () => {
+            
+    }, []);
+
     useEffect(() => {
-        
-    }, [albumID, open]);
+        if(albumID && open)
+        {
+            fetchSongs();
+        }
+    },);
     
     return (
         <Dialog
