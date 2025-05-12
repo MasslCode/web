@@ -15,7 +15,7 @@ export default function EditDialog({open, close, success, album, albumID})
     const fetchSongs = useCallback (async (albumID) => {
             setLoading(true);
             try {
-                const response = await fetch(`${BASE_URL_DB}/api/album/${albumID}/songs`,
+                const response = await fetch(`${BASE_URL_DB}/api/albums/${albumID}/songs`,
                     {
                         method: 'GET',
                         headers: { 'Content-Type': 'application/json' },
