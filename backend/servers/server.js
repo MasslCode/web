@@ -6,7 +6,7 @@ import cors from 'cors';
 const app = express();
 
 const PORT = process.env.PORT || 5000;
-
+const cors = require('cors');
 app.use(express.json());
 app.use(cors());
 
@@ -118,7 +118,7 @@ app.get('/api/albums/:albumID/songs', async (req, res) => {
     result = await pool.query('SELECT * FROM songs WHERE album_id = $1', [albumID]);
     res.status(200).json(result.rows);
   } catch (error) {
-    console.error('Error fetching songs:', err);
+    console.error('Error fetching songs:', error);
     res.status(500).json({ error: 'Failed to fetch songs' });
   }
   
