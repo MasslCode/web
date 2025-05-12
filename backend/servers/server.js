@@ -109,7 +109,20 @@ app.post('/api/save-album', async (req, res) => {
     console.error('Error adding album and songs:', error);
     res.status(500).json({ error: 'Database query failed (internal server error). Look for problems when adding album or songs'});
   }
-})
+});
+
+app.get('/api/albums/:albumID/songs', async (req, res) => {
+  const albumID = req.params.albumID;
+  console.log("get songs from db endpoint reached with album id: ", albumID);
+  try {
+    result = await pool.query('SELECT * FROM songs WHERE album_id = $1', [albumID]);
+    res.status(200).json(result.rows);
+  } catch (error) {
+    console.error('Error fetching songs:', err);
+    res.status(500).json({ error: 'Failed to fetch songs' });
+  }
+  
+});
 
 app.put('/api/edit-album', async (req, res) => {
   console.log("Edit-album endpoint reached: ", req.body);
@@ -117,7 +130,9 @@ app.put('/api/edit-album', async (req, res) => {
     if(!album || !songs) {
       return res.status(400).json({ error: 'Album and songs are required for editing. Check if either or both of the data is missing'});
     }
-})
+
+
+});
 
 app.listen(PORT, () => {
   console.log(`Server running on PORT: ${PORT}`);
