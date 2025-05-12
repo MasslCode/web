@@ -2,7 +2,7 @@
 import { Button } from "@mui/material";
 import { Edit } from "@mui/icons-material";
 import EditDialog from "./EditDialog";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 
 export default function Editbutton({album})
 {
@@ -19,10 +19,6 @@ export default function Editbutton({album})
     const handleDialogClose = () => {
         setDialogOpen(false);
       };
-
-    useEffect(() => {
-
-    },[]);
     
     return(
         <div>

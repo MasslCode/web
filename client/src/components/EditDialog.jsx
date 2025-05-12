@@ -1,26 +1,53 @@
 /* eslint-disable react/prop-types */
-import { Dialog, DialogActions, DialogTitle, Button } from "@mui/material";
+import { Dialog, DialogActions, DialogTitle, Button, DialogContent, Typography, Box, CircularProgress, List, ListItem } from "@mui/material";
 import { useCallback, useEffect, useState } from "react";
-export default function EditDialog({open, close, success, album, albumID, songs})
+export default function EditDialog({open, close, success, album, albumID})
 {
     const BASE_URL_DB = "https://albums-ink9.onrender.com";
 
     const [loading, setLoading] = useState(false);
+    const [songs, setSongs] = useState([]);
 
     const handleEditSave = async () => {
         
     };
 
-    const fetchSongs = useCallback (async () => {
-            
+    const fetchSongs = useCallback (async (albumID) => {
+            setLoading(true);
+            try {
+                const response = await fetch(`${BASE_URL_DB}/api/album/${albumID}/songs`,
+                    {
+                        method: 'GET',
+                        headers: { 'Content-Type': 'application/json' },
+                    }
+                );
+
+                if (!response.ok) {
+                throw new Error('Failed to fetch songs');
+                }
+
+                const songData = await response.json();
+                setSongs(songData);
+            } catch (error) {
+                console.error("Error fetching songs:", error);
+                setSongs([]);
+            }
+            finally
+            {
+                setLoading(false);
+            }
     }, []);
 
     useEffect(() => {
         if(albumID && open)
         {
-            fetchSongs();
+            fetchSongs(albumID);
         }
-    },);
+        else
+        {
+            setSongs([]);
+        }
+    },[open, albumID, fetchSongs]);
     
     return (
         <Dialog
@@ -42,8 +69,29 @@ export default function EditDialog({open, close, success, album, albumID, songs}
                     padding: 2,
                     fontSize: '1.5rem',
                 }}>
-             Edit album
+             Edit album: {album?.title}
             </DialogTitle>
+            <DialogContent dividers>
+                <Typography variant="h6">Songs</Typography>
+
+                {loading ? (
+                    <Box display="flex" justifyContent="center" alignItems="center" height={100}>
+                        <CircularProgress />
+                    </Box>
+                ) : songs.length === 0 ? (
+                    <Typography variant="body2" color="text.secondary">
+                        No songs found for this album.
+                    </Typography>
+                ) : (
+                    <List dense>
+                        {songs.map(song => (
+                            <ListItem key={song.id}>
+                                {song.title}
+                            </ListItem>
+                        ))}
+                    </List>
+                )}
+            </DialogContent>
             <DialogActions>
                 <Button variant="contained" color="error" onClick={close}> Cancel </Button>
                 <Button variant="contained" color="success" onClick={handleEditSave}> Save </Button>
