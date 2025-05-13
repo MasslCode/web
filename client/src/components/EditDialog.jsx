@@ -1,3 +1,8 @@
+
+
+
+/** THIS IS A LEGACY COMPONENT, NOT NEEDED ANYMORE */
+
 /* eslint-disable react/prop-types */
 import { Dialog, DialogActions, DialogTitle, Button, DialogContent, Typography, Box, CircularProgress, List, ListItem } from "@mui/material";
 import { useCallback, useEffect, useState } from "react";

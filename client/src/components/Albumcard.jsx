@@ -1,10 +1,9 @@
 /* eslint-disable react/prop-types */
-import { Card, CardMedia, CardContent, Typography, Box } from '@mui/material';
+import { Card, CardMedia, CardContent, Typography, Box, Button } from '@mui/material';
 import { motion } from "framer-motion"
 import { useState } from 'react';
-import Editbutton from './Editbutton';
 
-export default function Albumcard({album})
+export default function Albumcard({album, onEditClick })
 {
     const [flipped, setFlipped] = useState(false);
     const [buttonVisible, setButtonVisible] = useState(false);
@@ -76,12 +75,18 @@ export default function Albumcard({album})
                     sx={{ textAlign: 'center', marginTop: 1 }}>
                 {`Rating: ${album.average_rating.toFixed(1) || 'N/A'}`}
                 </Typography>
-                {buttonVisible && !flipped ? (
-                <Box>
-                    <Editbutton album={album} />
-                </Box>
-                ) : (
-                null
+                {buttonVisible && !flipped && (
+                <Box display="flex" justifyContent="center" mt={2}>
+                    <Button
+                      variant="contained"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        onEditClick();
+                      }}
+                    >
+                      Edit
+                    </Button>
+                  </Box>
                 )}
             </CardContent> 
             </>

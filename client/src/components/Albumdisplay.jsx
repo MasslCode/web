@@ -2,10 +2,22 @@
 import { Card, CardContent, Box, Skeleton, Fade } from '@mui/material';
 import Grid from '@mui/material/Grid2';
 import Albumcard from './Albumcard';
+import EditDialog from './EditDialog';
+import { useState } from 'react';
 
 export default function Albumdisplay({albums, loading, currentPage })
 {
+    const [selectedAlbum, setSelectedAlbum] = useState(null);
+
     const cardSkeletons = Array.from({ length: 20 });
+
+    const handleOpenDialog = (album) => {
+        setSelectedAlbum(album);
+    }
+
+    const handleCloseDialog = () => {
+        setSelectedAlbum(null);
+    }
 
     return (
         <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', padding: 4 }}>
@@ -40,13 +52,19 @@ export default function Albumdisplay({albums, loading, currentPage })
                     <Grid container spacing={4} justifyContent="center">
                     {albums.map((album, index) => (
                     <Grid item xs={12} sm={6} md={4} lg={3} key={index}>
-                        <Albumcard album={album}></Albumcard>
+                        <Albumcard album={album} onEditClick={() => handleOpenDialog(album)}></Albumcard>
                     </Grid>
                     ))}
                 </Grid>
             </Box>
         </Fade>
     </Grid>
+        <EditDialog
+            open={Boolean(selectedAlbum)}
+            album={selectedAlbum}
+            albumID={selectedAlbum?.id}
+            close={handleCloseDialog}
+        />
     </Box>
     );
 }
