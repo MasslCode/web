@@ -115,7 +115,7 @@ app.get('/api/albums/:albumID/songs', async (req, res) => {
   const albumID = req.params.albumID;
   console.log("get songs from db endpoint reached with album id: ", albumID);
   try {
-    result = await pool.query('SELECT * FROM songs WHERE album_id = $1', [albumID]);
+    const result = await pool.query('SELECT * FROM songs WHERE album_id = $1', [albumID]);
     res.status(200).json(result.rows);
   } catch (error) {
     console.error('Error fetching songs:', error);
