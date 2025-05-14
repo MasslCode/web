@@ -1,7 +1,8 @@
 /* eslint-disable react/prop-types */
-import { Card, CardMedia, CardContent, Typography, Box, Button } from '@mui/material';
+import { Card, CardMedia, CardContent, Typography, Box, Button, Chip } from '@mui/material';
 import { motion } from "framer-motion"
 import { useState } from 'react';
+import ReplayIcon from '@mui/icons-material/Replay';
 
 export default function Albumcard({album, onEditClick })
 {
@@ -78,9 +79,10 @@ export default function Albumcard({album, onEditClick })
                 </Typography>
                 {reListen && !flipped && (
                 <Box display="flex" justifyContent="left" mt={2}>
-                    <Chip label="needs re-listen">
-
-                    </Chip>
+                    <Chip icon={<ReplayIcon />} 
+                          label="needs re-listen"
+                          variant="outlined"
+                          color="primary" />
                 </Box>
                 )}
                 {buttonVisible && !flipped && (

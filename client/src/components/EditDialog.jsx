@@ -1,17 +1,13 @@
-
-
-
-/** THIS IS A LEGACY COMPONENT, NOT NEEDED ANYMORE */
-
 /* eslint-disable react/prop-types */
 import { Dialog, DialogActions, DialogTitle, Button, DialogContent, Typography, Box, CircularProgress, List, ListItem } from "@mui/material";
 import { useCallback, useEffect, useState } from "react";
-export default function EditDialog({open, close, success, album, albumID})
+export default function EditDialog({open, close, album, albumID})
 {
     const BASE_URL_DB = "https://albums-ink9.onrender.com";
 
     const [loading, setLoading] = useState(false);
     const [songs, setSongs] = useState([]);
+    const [reListen, setReListen] = useState(false); /**just the start in editdialog, needs to be done further */
 
     const handleEditSave = async () => {
         
