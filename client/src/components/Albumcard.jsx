@@ -7,6 +7,7 @@ export default function Albumcard({album, onEditClick })
 {
     const [flipped, setFlipped] = useState(false);
     const [buttonVisible, setButtonVisible] = useState(false);
+    const [reListen, setReListen] = useState(false);
     
     const handleFlip = () => {
         setFlipped(!flipped);
@@ -75,6 +76,13 @@ export default function Albumcard({album, onEditClick })
                     sx={{ textAlign: 'center', marginTop: 1 }}>
                 {`Rating: ${album.average_rating.toFixed(1) || 'N/A'}`}
                 </Typography>
+                {reListen && !flipped && (
+                <Box display="flex" justifyContent="left" mt={2}>
+                    <Chip label="needs re-listen">
+
+                    </Chip>
+                </Box>
+                )}
                 {buttonVisible && !flipped && (
                 <Box display="flex" justifyContent="center" mt={2}>
                     <Button
