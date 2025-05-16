@@ -30,6 +30,8 @@ export default function EditDialog({open, close, album})
             });
 
             if (!response.ok) {
+                const errorData = await response.json();
+                console.error("Server error response:", errorData);
             throw new Error("Failed to update album. PUT request failed.");
         }
             const data = await response.json();
