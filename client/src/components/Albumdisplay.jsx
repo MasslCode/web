@@ -62,7 +62,6 @@ export default function Albumdisplay({albums, loading, currentPage })
         <EditDialog
             open={Boolean(selectedAlbum)}
             album={selectedAlbum}
-            albumID={selectedAlbum?.id}
             close={handleCloseDialog}
         />
     </Box>

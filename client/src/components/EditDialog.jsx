@@ -4,23 +4,26 @@
 /** THIS IS A LEGACY COMPONENT, NOT NEEDED ANYMORE */
 
 /* eslint-disable react/prop-types */
-import { Dialog, DialogActions, DialogTitle, Button, DialogContent, Typography, Box, CircularProgress, List, ListItem } from "@mui/material";
+import { Dialog, DialogActions, DialogTitle, Button, DialogContent, Typography, Box, CircularProgress, List, ListItem, Slider } from "@mui/material";
 import { useCallback, useEffect, useState } from "react";
-export default function EditDialog({open, close, success, album, albumID})
+import RatingSlider from "./RatingSlider";
+
+export default function EditDialog({open, close, album})
 {
     const BASE_URL_DB = "https://albums-ink9.onrender.com";
 
     const [loading, setLoading] = useState(false);
     const [songs, setSongs] = useState([]);
+    const [rating, setRating] = useState(album?.average_rating || null);
 
     const handleEditSave = async () => {
         
     };
 
-    const fetchSongs = useCallback (async (albumID) => {
+    const fetchSongs = useCallback (async (albumid) => {
             setLoading(true);
             try {
-                const response = await fetch(`${BASE_URL_DB}/api/albums/${albumID}/songs`,
+                const response = await fetch(`${BASE_URL_DB}/api/albums/${albumid}/songs`,
                     {
                         method: 'GET',
                         headers: { 'Content-Type': 'application/json' },
@@ -44,15 +47,19 @@ export default function EditDialog({open, close, success, album, albumID})
     }, []);
 
     useEffect(() => {
-        if(albumID && open)
+        if(album?.id && open)
         {
-            fetchSongs(albumID);
+            fetchSongs(album?.id);
+            setRating(album?.average_rating || null);
         }
         else
         {
             setSongs([]);
+            setRating(null);
         }
-    },[open, albumID, fetchSongs]);
+        //setNeedsRelisten(album.needs_relisten || false);
+        
+    },[open, fetchSongs, album]);
     
     return (
         <Dialog
@@ -60,7 +67,7 @@ export default function EditDialog({open, close, success, album, albumID})
             onClose={close}
             sx={{ 
                 '& .MuiDialog-paper': {
-                    width: 'auto',
+                    width: '30vw',
                     maxWidth: '90vw',
                     maxHeight: '90vh',
                     overflow: 'hidden',
@@ -74,10 +81,23 @@ export default function EditDialog({open, close, success, album, albumID})
                     padding: 2,
                     fontSize: '1.5rem',
                 }}>
-             Edit album: {album?.title}
+             {album?.title}
             </DialogTitle>
             <DialogContent dividers>
-                <Typography variant="h6">Songs</Typography>
+                <Box
+                    component="img"
+                    src={album?.cover_image}
+                    alt="cover not found"
+                    sx={{
+                        width: 200,
+                        height: 200,
+                        borderRadius: 1,
+                        objectFit: 'cover',
+                        marginRight: 2,
+                        textAlign: 'center',
+                    }}
+                />
+                <Typography variant="h4">Songs</Typography>
 
                 {loading ? (
                     <Box display="flex" justifyContent="center" alignItems="center" height={100}>
@@ -96,6 +116,10 @@ export default function EditDialog({open, close, success, album, albumID})
                         ))}
                     </List>
                 )}
+            <Box mt={3}>
+                <Typography gutterBottom>Rate this album (1–10)</Typography>
+                <RatingSlider value={rating} onChange={(val) => setRating(val)} />
+            </Box>
             </DialogContent>
             <DialogActions>
                 <Button variant="contained" color="error" onClick={close}> Cancel </Button>

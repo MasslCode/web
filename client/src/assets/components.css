@@ -1,0 +1,32 @@
+.SliderRoot {
+  position: relative;
+  display: flex;
+  align-items: center;
+  height: 20px;
+}
+
+.SliderTrack {
+  background-color: #ccc;
+  position: relative;
+  flex-grow: 1;
+  height: 6px;
+  border-radius: 9999px;
+}
+
+.SliderRange {
+  position: absolute;
+  background-color: #1976d2;
+  height: 100%;
+  border-radius: 9999px;
+}
+
+.SliderThumb {
+  display: block;
+  width: 16px;
+  height: 16px;
+  background-color: #1976d2;
+  border: 2px solid white;
+  border-radius: 50%;
+  box-shadow: 0 0 4px rgba(0, 0, 0, 0.3);
+  cursor: grab;
+}
