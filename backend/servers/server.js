@@ -126,12 +126,26 @@ app.get('/api/albums/:albumID/songs', async (req, res) => {
 
 app.put('/api/edit-album', async (req, res) => {
   console.log("Edit-album endpoint reached: ", req.body);
-  const { album, songs } = req.body;
-    if(!album || !songs) {
-      return res.status(400).json({ error: 'Album and songs are required for editing. Check if either or both of the data is missing'});
+  const { albumID, average_rating } = req.body;
+    if(!albumID || average_rating === undefined) {
+      return res.status(400).json({ error: 'Album id or rating missing/undefined'});
     }
+    if (average_rating < 1 || average_rating > 10) {
+      return res.status(400).json({ error: 'Rating must be between 1 and 10' });
+    }
+  const albumQuery = `UPDATE albums SET average_rating = $1 WHERE id = $2 RETURNING *`;
 
+  try {
+    const result = await pool.query(albumQuery, [average_rating, albumID]);
 
+    if (result.rowCount === 0) {
+      return res.status(404).json({ error: 'Album not found' });
+    }
+    return res.status(200).json({ success: true, album: result.rows[0] });
+  } catch (error) {
+    console.error('Error updating album:', error);
+    return res.status(500).json({ error: 'Database error' });
+  }
 });
 
 app.listen(PORT, () => {

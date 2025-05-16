@@ -4,7 +4,7 @@
 /** THIS IS A LEGACY COMPONENT, NOT NEEDED ANYMORE */
 
 /* eslint-disable react/prop-types */
-import { Dialog, DialogActions, DialogTitle, Button, DialogContent, Typography, Box, CircularProgress, List, ListItem, Slider } from "@mui/material";
+import { Dialog, DialogActions, DialogTitle, Button, DialogContent, Typography, Box, CircularProgress, List, ListItem } from "@mui/material";
 import { useCallback, useEffect, useState } from "react";
 import RatingSlider from "./RatingSlider";
 
@@ -17,7 +17,26 @@ export default function EditDialog({open, close, album})
     const [rating, setRating] = useState(album?.average_rating || null);
 
     const handleEditSave = async () => {
-        
+        try {
+            const response = await fetch(`${BASE_URL_DB}/api/edit-album`, {
+                method: "PUT",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                    id: album?.id,
+                    average_rating: rating
+                }),
+            });
+
+            if (!response.ok) {
+            throw new Error("Failed to update album. PUT request failed.");
+        }
+            const data = await response.json();
+            console.log("Album updated: ", data);
+        } catch (error) {
+            console.error("Error updating album:", error);
+        }
     };
 
     const fetchSongs = useCallback (async (albumid) => {
