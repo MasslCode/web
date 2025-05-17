@@ -25,7 +25,7 @@ export default function EditDialog({open, close, album})
                 },
                 body: JSON.stringify({
                     id: album?.id,
-                    average_rating: rating
+                    average_rating: parseFloat(rating).toFixed(0)
                 }),
             });
 
