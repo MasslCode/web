@@ -130,13 +130,14 @@ app.put('/api/edit-album', async (req, res) => {
     if(!albumID || average_rating === undefined) {
       return res.status(400).json({ error: 'Album id or rating missing/undefined'});
     }
-    if (average_rating < 1 || average_rating > 10) {
-      return res.status(400).json({ error: 'Rating must be between 1 and 10' });
+    const parsedRating = parseFloat(average_rating);
+    if (isNaN(parsedRating) || parsedRating < 1 || parsedRating > 10) {
+      return res.status(400).json({ error: 'Rating must be between 1 and 10 and a number'});
     }
   const albumQuery = `UPDATE albums SET average_rating = $1 WHERE id = $2 RETURNING *`;
 
   try {
-    const result = await pool.query(albumQuery, [average_rating, albumID]);
+    const result = await pool.query(albumQuery, [parsedRating, albumID]);
 
     if (result.rowCount === 0) {
       return res.status(404).json({ error: 'Album not found' });
