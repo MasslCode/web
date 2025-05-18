@@ -4,6 +4,7 @@ import CloseIcon from '@mui/icons-material/Close';
 import { useEffect, useState } from "react"
 import SongRating from "./Rating";
 import { getColorForValue } from '../../../backend/colors';
+import RatingSlider from "./RatingSlider";
 
 export default function ScoreDialog({open, album, onClose, albumID, onSuccess})
 {
@@ -11,29 +12,14 @@ export default function ScoreDialog({open, album, onClose, albumID, onSuccess})
     const [songColors, setSongColors] = useState([]);
     // eslint-disable-next-line no-unused-vars
     const [loading, setLoading] = useState(false);
+    const [rating, setRating] = useState(null);
 
     const BASE_URL = "https://spotifyserver-6pb2.onrender.com";
     const BASE_URL_DB = "https://albums-ink9.onrender.com";
 
-    const handleRatingChange = (index, ratingColor) => {
-        setSongColors((prevRatings) => {
-            const newRatings = [...prevRatings];
-            newRatings[index] = ratingColor;
-            return newRatings;
-        });
-    };
-
     const handleSave = async () => {
-        const validRatings = songs.filter((_, index) => (songColors[index] || 0) > 0);
 
-        const album_total_rating = validRatings.reduce((acc, song) => {
-            const rating = songColors[songs.indexOf(song)] || 0;
-            return acc + rating;
-        }, 0);
-
-        const averageRating = validRatings.length > 0 ? album_total_rating / validRatings.length : 0;
-
-        console.log(averageRating);
+        console.log(rating);
         
         const payload = {
             album: {
@@ -41,16 +27,15 @@ export default function ScoreDialog({open, album, onClose, albumID, onSuccess})
                 title: album?.title,
                 artist: album?.artist,
                 release_year: album?.release_year,
-                average_rating: parseFloat(averageRating.toFixed(2)),
+                average_rating: parseFloat(rating.toFixed(0)),
                 cover_image: album?.cover_image,
             },
             
-            songs: songs.map((song, index) => ({
+            songs: songs.map((song) => ({
                 id: song.id,
                 title: song.title,
                 duration_in_sec: song.duration_in_sec,
                 track_number: song.track_number,
-                rating: songColors[index] || 0,
             })),
         };
         console.log("Payload: ", payload);
@@ -207,14 +192,10 @@ export default function ScoreDialog({open, album, onClose, albumID, onSuccess})
                             }}>
                         {song.title}
                     </Typography>
-                    <SongRating
-                        onRatingChange={(newRating) => {
-                            handleRatingChange(index, newRating);
-                        }}
-                    />
                   </ListItem>
                   ))}
                 </List>
+            <RatingSlider value={rating} onChange={(val) => setRating(val)}/>
             </DialogContent>
             
             <DialogActions>

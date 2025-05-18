@@ -73,7 +73,7 @@ export default function Albumcard({album, onEditClick })
                     variant="body2"
                     color="black"
                     sx={{ textAlign: 'center', marginTop: 1 }}>
-                {`Rating: ${album.average_rating.toFixed(1) || 'N/A'}`}
+                {`Rating: ${album.average_rating.toFixed(0) || 'N/A'}`}
                 </Typography>
                 {buttonVisible && !flipped && (
                 <Box display="flex" justifyContent="center" mt={2}>
