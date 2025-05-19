@@ -1,12 +1,7 @@
-
-
-
-/** THIS IS A LEGACY COMPONENT, NOT NEEDED ANYMORE */
-
 /* eslint-disable react/prop-types */
 import { Dialog, DialogActions, DialogTitle, Button, DialogContent, Typography, Box, CircularProgress, List, ListItem } from "@mui/material";
 import { useCallback, useEffect, useState } from "react";
-import RatingSlider from "./RatingSlider";
+import SliderRating from "./SliderRating";
 
 export default function EditDialog({open, close, album})
 {
@@ -139,7 +134,7 @@ export default function EditDialog({open, close, album})
                 )}
             <Box mt={3}>
                 <Typography gutterBottom>Rate this album (1–10)</Typography>
-                <RatingSlider value={rating} onChange={(val) => setRating(val)} />
+                <SliderRating value={rating} onChange={(val) => setRating(val)} />
             </Box>
             </DialogContent>
             <DialogActions>
