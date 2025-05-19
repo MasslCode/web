@@ -90,8 +90,7 @@ app.post('/api/save-album', async (req, res) => {
                          SET album_id = EXCLUDED.album_id,
                              title = EXCLUDED.title,
                              duration_in_sec = EXCLUDED.duration_in_sec,
-                             track_number = EXCLUDED.track_number,
-                             rating = EXCLUDED.rating`;
+                             track_number = EXCLUDED.track_number`;
 
     for (const song of songs) {
       await pool.query(songQuery, [
