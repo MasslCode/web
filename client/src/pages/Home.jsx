@@ -6,6 +6,7 @@ import TempDrawer from "../components/TempDrawer.jsx"
 import Albumdisplay from '../components/Albumdisplay.jsx';
 import AlbumsSort from '../components/Albumssort.jsx';
 import { Pagination, Box } from '@mui/material';
+import EditDialog from '../components/EditDialog.jsx';
 
 export default function Homepage()
 {
@@ -80,6 +81,12 @@ export default function Homepage()
                     padding: 4
                 }}
             ></Pagination>
+            <EditDialog 
+                open={false}
+                album={null}
+                close={false}
+                success={fetchAlbumList}
+            />
         </div>
     )
 }

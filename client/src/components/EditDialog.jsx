@@ -3,7 +3,7 @@ import { Dialog, DialogActions, DialogTitle, Button, DialogContent, Typography, 
 import { useCallback, useEffect, useState } from "react";
 import SliderRating from "./SliderRating";
 
-export default function EditDialog({open, close, album})
+export default function EditDialog({open, close, album, success})
 {
     const BASE_URL_DB = "https://albums-ink9.onrender.com";
 
@@ -31,6 +31,11 @@ export default function EditDialog({open, close, album})
         }
             const data = await response.json();
             console.log("Album updated: ", data);
+            if(success) {
+                success();
+                console.log("onsavesuccess called...");
+            }              
+            close(); // Close the dialog after saving
         } catch (error) {
             console.error("Error updating album:", error);
         }
