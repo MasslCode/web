@@ -5,7 +5,7 @@ import Albumcard from './Albumcard';
 import EditDialog from './EditDialog';
 import { useState } from 'react';
 
-export default function Albumdisplay({albums, loading, currentPage })
+export default function Albumdisplay({albums, loading, currentPage, success })
 {
     const [selectedAlbum, setSelectedAlbum] = useState(null);
 
@@ -63,6 +63,7 @@ export default function Albumdisplay({albums, loading, currentPage })
             open={Boolean(selectedAlbum)}
             album={selectedAlbum}
             close={handleCloseDialog}
+            success={success}
         />
     </Box>
     );

@@ -65,7 +65,7 @@ export default function Homepage()
                         <div></div>
                 )}
                 </Box>
-                <Albumdisplay albums={albums} loading={loading} currentPage={currentPage}/>
+                <Albumdisplay albums={albums} loading={loading} currentPage={currentPage} success={fetchAlbumList}/>
             </Box>
             </div>
             <Pagination 

@@ -2,9 +2,8 @@
 import { Button, Dialog, DialogActions, DialogContent, DialogTitle, IconButton, List, ListItem, Typography, Box } from "@mui/material";
 import CloseIcon from '@mui/icons-material/Close';
 import { useEffect, useState } from "react"
-import SongRating from "./Rating";
 import { getColorForValue } from '../../../backend/colors';
-import RatingSlider from "./RatingSlider";
+import SliderRating from "./SliderRating";
 
 export default function ScoreDialog({open, album, onClose, albumID, onSuccess})
 {
@@ -195,7 +194,7 @@ export default function ScoreDialog({open, album, onClose, albumID, onSuccess})
                   </ListItem>
                   ))}
                 </List>
-            <RatingSlider value={rating} onChange={(val) => setRating(val)}/>
+            <SliderRating value={rating} onChange={(val) => setRating(val)}/>
             </DialogContent>
             
             <DialogActions>

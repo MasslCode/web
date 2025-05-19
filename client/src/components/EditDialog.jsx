@@ -1,14 +1,9 @@
-
-
-
-/** THIS IS A LEGACY COMPONENT, NOT NEEDED ANYMORE */
-
 /* eslint-disable react/prop-types */
 import { Dialog, DialogActions, DialogTitle, Button, DialogContent, Typography, Box, CircularProgress, List, ListItem } from "@mui/material";
 import { useCallback, useEffect, useState } from "react";
-import RatingSlider from "./RatingSlider";
+import SliderRating from "./SliderRating";
 
-export default function EditDialog({open, close, album})
+export default function EditDialog({open, close, album, success})
 {
     const BASE_URL_DB = "https://albums-ink9.onrender.com";
 
@@ -36,6 +31,11 @@ export default function EditDialog({open, close, album})
         }
             const data = await response.json();
             console.log("Album updated: ", data);
+            if(success) {
+                success();
+                console.log("onsavesuccess called...");
+            }              
+            close(); // Close the dialog after saving
         } catch (error) {
             console.error("Error updating album:", error);
         }
@@ -139,7 +139,7 @@ export default function EditDialog({open, close, album})
                 )}
             <Box mt={3}>
                 <Typography gutterBottom>Rate this album (1–10)</Typography>
-                <RatingSlider value={rating} onChange={(val) => setRating(val)} />
+                <SliderRating value={rating} onChange={(val) => setRating(val)} />
             </Box>
             </DialogContent>
             <DialogActions>
