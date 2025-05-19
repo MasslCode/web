@@ -6,6 +6,7 @@ import TempDrawer from "../components/TempDrawer.jsx"
 import Albumdisplay from '../components/Albumdisplay.jsx';
 import AlbumsSort from '../components/Albumssort.jsx';
 import { Pagination, Box } from '@mui/material';
+import MenuBar from '../components/MenuBar.jsx';
 
 export default function Homepage()
 {
@@ -52,7 +53,7 @@ export default function Homepage()
     return (
         <div>
             <div>
-            <h1 id="uber">Alben</h1>
+            <MenuBar />
             <TempDrawer id="drawer1" onSuccess={fetchAlbumList}/>
             <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', width: '100%' }}>
                 <Box sx={{ width: '80%', display: 'flex', alignItems: 'center', position: 'relative', mb: 2 }}>
