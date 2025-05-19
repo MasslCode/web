@@ -1,9 +1,80 @@
-import { Box, Typography } from "@mui/material";
+import { Box, Typography, CircularProgress, Grid2 } from "@mui/material";
+import { useEffect, useState } from "react";
 
 export default function TierlistPage(){
+  const [albums, setAlbums] = useState([]);
+  const [loading, setLoading] = useState(true);
+  
+  const BASE_URL = "https://albums-ink9.onrender.com";
+
+  useEffect(() => {
+    const fetchAlbums = async () => {
+      try {
+        const response = await fetch(`${BASE_URL}/api/albums`);
+        const data = await response.json();
+        const rated = data.albums.filter(a => a.average_rating);
+        setAlbums(rated);;
+      } catch (error) {
+        console.error("Failed to fetch albums", error);
+      }
+      finally
+      {
+        setLoading(false);
+      }
+    };
+
+    fetchAlbums();
+  }, []);
+  
+  const getAlbumsByRating = (rating) => {
+    return albums.filter(album => parseInt(album.average_rating) === rating);
+  };
+
+  if (loading) {
     return (
-    <Box p={2}>
-      <Typography variant="h3">Tierlist</Typography>
+      <Box display="flex" justifyContent="center" alignItems="center" height="60vh">
+        <CircularProgress />
+      </Box>
+    );
+  }
+  
+  return (
+    <Box p={4}>
+      <Typography variant="h3" gutterBottom>Tier List</Typography>
+      {[...Array(10)].map((_, i) => {
+        const rating = 10 - i; // Start from 10 down to 1
+        const tierAlbums = getAlbumsByRating(rating);
+
+        return (
+          <Box key={rating} mb={4}>
+            <Typography variant="h5" gutterBottom>
+              Tier {rating}
+            </Typography>
+            {tierAlbums.length === 0 ? (
+              <Typography color="text.secondary">No albums in this tier.</Typography>
+            ) : (
+              <Grid2 container spacing={2}>
+                {tierAlbums.map(album => (
+                  <Grid2 item key={album.id}>
+                    <Box
+                      component="img"
+                      src={album.cover_image}
+                      alt={album.title}
+                      sx={{
+                        width: 100,
+                        height: 100,
+                        borderRadius: 1,
+                        objectFit: 'cover',
+                        border: '2px solid #ccc',
+                      }}
+                    />
+                  </Grid2>
+                ))}
+              </Grid2>
+            )}
+          </Box>
+        );
+      })}
     </Box>
   );
-};
+}
