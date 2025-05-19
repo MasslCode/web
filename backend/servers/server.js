@@ -84,7 +84,7 @@ app.post('/api/save-album', async (req, res) => {
 
     console.log("Starting insert query for songs");
     
-    const songQuery = `INSERT INTO songs (id, album_id, title, duration_in_sec, track_number, rating)
+    const songQuery = `INSERT INTO songs (id, album_id, title, duration_in_sec, track_number)
                          VALUES ($1, $2, $3, $4, $5, $6)
                          ON CONFLICT (id) DO UPDATE
                          SET album_id = EXCLUDED.album_id,
