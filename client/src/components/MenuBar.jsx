@@ -1,5 +1,4 @@
-import { AppBar, Container, Typography, Box, Button } from "@mui/material";
-import { Toolbar } from "radix-ui";
+import { AppBar, Container, Typography, Box, Button, Toolbar } from "@mui/material";
 import EqualizerIcon from '@mui/icons-material/Equalizer';
 
 export default function MenuBar(){
