@@ -1,12 +1,14 @@
 import { AppBar, Container, Typography, Box, Button, Toolbar } from "@mui/material";
 import EqualizerIcon from '@mui/icons-material/Equalizer';
+import { useNavigate } from "react-router-dom";
 
 export default function MenuBar(){
 
     const pages = ['Tierlist'];
+    const navigate = useNavigate();
 
     const handlePageClicked = () => {
-        console.log("Page clicked");
+        navigate("/tierlist");
     };
 
     return (
