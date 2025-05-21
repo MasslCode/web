@@ -39,7 +39,7 @@ export default function TierlistPage(){
   }
   
   return (
-    <Box p={4} className="bg-green-500 text-white p-4">
+    <Box p={4} class="bg-sky-500 hover:bg-sky-700">
       <Typography variant="h3" gutterBottom>Tier List</Typography>
       {[...Array(10)].map((_, i) => {
         const rating = 10 - i; // Start from 10 down to 1
@@ -47,8 +47,8 @@ export default function TierlistPage(){
 
         return (
           <Box key={rating} mb={4}>
-            <Typography variant="h5" gutterBottom>
-              Tier {rating}
+            <Typography variant="h4" gutterBottom>
+             {rating}
             </Typography>
             {tierAlbums.length === 0 ? (
               <Typography color="text.secondary">No albums in this tier.</Typography>

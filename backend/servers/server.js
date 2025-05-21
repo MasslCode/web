@@ -12,39 +12,48 @@ app.use(cors());
 
 // Endpoint to fetch albums
 app.get('/api/albums', async (req, res) => {
-  const { page = 1, limit = 20, sort } = req.query;
-  const offset = (page - 1) * limit;
+  let { page = 1, limit, sort } = req.query;
   try {
-    console.log(sort);
-
     let result;
 
-    if(sort === "RANKING_DESC")
+    page = parseInt(page, 10);
+    limit = limit ? parseInt(limit, 10) : undefined;
+
+    if (limit && limit > 0)
     {
+      const offset = (page - 1) * limit;
+
+      if(sort === "RANKING_DESC")
+      {
        result = await pool.query('SELECT * FROM albums ORDER BY average_rating DESC, added_at DESC LIMIT $1 OFFSET $2', [limit, offset]);
-    }
-    else if(sort === "RANKING_ASC")
-    {
+      }
+      else if(sort === "RANKING_ASC")
+      {
        result = await pool.query('SELECT * FROM albums ORDER BY average_rating ASC, added_at DESC LIMIT $1 OFFSET $2', [limit, offset]);
-    }
-    else if(sort === "DATE_ADDED_ASC")
-    {
+      }
+      else if(sort === "DATE_ADDED_ASC")
+      {
        result = await pool.query('SELECT * FROM albums ORDER BY added_at ASC, average_rating DESC LIMIT $1 OFFSET $2', [limit, offset]);
-    }
-    else if(sort === "DATE_ADDED_DESC")
-    {
+      }
+      else if(sort === "DATE_ADDED_DESC")
+      {
        result = await pool.query('SELECT * FROM albums ORDER BY added_at DESC, average_rating DESC LIMIT $1 OFFSET $2', [limit, offset]);
+      }
+      else
+      {
+      console.log("unexpected sorting call, defaulting to rating desc");
+      result = await pool.query('SELECT * FROM albums ORDER BY average_rating DESC, added_at DESC LIMIT $1 OFFSET $2', [limit, offset]);
+      }
+
+      const albumCount = await pool.query('SELECT COUNT(*) FROM albums');
+      const totalCount = parseInt(albumCount.rows[0].count, 10);
+      const totalPages = Math.ceil(totalCount / limit);
     }
     else
     {
-      console.log("unexpected sorting call, defaulting to rating desc");
-      result = await pool.query('SELECT * FROM albums ORDER BY average_rating DESC, added_at DESC LIMIT $1 OFFSET $2', [limit, offset]);
+       result = await pool.query('SELECT * FROM albums ORDER BY average_rating DESC, added_at DESC');
     }
-
-    const albumCount = await pool.query('SELECT COUNT(*) FROM albums');
-    const totalCount = parseInt(albumCount.rows[0].count, 10);
-    const totalPages = Math.ceil(totalCount / limit);
-
+    
     res.json({ albums: result.rows, totalPages }); // Send the rows as JSON
   } catch (error) {
     console.error('Error fetching albums:', error);
