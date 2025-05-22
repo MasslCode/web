@@ -15,7 +15,7 @@ app.get('/api/albums', async (req, res) => {
   let { page = 1, limit, sort } = req.query;
   try {
     let result;
-
+    let totalPages;
     page = parseInt(page, 10);
     limit = limit ? parseInt(limit, 10) : undefined;
 
@@ -47,7 +47,7 @@ app.get('/api/albums', async (req, res) => {
 
       const albumCount = await pool.query('SELECT COUNT(*) FROM albums');
       const totalCount = parseInt(albumCount.rows[0].count, 10);
-      const totalPages = Math.ceil(totalCount / limit);
+      totalPages = Math.ceil(totalCount / limit);
     }
     else
     {
