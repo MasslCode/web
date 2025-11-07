@@ -12,7 +12,7 @@ export default function MenuBar(){
     };
 
     return (
-        <AppBar position="static">
+        <AppBar position="static" className="bg-gradient-to-r from-indigo-600 to-purple-600">
             <Container maxWidth="xl">
                 <Toolbar disableGutters>
                     <EqualizerIcon sx={{ display: { xs: 'none', md: 'flex' }, mr: 1 }} />
