@@ -52,7 +52,7 @@ export default function Homepage()
       };
 
     return (
-        <div className="bg-linear-to-bl from-black-200 to-gold-800">
+        <div className="bg-linear-to-bl from-black-200 to-stone-800">
             <div>
             <TempDrawer id="drawer1" onSuccess={fetchAlbumList}/>
             <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', width: '100%' }}>
