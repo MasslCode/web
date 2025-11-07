@@ -12,37 +12,39 @@ export default function MenuBar(){
     };
 
     return (
-        <AppBar position="static" className="bg-gradient-to-r from-indigo-600 to-purple-600">
-            <Container maxWidth="xl">
-                <Toolbar disableGutters>
-                    <EqualizerIcon sx={{ display: { xs: 'none', md: 'flex' }, mr: 1 }} />
-                    <Typography
-                        variant="h6"
-                        noWrap
-                        component="a"
-                        sx={{
-                            mr: 2,
-                            display: {xs: 'none', md: 'flex'},
-                            fontFamily: 'monospace',
-                            fontWeight: 700,
-                            letterSpacing: '.3rem',
-                            color: 'inherit',
-                            textDecoration: 'none'
-                        }}>
-                        ALBUMS
-                    </Typography>
-                    <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
-                        {pages.map((page) => (
-                            <Button
-                                key={page}
-                                onClick={handlePageClicked}
-                                sx={{ my: 2, color: 'white', display: 'block' }}>
-                            {page}
-                            </Button>
-                        ))}
-                    </Box>
-                </Toolbar>
-            </Container>
+        <AppBar position="static" color="transparent" className="bg-gradient-to-r from-indigo-600 to-purple-600">
+            <div className="bg-gradient-to-r from-indigo-600 to-purple-600 w-full">
+                <Container maxWidth="xl">
+                    <Toolbar disableGutters>
+                        <EqualizerIcon sx={{ display: { xs: 'none', md: 'flex' }, mr: 1 }} />
+                        <Typography
+                            variant="h6"
+                            noWrap
+                            component="a"
+                            sx={{
+                                mr: 2,
+                                display: {xs: 'none', md: 'flex'},
+                                fontFamily: 'monospace',
+                                fontWeight: 700,
+                                letterSpacing: '.3rem',
+                                color: 'inherit',
+                                textDecoration: 'none'
+                            }}>
+                            ALBUMS
+                        </Typography>
+                        <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
+                            {pages.map((page) => (
+                                <Button
+                                    key={page}
+                                    onClick={handlePageClicked}
+                                    sx={{ my: 2, color: 'white', display: 'block' }}>
+                                {page}
+                                </Button>
+                            ))}
+                        </Box>
+                    </Toolbar>
+                </Container>
+            </div>
         </AppBar>
     );
 };
