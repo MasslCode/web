@@ -17,8 +17,8 @@ export default function MenuBar(){
                 <div className="bg-linear-to-br from-black to-violet-600 w-full">
                     <Container maxWidth="xl">
                         <Toolbar disableGutters>
-                            <EqualizerIcon sx={{ display: { xs: 'none', md: 'flex' }, mr: 1 }} />
-                                <p className="font-rubik-iso text-lg font-semibold text-amber-700 tracking-widest pr-0 md:pr-[15px]">Albums</p>
+                            <EqualizerIcon className="hidden md:flex mr-1 animate-pulse text-cyan-700 text-2xl"/>
+                                <p className="font-rubik-iso text-xl font-semibold text-cyan-700 tracking-widest pr-0 md:pr-[15px]">Albums</p>
                             <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
                                 {pages.map((page) => (
                                     <Button
