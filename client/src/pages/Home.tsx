@@ -69,18 +69,16 @@ export default function Homepage()
                 <Albumdisplay albums={albums} loading={loading} currentPage={currentPage} success={fetchAlbumList}/>
             </Box>
             </div>
-            <Pagination 
+            <div className="p-4 mb-20">
+            <Pagination
                 count={totalPages}
                 page={currentPage}
                 onChange={handlePageChange}
                 color="primary"
                 variant="outlined"
                 shape="rounded"
-                style={{ marginBottom: '20px' }}
-                sx={{
-                    padding: 4
-                }}
             ></Pagination>
+            </div>
         </div>
     )
 }
