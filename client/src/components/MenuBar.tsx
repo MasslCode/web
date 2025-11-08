@@ -18,21 +18,7 @@ export default function MenuBar(){
                     <Container maxWidth="xl">
                         <Toolbar disableGutters>
                             <EqualizerIcon sx={{ display: { xs: 'none', md: 'flex' }, mr: 1 }} />
-                            <Typography
-                                variant="h6"
-                                noWrap
-                                component="a"
-                                sx={{
-                                    mr: 2,
-                                    display: {xs: 'none', md: 'flex'},
-                                    fontFamily: 'monospace',
-                                    fontWeight: 700,
-                                    letterSpacing: '.3rem',
-                                    color: 'inherit',
-                                    textDecoration: 'none'
-                                }}>
-                                ALBUMS
-                            </Typography>
+                                <p className="font-roboto text-lg font-semibold text-emerald-700">Albums</p>
                             <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
                                 {pages.map((page) => (
                                     <Button
