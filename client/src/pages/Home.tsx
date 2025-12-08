@@ -69,7 +69,6 @@ export default function Homepage()
                 <Albumdisplay albums={albums} loading={loading} currentPage={currentPage} success={fetchAlbumList}/>
             </Box>
             </div>
-            <div className="p-4 mb-20">
             <Pagination
                 count={totalPages}
                 page={currentPage}
@@ -78,7 +77,6 @@ export default function Homepage()
                 variant="outlined"
                 shape="rounded"
             ></Pagination>
-            </div>
         </div>
     )
 }
