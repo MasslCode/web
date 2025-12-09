@@ -1,15 +1,29 @@
-/* eslint-disable react/prop-types */
 import { Dialog, DialogActions, DialogTitle, Button, DialogContent, Typography, Box, CircularProgress, List, ListItem } from "@mui/material";
 import { useCallback, useEffect, useState } from "react";
-import SliderRating from "./SliderRating";
+import { TransitionProps as MuiTransitionProps } from "@mui/material/transitions";
+import SliderRating from "./SliderRating.tsx";
 
-export default function EditDialog({open, close, album, success})
+
+interface EditDialogProps {
+    open: boolean;
+    close: () => void;
+    album: { id: number; title: string; cover_image: string; average_rating: number } | null;
+    success: (album: any) => void;
+    TransitionProps?: MuiTransitionProps;
+}
+
+interface Song {
+    id: number;
+    title: string;
+}
+
+export default function EditDialog({open, close, album, success, TransitionProps}: EditDialogProps)
 {
     const BASE_URL_DB = "https://albums-ink9.onrender.com";
 
     const [loading, setLoading] = useState(false);
-    const [songs, setSongs] = useState([]);
-    const [rating, setRating] = useState(album?.average_rating || null);
+    const [songs, setSongs] = useState<Song[]>([]);
+    const [rating, setRating] = useState<number>(album?.average_rating || 0);
 
     const handleEditSave = async () => {
         try {
@@ -20,7 +34,7 @@ export default function EditDialog({open, close, album, success})
                 },
                 body: JSON.stringify({
                     id: album?.id,
-                    average_rating: parseFloat(rating).toFixed(0)
+                    average_rating: rating.toFixed(0)
                 }),
             });
 
@@ -32,7 +46,7 @@ export default function EditDialog({open, close, album, success})
             const data = await response.json();
             console.log("Album updated: ", data);
             if(success) {
-                success();
+                success(album);
                 console.log("onsavesuccess called...");
             }              
             close(); // Close the dialog after saving
@@ -41,7 +55,7 @@ export default function EditDialog({open, close, album, success})
         }
     };
 
-    const fetchSongs = useCallback (async (albumid) => {
+    const fetchSongs = useCallback (async (albumid: any) => {
             setLoading(true);
             try {
                 const response = await fetch(`${BASE_URL_DB}/api/albums/${albumid}/songs`,
@@ -71,12 +85,12 @@ export default function EditDialog({open, close, album, success})
         if(album?.id && open)
         {
             fetchSongs(album?.id);
-            setRating(album?.average_rating || null);
+            setRating(album?.average_rating || 0);
         }
         else
         {
             setSongs([]);
-            setRating(null);
+            setRating(0);
         }
         //setNeedsRelisten(album.needs_relisten || false);
         
@@ -86,6 +100,7 @@ export default function EditDialog({open, close, album, success})
         <Dialog
             open={open}
             onClose={close}
+            TransitionProps={TransitionProps}
             sx={{ 
                 '& .MuiDialog-paper': {
                     width: '30vw',
@@ -139,7 +154,7 @@ export default function EditDialog({open, close, album, success})
                 )}
             <Box mt={3}>
                 <Typography gutterBottom>Rate this album (1–10)</Typography>
-                <SliderRating value={rating} onChange={(val) => setRating(val)} />
+                <SliderRating value={rating ?? 0} onChange={(val) => setRating(val)} min={1} max={10} />
             </Box>
             </DialogContent>
             <DialogActions>

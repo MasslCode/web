@@ -1,17 +1,23 @@
 /* eslint-disable react/prop-types */
-import { Card, CardContent, Box, Skeleton, Fade } from '@mui/material';
-import Grid from '@mui/material/Grid2';
-import Albumcard from './Albumcard';
-import EditDialog from './EditDialog';
-import { useState } from 'react';
+import { Card, CardContent, Box, Skeleton, Fade, Grid2 } from '@mui/material';
+import Albumcard from './Albumcard.tsx';
+import EditDialog from './EditDialog.tsx';
+import { SetStateAction, useState } from 'react';
 
-export default function Albumdisplay({albums, loading, currentPage, success })
+interface AlbumDisplayProps {
+    albums: any[];
+    loading: boolean;
+    currentPage: number;
+    success: (album: any) => void;
+}
+
+export default function Albumdisplay({ albums, loading, currentPage, success }: AlbumDisplayProps)
 {
     const [selectedAlbum, setSelectedAlbum] = useState(null);
 
     const cardSkeletons = Array.from({ length: 20 });
 
-    const handleOpenDialog = (album) => {
+    const handleOpenDialog = (album: SetStateAction<null>) => {
         setSelectedAlbum(album);
     }
 
@@ -21,9 +27,9 @@ export default function Albumdisplay({albums, loading, currentPage, success })
 
     return (
         <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', padding: 4 }}>
-            <Grid container spacing={4} justifyContent="center" >
+            <Grid2 container spacing={4} justifyContent="center" >
                 {loading && albums.length === 0 ? cardSkeletons.map((_, index) => (
-                    <Grid item xs={12} sm={6} md={4} lg={3} key={index}>
+                    <Grid2 key={index} xs={12} sm={6} md={4} lg={3} >
                         <Card
                           sx={{
                             maxWidth: 300,
@@ -44,26 +50,26 @@ export default function Albumdisplay({albums, loading, currentPage, success })
                                 <Skeleton animation="wave" variant="text" height={20} width="40%" sx={{ display: 'block', margin: '0 auto' }}></Skeleton>
                             </CardContent>
                         </Card>
-                    </Grid>
+                    </Grid2>
                 ))
                 : null}
             <Fade in={!loading} timeout={600} key={currentPage}>
                 <Box sx={{ width: '100%' }}> 
-                    <Grid container spacing={4} justifyContent="center">
+                    <Grid2 container spacing={4} justifyContent="center">
                     {albums.map((album, index) => (
-                    <Grid item xs={12} sm={6} md={4} lg={3} key={index}>
+                    <Grid2 key={index} xs={12} sm={6} md={4} lg={3} >
                         <Albumcard album={album} onEditClick={() => handleOpenDialog(album)}></Albumcard>
-                    </Grid>
+                    </Grid2>
                     ))}
-                </Grid>
+                </Grid2>
             </Box>
         </Fade>
-    </Grid>
+    </Grid2>
         <EditDialog
             open={Boolean(selectedAlbum)}
             album={selectedAlbum}
             close={handleCloseDialog}
-            success={success}
+            success={(album) => success}
         />
     </Box>
     );

@@ -1,8 +1,15 @@
 import { Box, Typography, CircularProgress, Grid2 } from "@mui/material";
 import { useEffect, useState } from "react";
 
+interface Album {
+  id: string;
+  title: string;
+  cover_image: string;
+  average_rating: number;
+}
+
 export default function TierlistPage(){
-  const [albums, setAlbums] = useState([]);
+  const [albums, setAlbums] = useState<Album[]>([]);
   const [loading, setLoading] = useState(true);
   
   const BASE_URL = "https://albums-ink9.onrender.com";
@@ -12,7 +19,7 @@ export default function TierlistPage(){
       try {
         const response = await fetch(`${BASE_URL}/api/albums`);
         const data = await response.json();
-        const rated = data.albums.filter(a => a.average_rating);
+        const rated = data.albums.filter((a: Album) => a.average_rating);
         setAlbums(rated);;
       } catch (error) {
         console.error("Failed to fetch albums", error);
@@ -26,8 +33,8 @@ export default function TierlistPage(){
     fetchAlbums();
   }, []);
   
-  const getAlbumsByRating = (rating) => {
-    return albums.filter(album => parseInt(album.average_rating) === rating);
+  const getAlbumsByRating = (rating: number) => {
+    return albums.filter(album => album.average_rating === rating);
   };
 
   if (loading) {
@@ -39,7 +46,7 @@ export default function TierlistPage(){
   }
   
   return (
-    <Box p={4} class="bg-sky-500 hover:bg-sky-700">
+    <Box p={4} className="bg-sky-500 hover:bg-sky-700">
       <Typography variant="h3" gutterBottom>Tier List</Typography>
       {[...Array(10)].map((_, i) => {
         const rating = 10 - i; // Start from 10 down to 1
@@ -55,7 +62,7 @@ export default function TierlistPage(){
             ) : (
               <Grid2 container spacing={2}>
                 {tierAlbums.map(album => (
-                  <Grid2 item key={album.id}>
+                  <Grid2 key={album.id}>
                     <Box
                       component="img"
                       src={album.cover_image}
@@ -65,7 +72,7 @@ export default function TierlistPage(){
                         height: 100,
                         borderRadius: 1,
                         objectFit: 'cover',
-                        border: '2px solid #ccc',
+                        border: '2px solid #000000ff',
                       }}
                     />
                   </Grid2>

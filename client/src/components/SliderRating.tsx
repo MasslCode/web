@@ -2,9 +2,13 @@ import { Box, Slider, Stack } from "@mui/material";
 import HeartBrokenSharpIcon from '@mui/icons-material/HeartBrokenSharp';
 import FavoriteIcon from '@mui/icons-material/Favorite';
 
-
-// eslint-disable-next-line react/prop-types
-export default function SliderRating({value = 5, min = 1, max = 10, onChange}){
+interface SliderRatingProps {
+  value: number;
+  min: number;
+  max: number;
+  onChange: (value: number) => void;
+}
+export default function SliderRating({value = 5, min = 1, max = 10, onChange}: SliderRatingProps){
 
     return (
         <Box sx={{ width: "24vw" }}>
@@ -16,7 +20,7 @@ export default function SliderRating({value = 5, min = 1, max = 10, onChange}){
                         value={value} 
                         min={min} 
                         max={max} 
-                        onChange={(e, newValue) => onChange(newValue)}>
+                        onChange={(e, newValue) => onChange(Array.isArray(newValue) ? newValue[0] : newValue)}>
                 </Slider>
                 <FavoriteIcon />
             </Stack>

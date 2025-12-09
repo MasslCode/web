@@ -1,8 +1,8 @@
 import { Routes, Route } from "react-router-dom";
-import TierlistPage from "./pages/TierlistPage";
-import Home from "./pages/Home";
-import MenuBar from "./components/MenuBar";
-import ScrollToTop from "./pages/ScrollToTop";
+import TierlistPage from "./pages/TierlistPage.tsx";
+import Home from "./pages/Home.tsx";
+import MenuBar from "./components/MenuBar.tsx";
+import ScrollToTop from "./pages/ScrollToTop.tsx";
 
 export default function App() {
   return (

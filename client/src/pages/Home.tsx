@@ -1,10 +1,10 @@
-import { useEffect, useState, useCallback } from 'react';
+import { useEffect, useState, useCallback, ChangeEvent } from 'react';
 import '../assets/Home.css';
 import CircularProgress from '@mui/material/CircularProgress';
 //import { useState } from 'react';
-import TempDrawer from "../components/TempDrawer.jsx"
-import Albumdisplay from '../components/Albumdisplay.jsx';
-import AlbumsSort from '../components/Albumssort.jsx';
+import TempDrawer from "../components/TempDrawer.tsx"
+import Albumdisplay from '../components/Albumdisplay.tsx';
+import AlbumsSort from '../components/Albumssort.tsx';
 import { Pagination, Box } from '@mui/material';
 
 export default function Homepage()
@@ -40,7 +40,7 @@ export default function Homepage()
         fetchAlbumList(currentPage, sortOption);
     }, [fetchAlbumList, currentPage, sortOption]);
 
-    const handlePageChange = (event, value) => {
+    const handlePageChange = (_: ChangeEvent<unknown>, value: number) => {
         fetchAlbumList(value);
         window.scrollTo({
             top: 0,

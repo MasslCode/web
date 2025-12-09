@@ -1,8 +1,11 @@
-import { FormControl, InputLabel, MenuItem, Select, Box, Typography } from '@mui/material';
+import { FormControl, InputLabel, MenuItem, Select, Box, Typography, SelectChangeEvent } from '@mui/material';
 import { ArrowUpward, ArrowDownward } from '@mui/icons-material';
 
-// eslint-disable-next-line react/prop-types
-export default function AlbumsSort({sortOption, onSortChange})
+interface AlbumsSortProps {
+    sortOption: string;
+    onSortChange: (value: string) => void;
+}
+export default function AlbumsSort({sortOption, onSortChange}: AlbumsSortProps)
 {
 
     const sortOptions = [
@@ -12,8 +15,7 @@ export default function AlbumsSort({sortOption, onSortChange})
         { value: "DATE_ADDED_DESC", label: "Newest", icon: <ArrowDownward fontSize="small" /> }
     ];
 
-    const handleSortChange = (event) => {
-        console.log(event.target.value);
+    const handleSortChange = (event: SelectChangeEvent<string>) => {
         onSortChange(event.target.value);
     }
     return (

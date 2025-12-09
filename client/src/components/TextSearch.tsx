@@ -1,14 +1,12 @@
-/* eslint-disable react/prop-types */
-/* eslint-disable no-unused-vars */
-
 import { TextField } from "@mui/material"
-import { useState } from "react"
-import { useFormControl } from '@mui/material/FormControl';
 
-export default function TextSearch({ query, onQueryChange })
+interface TextSearchProps {
+  query: string;
+  onQueryChange: (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void;
+}
+
+export default function TextSearch({ query, onQueryChange }: TextSearchProps)
 {
-    const [searchText, setSearchText] = useState("");
-
     return (
         <TextField
         sx={{
