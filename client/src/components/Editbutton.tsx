@@ -45,7 +45,7 @@ export default function Editbutton({ album }: { album: Album })
             open={dialogOpen}
             album={selectedAlbum}
             close={handleDialogClose}
-            success={(album) => {
+            success={() => {
                 console.log("Editing successful...");
                 setSelectedAlbum(null);
             }}

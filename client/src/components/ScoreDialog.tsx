@@ -32,7 +32,7 @@ export default function ScoreDialog({open, album, onClose, albumID, onSuccess}: 
     const BASE_URL_DB = "https://albums-ink9.onrender.com";
 
     const handleSave = async () => {
-
+        console.log("Saving album {IN handleSave of ScoreDialog.tsx}...");
         if (rating === null) {
             console.warn('Rating is required');
             return;
@@ -83,8 +83,7 @@ export default function ScoreDialog({open, album, onClose, albumID, onSuccess}: 
     }
         useEffect(() => {
             const fetchSongs = async () => {
-                try {
-                    
+                try {                   
                     console.log(albumID);
                     setLoading(true);
                     const response = await fetch(`${BASE_URL}/api/fetch-songs?albumId=${albumID}`);

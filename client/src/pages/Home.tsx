@@ -17,10 +17,12 @@ export default function Homepage()
 
     const BASE_URL = "https://albums-ink9.onrender.com";
     
-        const fetchAlbumList = useCallback(async (page = 1, sort = sortOption) => {
+        const fetchAlbumList = useCallback(async (page?: number, sort = sortOption) => {
+            const validPage = typeof page === "number" && page > 0 ? page : 1;
+            console.log("FETCHING albumlist with page:", validPage, "and sort:", sort);    
             setLoading(true);
             try {
-                const response = await fetch(`${BASE_URL}/api/albums?page=${page}&limit=20&sort=${sort}`);
+                const response = await fetch(`${BASE_URL}/api/albums?page=${validPage}&limit=20&sort=${sort}`);
                 const data = await response.json();
                 
                 if (data.albums.length > 0)
@@ -28,7 +30,7 @@ export default function Homepage()
                     setAlbums(data.albums);
                 }
                 setTotalPages(data.totalPages);
-                setCurrentPage(page);
+                setCurrentPage(validPage);
             } catch (error) {
                 console.error("Error fetching Albumlist:", error);
             } finally {

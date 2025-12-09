@@ -69,7 +69,7 @@ export default function Albumdisplay({ albums, loading, currentPage, success }: 
             open={Boolean(selectedAlbum)}
             album={selectedAlbum}
             close={handleCloseDialog}
-            success={(album) => success}
+            success={success}
         />
     </Box>
     );
