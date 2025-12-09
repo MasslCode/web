@@ -2,21 +2,41 @@
 import { Button, Dialog, DialogActions, DialogContent, DialogTitle, IconButton, List, ListItem, Typography, Box } from "@mui/material";
 import CloseIcon from '@mui/icons-material/Close';
 import { useEffect, useState } from "react"
-import { getColorForValue } from '../../../backend/colors';
-import SliderRating from "./SliderRating";
+import { getColorForValue } from '../../../backend/colors.js';
+import SliderRating from "./SliderRating.tsx";
 
-export default function ScoreDialog({open, album, onClose, albumID, onSuccess})
+interface ScoreDialogProps {
+    open: boolean;
+    album: { title: string; artist: string; release_year: number; cover_image: string };
+    onClose: () => void;
+    albumID: number;
+    onSuccess: (album: any) => void;
+}
+
+interface Song {
+    id: number;
+    album_id: number;
+    title: string;
+    duration_in_sec: number;
+    track_number: number;
+}
+
+export default function ScoreDialog({open, album, onClose, albumID, onSuccess}: ScoreDialogProps)
 {
-    const [songs, setSongs] = useState([]);
-    const [songColors, setSongColors] = useState([]);
-    // eslint-disable-next-line no-unused-vars
+    const [songs, setSongs] = useState<Song[]>([]);
+    const [songColors, setSongColors] = useState<string[]>([]);
     const [loading, setLoading] = useState(false);
-    const [rating, setRating] = useState(null);
+    const [rating, setRating] = useState<number | null>(null);
 
     const BASE_URL = "https://spotifyserver-6pb2.onrender.com";
     const BASE_URL_DB = "https://albums-ink9.onrender.com";
 
     const handleSave = async () => {
+        console.log("Saving album {IN handleSave of ScoreDialog.tsx}...");
+        if (rating === null) {
+            console.warn('Rating is required');
+            return;
+        }
 
         console.log(rating);
         
@@ -48,7 +68,7 @@ export default function ScoreDialog({open, album, onClose, albumID, onSuccess})
             if (response.ok) {
                 console.log('Album and songs saved successfully!', payload.album.average_rating);
                 if(onSuccess) {
-                    onSuccess();
+                    onSuccess(album);
                     console.log("onsavesuccess called...");
                 }              
                 onClose(); // Close the dialog after saving
@@ -63,8 +83,7 @@ export default function ScoreDialog({open, album, onClose, albumID, onSuccess})
     }
         useEffect(() => {
             const fetchSongs = async () => {
-                try {
-                    
+                try {                   
                     console.log(albumID);
                     setLoading(true);
                     const response = await fetch(`${BASE_URL}/api/fetch-songs?albumId=${albumID}`);
@@ -74,14 +93,14 @@ export default function ScoreDialog({open, album, onClose, albumID, onSuccess})
                           const responseBody = await response.json();
                           const retryAfter = responseBody.retryAfter;
                           console.warn(`Rate-limited. Retrying after ${retryAfter} seconds.`);
-                          setTimeout(() => fetchSongs(albumID), retryAfter * 1000);
+                          setTimeout(() => fetchSongs(), retryAfter * 1000);
                           return;
                         }
                         throw new Error(`HTTP error! status: ${response.status}`);
                       }
                     const rawSongs = await response.json();
                     console.log(rawSongs);
-                    const formattedSongs = rawSongs.map((song) => ({
+                    const formattedSongs = rawSongs.map((song: any) => ({
                         id: song.id,
                         album_id: albumID,
                         title: song.name,
@@ -194,7 +213,7 @@ export default function ScoreDialog({open, album, onClose, albumID, onSuccess})
                   </ListItem>
                   ))}
                 </List>
-            <SliderRating value={rating} onChange={(val) => setRating(val)}/>
+            <SliderRating value={rating ?? 0} onChange={(val) => setRating(val)} min={1} max={10}/>
             </DialogContent>
             
             <DialogActions>

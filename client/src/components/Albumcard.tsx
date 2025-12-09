@@ -3,7 +3,11 @@ import { Card, CardMedia, CardContent, Typography, Box, Button } from '@mui/mate
 import { motion } from "framer-motion"
 import { useState } from 'react';
 
-export default function Albumcard({album, onEditClick })
+interface AlbumcardProps {
+    album: { id: string; title: string; cover_image: string; average_rating: number, artist: string } | null;
+    onEditClick: () => void;
+}
+export default function Albumcard({album, onEditClick }: AlbumcardProps)
 {
     const [flipped, setFlipped] = useState(false);
     const [buttonVisible, setButtonVisible] = useState(false);
@@ -46,8 +50,8 @@ export default function Albumcard({album, onEditClick })
             <CardMedia 
                 component="img"
                 height="300"
-                image={album.cover_image || "https://via.placeholder.com/150"}
-                alt={album.title}
+                image={album?.cover_image || "https://via.placeholder.com/150"}
+                alt={album?.title}
                 sx={{ borderRadius: '4px'}}
             />
             <CardContent>
@@ -56,24 +60,24 @@ export default function Albumcard({album, onEditClick })
                     component="div"
                     gutterBottom
                     sx={{ 
-                        fontSize: `${Math.max(1, 2.5 - album.title.length * 0.05)}rem`,
+                        fontSize: `${Math.max(1, 2.5 - (album?.title?.length ?? 0) * 0.05)}rem`,
                         fontWeight: 'bold',
                         textAlign: 'center',
                         wordWrap: 'break-word',
                         marginBottom: 1 }}>
-                {album.title}
+                {album?.title}
                 </Typography>
                 <Typography
                     variant="body2"
                     color="text.secondary"
                     sx={{ textAlign: 'center' }}>
-                {album.artist}
+                {album?.artist}
                 </Typography>
                 <Typography
                     variant="body2"
                     color="black"
                     sx={{ textAlign: 'center', marginTop: 1 }}>
-                {`Rating: ${album.average_rating.toFixed(0) || 'N/A'}`}
+                {`Rating: ${album?.average_rating.toFixed(0) || 'N/A'}`}
                 </Typography>
                 {buttonVisible && !flipped && (
                 <Box display="flex" justifyContent="center" mt={2}>

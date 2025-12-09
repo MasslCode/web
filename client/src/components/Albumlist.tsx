@@ -1,17 +1,30 @@
 /* eslint-disable react/prop-types */
 import { Typography, List, ListItemButton } from "@mui/material";
 import { useEffect, useState } from "react"
-import ScoreDialog from "./ScoreDialog.jsx";
+import ScoreDialog from "./ScoreDialog.tsx";
 import CircularProgress from '@mui/material/CircularProgress';
 
-export default function Albumlist({ query, onSuccess })
+interface AlbumlistProps {
+  query: string;
+  onSuccess: (album: any) => void;
+}
+
+interface Album {
+  id: number;
+  title: string;
+  artist: string;
+  release_year: number;
+  cover_image: string;
+}
+
+export default function Albumlist({ query, onSuccess }: AlbumlistProps)
 {
     const [dialogOpen, setDialogOpen] = useState(false);
-    const [selectedAlbum, setSelectedAlbum] = useState(null);
-    const [albums, setAlbums] = useState([]);
+    const [selectedAlbum, setSelectedAlbum] = useState<Album | null>(null);
+    const [albums, setAlbums] = useState<Album[]>([]);
     const [loading, setLoading] = useState(false);
 
-    const handleAlbumClick = (album) => {
+    const handleAlbumClick = (album: any) => {
       setSelectedAlbum(album);
       setDialogOpen(true);
     };
@@ -30,9 +43,19 @@ export default function Albumlist({ query, onSuccess })
                 const rawAlbums = await response.json();
                 console.log(query);
                 console.log(rawAlbums);
+                interface RawAlbum {
+                  id: string;
+                  name: string;
+                  artists: { name: string }[];
+                  release_date: string;
+                  images: { url: string }[];
+                  total_tracks: number;
+                  album_type: string;
+                }
+
                 const formattedAlbums = rawAlbums
-                  .filter((album) => (album.total_tracks >= 5) && (album.album_type !== "compilation"))
-                  .map((album) => ({
+                  .filter((album: RawAlbum) => (album.total_tracks >= 5) && (album.album_type !== "compilation"))
+                  .map((album: RawAlbum) => ({
                     id: album.id,
                     title: album.name,
                     artist: album.artists.map((artist) => artist.name).join(' - '),
@@ -96,14 +119,15 @@ return (
           )}
         </div>
       )}
-      <ScoreDialog 
-        open={dialogOpen}
-        album={selectedAlbum}
-        onClose={handleDialogClose}
-        TransitionProps={{ onExited: () => setSelectedAlbum(null) }}
-        albumID={selectedAlbum?.id}
-        onSuccess={onSuccess}
-      />
+      {selectedAlbum && (
+        <ScoreDialog 
+          open={dialogOpen}
+          album={selectedAlbum}
+          onClose={handleDialogClose}
+          albumID={selectedAlbum.id}
+          onSuccess={onSuccess}
+        />
+      )}
     </div>
   );
 }

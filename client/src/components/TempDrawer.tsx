@@ -1,19 +1,24 @@
 /* eslint-disable react/prop-types */
 import { Box, Button } from '@mui/material';
 import Drawer from '@mui/material/Drawer';
-import { useState } from "react"
-import TextSearch from './TextSearch';
+import { useState, ChangeEvent } from "react"
+import TextSearch from './TextSearch.tsx';
 import Albumlist from './Albumlist';
 
-export default function TempDrawer(props){
+interface TempDrawerProps {
+    id: string;
+    onSuccess: (album: any) => void;
+}
+
+export default function TempDrawer(props: TempDrawerProps) {
     const [open, setOpen] = useState(false);
     const [query, setQuery] = useState('');
 
-    const toggleDrawer = (newOpen) => () => {
+    const toggleDrawer = (newOpen: boolean) => () => {
         setOpen(newOpen);
       };
 
-    const handleQueryChange = (e) => {
+    const handleQueryChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         setQuery(e.target.value);
       };  
     

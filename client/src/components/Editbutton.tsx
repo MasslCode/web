@@ -1,15 +1,21 @@
 /* eslint-disable react/prop-types */
 import { Button } from "@mui/material";
-import { Edit } from "@mui/icons-material";
-import EditDialog from "./EditDialog";
-import { useState } from "react";
+import { Album, Edit } from "@mui/icons-material";
+import EditDialog from "./EditDialog.tsx";
+import { useState, SetStateAction } from "react";
 
-export default function Editbutton({album})
+interface Album {
+    id: number;
+    title: string;
+    cover_image: string;
+    average_rating: number;
+}
+export default function Editbutton({ album }: { album: Album })
 {
     const [dialogOpen, setDialogOpen] = useState(false);
-    const [selectedAlbum, setSelectedAlbum] = useState(null);
+    const [selectedAlbum, setSelectedAlbum] = useState<Album | null>(null);
 
-    const handleClick = (e) => {
+    const handleClick = (e: React.MouseEvent<HTMLButtonElement>) => {
         e.stopPropagation();
         console.log("album clicked: ", album);
         setSelectedAlbum(album);
@@ -38,9 +44,14 @@ export default function Editbutton({album})
         <EditDialog 
             open={dialogOpen}
             album={selectedAlbum}
-            albumID={selectedAlbum?.id}
             close={handleDialogClose}
-            TransitionProps={{ onExited: () => setSelectedAlbum(null) }}
+            success={() => {
+                console.log("Editing successful...");
+                setSelectedAlbum(null);
+            }}
+            TransitionProps={{
+                onExited: () => setSelectedAlbum(null),
+            }}
         />
         </div>
     );
