@@ -14,7 +14,7 @@ export default function MenuBar(){
     return (
         <div className="border-4 border-violet-400 rounded-lg animate-pulse-border animate-glow">
             <AppBar position="static" color="transparent" className="bg-gradient-to-r from-lime-300 to-lime-700">
-                <div className="bg-linear-to-br from-black to-violet-600 w-full">
+                <div className="bg-gradient-to-br from-lime-300 to-lime-700 w-full">
                     <Container maxWidth="xl">
                         <Toolbar disableGutters>
                             <span className="hidden md:flex mr-1 animate-pulse text-cyan-700 text-6xl">
