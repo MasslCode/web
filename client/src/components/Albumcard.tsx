@@ -38,13 +38,16 @@ export default function Albumcard({album, onEditClick }: AlbumcardProps)
                 transformStyle: "preserve-3d",
             }}
         >
-        <Card className="bg-amber-600 rounded-xl shadow-lg p-4" 
-            sx={{ 
-            maxWidth: 300, 
-            height: 500, 
-            margin: 'auto', 
-            borderRadius: 2, 
-            boxShadow: 3,
+        <Card className="rounded-xl shadow-lg p-4 bg-[#b0b076]"
+            sx={{
+                maxWidth: 300,
+                height: 500,
+                margin: 'auto',
+                borderRadius: 2,
+                boxShadow: 3,
+                backgroundColor: '#b0b076',
+                display: 'flex',
+                flexDirection: 'column',
             }}>
             {!flipped ? (
             <>
@@ -54,38 +57,43 @@ export default function Albumcard({album, onEditClick }: AlbumcardProps)
                 image={album?.cover_image || "https://via.placeholder.com/150"}
                 alt={album?.title}
             />
-            <CardContent>
-                <Typography className="text-amber-50 font-semibold text-center break-words"
+            <CardContent className="flex flex-col justify-between flex-1 p-0">
+            <div>
+                <Typography className="text-[#0d0d0c] font-semibold text-center break-words line-clamp-2"
                     variant="h6"
                     component="div"
                     gutterBottom
-                    sx={{ 
-                        fontSize: `${Math.max(1, 2.5 - (album?.title?.length ?? 0) * 0.05)}rem`
+                    sx={{
+                        fontSize: `${Math.max(1, 2.5 - (album?.title?.length ?? 0) * 0.05)}rem`,
+                        minHeight: '3rem',
+                        overflow: 'hidden',
                     }}>
                 {album?.title}
                 </Typography>
                 <Typography
-                     className="text-amber-200 text-sm text-center">
-                {album?.artist}
+                     className="text-[#0d0d0c] text-sm text-center">
+                {album?.artist}            
                 </Typography>
-                <Typography className="mt-2 mx-auto w-fit rounded-full bg-amber-50 text-amber-900 px-3 py-1 text-sm font-medium shadow-sm"
-                    variant="body2"
+            </div>
+            <div className="flex flex-col items-center mt-4">
+            <Typography className="text-[#0d0d0c] text-sm font-medium text-center">
+            {`Rating: ${album?.average_rating.toFixed(0) || 'N/A'}`}
+            </Typography>
+
+            {buttonVisible && !flipped && (
+            <Box className="mt-2 flex justify-center">
+                <Button
+                variant="contained"
+                onClick={(e) => {
+                    e.stopPropagation();
+                    onEditClick();
+                }}
                 >
-                {`Rating: ${album?.average_rating.toFixed(0) || 'N/A'}`}
-                </Typography>
-                {buttonVisible && !flipped && (
-                <Box display="flex" justifyContent="center" mt={2}>
-                    <Button
-                      variant="contained"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        onEditClick();
-                      }}
-                    >
-                      Edit
-                    </Button>
-                  </Box>
-                )}
+                Edit
+                </Button>
+            </Box>
+            )}
+            </div>
             </CardContent> 
             </>
             ) : (

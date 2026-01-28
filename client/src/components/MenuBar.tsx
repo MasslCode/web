@@ -12,15 +12,15 @@ export default function MenuBar(){
     };
 
     return (
-        <div className="border-4 border-violet-400 rounded-lg animate-pulse-border animate-glow">
+        <div className="border-4 border-[#525925] border-l-0 border-r-0 rounded-lg animate-glow">
             <AppBar position="static" color="transparent" className="bg-gradient-to-r from-lime-300 to-lime-700">
-                <div className="bg-amber-800 text-amber-50 w-full">
+                <div className="bg-[#b0b076] w-full">
                     <Container maxWidth="xl">
                         <Toolbar disableGutters>
-                            <span className="hidden md:flex mr-1 animate-pulse text-cyan-700 text-6xl">
+                            <span className="hidden md:flex mr-1 animate-pulse text-amber-700 text-6xl">
                                 <EqualizerIcon />
                             </span>
-                                <p className="font-rubik-iso text-7xl font-semibold text-cyan-700 tracking-widest pr-0 md:pr-[15px]">Albums</p>
+                                <p className="text-7xl font-semibold text-[#0d0d0c] tracking-widest pr-0 md:pr-[15px]">Albums</p>
                             <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
                                 {pages.map((page) => (
                                     <Button
