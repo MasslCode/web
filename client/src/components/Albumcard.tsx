@@ -38,7 +38,8 @@ export default function Albumcard({album, onEditClick }: AlbumcardProps)
                 transformStyle: "preserve-3d",
             }}
         >
-        <Card sx={{ 
+        <Card className="bg-amber-600 rounded-xl shadow-lg p-4" 
+            sx={{ 
             maxWidth: 300, 
             height: 500, 
             margin: 'auto', 
@@ -47,36 +48,29 @@ export default function Albumcard({album, onEditClick }: AlbumcardProps)
             }}>
             {!flipped ? (
             <>
-            <CardMedia 
+            <CardMedia className="rounded-lg shadow-md mb-3"
                 component="img"
                 height="300"
                 image={album?.cover_image || "https://via.placeholder.com/150"}
                 alt={album?.title}
-                sx={{ borderRadius: '4px'}}
             />
             <CardContent>
-                <Typography
+                <Typography className="text-amber-50 font-semibold text-center break-words"
                     variant="h6"
                     component="div"
                     gutterBottom
                     sx={{ 
-                        fontSize: `${Math.max(1, 2.5 - (album?.title?.length ?? 0) * 0.05)}rem`,
-                        fontWeight: 'bold',
-                        textAlign: 'center',
-                        wordWrap: 'break-word',
-                        marginBottom: 1 }}>
+                        fontSize: `${Math.max(1, 2.5 - (album?.title?.length ?? 0) * 0.05)}rem`
+                    }}>
                 {album?.title}
                 </Typography>
                 <Typography
-                    variant="body2"
-                    color="text.secondary"
-                    sx={{ textAlign: 'center' }}>
+                     className="text-amber-200 text-sm text-center">
                 {album?.artist}
                 </Typography>
-                <Typography
+                <Typography className="mt-2 mx-auto w-fit rounded-full bg-amber-50 text-amber-900 px-3 py-1 text-sm font-medium shadow-sm"
                     variant="body2"
-                    color="black"
-                    sx={{ textAlign: 'center', marginTop: 1 }}>
+                >
                 {`Rating: ${album?.average_rating.toFixed(0) || 'N/A'}`}
                 </Typography>
                 {buttonVisible && !flipped && (
