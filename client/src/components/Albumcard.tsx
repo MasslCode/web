@@ -10,78 +10,44 @@ interface AlbumcardProps {
 export default function Albumcard({album, onEditClick }: AlbumcardProps)
 {
     const [flipped, setFlipped] = useState(false);
-    const [buttonVisible, setButtonVisible] = useState(false);
+    const [buttonVisible, setButtonVisible] = useState(true);
     
-    const handleFlip = () => {
-        setFlipped(!flipped);
-    };
-
     return (
-      <motion.div
-      whileHover={{ scale: 1.05 }}
-      style={{
-        perspective: 1000,
-        cursor: "pointer",
-        willChange: "transform",
-      }}
-      onHoverStart={() => setButtonVisible(true)}
-      onHoverEnd={() => setButtonVisible(false)}
-      >
-        <motion.div
-            onClick={handleFlip}
-            animate={{ rotateY: flipped ? 180 : 0 }}
-            transition={{ duration: 0.6 }}
-            style={{
-                position: "relative",
-                width: 300,
-                height: 500,
-                transformStyle: "preserve-3d",
-            }}
-        >
-        <Card className="rounded-xl shadow-lg p-4 bg-[#b0b076]"
-            sx={{
-                maxWidth: 300,
-                height: 500,
-                margin: 'auto',
-                borderRadius: 2,
-                boxShadow: 3,
-                backgroundColor: '#b0b076',
-                display: 'flex',
-                flexDirection: 'column',
-            }}>
+        <Card className="group rounded-xl shadow-lg p-4 bg-[#b0b076] flex flex-col w-full max-w-xs sm:max-w-sm border-2 border-[#525925] animate-glow"
+            sx={{ backgroundColor: '#b0b076' }}>
             {!flipped ? (
             <>
-            <CardMedia className="rounded-lg shadow-md mb-3"
+            <CardMedia
                 component="img"
-                height="300"
+                className="w-full aspect-square rounded-lg shadow-md object-cover"
                 image={album?.cover_image || "https://via.placeholder.com/150"}
                 alt={album?.title}
             />
-            <CardContent className="flex flex-col justify-between flex-1 p-0">
-            <div>
+            <CardContent className="flex flex-col flex-1">
+                <div className="h-[2.86rem]">
                 <Typography className="text-[#0d0d0c] font-semibold text-center break-words line-clamp-2"
                     variant="h6"
                     component="div"
                     gutterBottom
                     sx={{
-                        fontSize: `${Math.max(1, 2.5 - (album?.title?.length ?? 0) * 0.05)}rem`,
-                        minHeight: '3rem',
-                        overflow: 'hidden',
+                        fontSize: '1.1rem',
+                        lineHeight: 1.3,
                     }}>
                 {album?.title}
                 </Typography>
+               </div>
                 <Typography
-                     className="text-[#0d0d0c] text-sm text-center">
-                {album?.artist}            
+                     className="text-[#0d0d0c] text-sm sm:text-base text-center mt-1 truncate"
+                     title={album?.artist}> 
+                {album?.artist}
+                </Typography>
+            <div className="flex flex-col items-center mt-auto">
+                <Typography className="text-[#0d0d0c] text-sm sm:text-base font-medium text-center">
+                    {`Rating: ${album?.average_rating.toFixed(0) || 'N/A'}`}
                 </Typography>
             </div>
-            <div className="flex flex-col items-center mt-4">
-            <Typography className="text-[#0d0d0c] text-sm font-medium text-center">
-            {`Rating: ${album?.average_rating.toFixed(0) || 'N/A'}`}
-            </Typography>
-
-            {buttonVisible && !flipped && (
-            <Box className="mt-2 flex justify-center">
+            <div className="mt-2 flex justify-center min-h-[2.5rem]">
+            {buttonVisible && (
                 <Button
                 variant="contained"
                 onClick={(e) => {
@@ -91,32 +57,15 @@ export default function Albumcard({album, onEditClick }: AlbumcardProps)
                 >
                 Edit
                 </Button>
-            </Box>
             )}
             </div>
             </CardContent> 
             </>
             ) : (
             <CardContent
-                sx={{
-                    position: "absolute",
-                    top: 0,
-                    left: 0,
-                    right: 0,
-                    bottom: 0,
-                    backgroundColor: "white",
-                    transform: "rotateY(180deg)",
-                    display: "flex",
-                    justifyContent: "center",
-                    alignItems: "center",
-                    width: "100%",
-                    height: "100%",
-                    backfaceVisibility: "hidden",
-                }}
+                
             ></CardContent>
             )}
         </Card>
-        </motion.div>
-    </motion.div>
     );
 }

@@ -39,14 +39,14 @@ export default function TierlistPage(){
 
   if (loading) {
     return (
-      <Box display="flex" justifyContent="center" alignItems="center" height="60vh">
+      <Box className="bg-[#e3e3b3] min-h-screen flex items-center justify-center" >
         <CircularProgress />
       </Box>
     );
   }
   
   return (
-    <Box p={4} className="bg-sky-500 hover:bg-sky-700">
+    <Box p={4} className="bg-[#e3e3b3]">
       <Typography variant="h3" gutterBottom>Tier List</Typography>
       {[...Array(10)].map((_, i) => {
         const rating = 10 - i; // Start from 10 down to 1

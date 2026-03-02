@@ -26,24 +26,12 @@ export default function Albumdisplay({ albums, loading, currentPage, success }: 
     }
 
     return (
-        <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', padding: 4 }}>
+        <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', padding: 3 }}>
             <Grid2 container spacing={4} justifyContent="center" >
                 {loading && albums.length === 0 ? cardSkeletons.map((_, index) => (
-                    <Grid2 key={index} xs={12} sm={6} md={4} lg={3} >
-                        <Card
-                          sx={{
-                            maxWidth: 300,
-                            width: '100%',
-                            minWidth: 300,
-                            height: 500,
-                            margin: 'auto',
-                            borderRadius: 2,
-                            boxShadow: 3,
-                            display: 'flex',
-                            flexDirection: 'column',
-                            justifyContent: 'space-between',
-                          }}>
-                            <Skeleton animation="wave" variant="rectangular" width="100%" height={300} sx={{ borderRadius: '4px' }}></Skeleton>
+                    <Grid2 key={index} size={{ xs: 12, sm: 6, md: 4, lg: 2.4 }}>
+                        <Card className="group rounded-xl shadow-lg flex flex-col max-w-xs sm:max-w-sm">
+                            <Skeleton animation="wave" variant="rectangular"></Skeleton>
                             <CardContent sx={{ width: '100%', textAlign: 'center', flexGrow: 1 }}>
                                 <Skeleton animation="wave" variant="text" height={40} width="80%" sx={{ display: 'block', margin: '0 auto 1rem' }}></Skeleton>
                                 <Skeleton animation="wave" variant="text" height={20} width="60%" sx={{ display: 'block', margin: '0 auto 1rem' }}></Skeleton>
@@ -54,10 +42,10 @@ export default function Albumdisplay({ albums, loading, currentPage, success }: 
                 ))
                 : null}
             <Fade in={!loading} timeout={600} key={currentPage}>
-                <Box sx={{ width: '100%' }}> 
+                <Box sx={{ width: "90%" }}> 
                     <Grid2 container spacing={4} justifyContent="center">
                     {albums.map((album, index) => (
-                    <Grid2 key={index} xs={12} sm={6} md={4} lg={3} >
+                    <Grid2 key={index} size={{ xs: 12, sm: 6, md: 4, lg: 2.4 }}>
                         <Albumcard album={album} onEditClick={() => handleOpenDialog(album)}></Albumcard>
                     </Grid2>
                     ))}

@@ -4,10 +4,13 @@ import { useNavigate } from "react-router-dom";
 
 export default function MenuBar(){
 
-    const pages = ['Tierlist'];
+    const pages = [
+        { label: 'Home', path: '/' },
+        { label: 'Tier List', path: '/tierlist' }
+        ];
     const navigate = useNavigate();
 
-    const handlePageClicked = () => {
+    const handlePageClicked = (path: string) => {
         navigate("/tierlist");
     };
 
@@ -16,18 +19,19 @@ export default function MenuBar(){
             <AppBar position="static" color="transparent" className="bg-gradient-to-r from-lime-300 to-lime-700">
                 <div className="bg-[#b0b076] w-full">
                     <Container maxWidth="xl">
-                        <Toolbar disableGutters>
+                        <Toolbar disableGutters className="flex items-center">
                             <span className="hidden md:flex mr-1 animate-pulse text-amber-700 text-6xl">
                                 <EqualizerIcon />
                             </span>
-                                <p className="text-7xl font-semibold text-[#0d0d0c] tracking-widest pr-0 md:pr-[15px]">Albums</p>
-                            <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
+                                <p className="text-5xl font-semibold text-[#0d0d0c] tracking-widest">Albums</p>
+                            <div className="flex-1" />
+                            <Box sx={{ display: { xs: 'none', md: 'flex' } }}>
                                 {pages.map((page) => (
                                     <Button
-                                        key={page}
-                                        onClick={handlePageClicked}
+                                        key={page.path}
+                                        onClick={() => navigate(page.path)}
                                         sx={{ my: 2, color: 'white', display: 'block' }}>
-                                    {page}
+                                    {page.label}
                                     </Button>
                                 ))}
                             </Box>
