@@ -52,7 +52,7 @@ export default function Homepage()
       };
 
     return (
-        <div>
+        <div className="bg-[#e3e3b3]">
             <div>
             <TempDrawer id="drawer1" onSuccess={fetchAlbumList}/>
             <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', width: '100%' }}>
@@ -69,17 +69,13 @@ export default function Homepage()
                 <Albumdisplay albums={albums} loading={loading} currentPage={currentPage} success={fetchAlbumList}/>
             </Box>
             </div>
-            <Pagination 
+            <Pagination
                 count={totalPages}
                 page={currentPage}
                 onChange={handlePageChange}
                 color="primary"
                 variant="outlined"
                 shape="rounded"
-                style={{ marginBottom: '20px' }}
-                sx={{
-                    padding: 4
-                }}
             ></Pagination>
         </div>
     )
