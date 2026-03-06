@@ -49,7 +49,7 @@ app.listen(PORT, async () => {
 
   // Eagerly fetch a token on startup so the first real request is instant
   try {
-    await getToken();
+    await getTidalToken();
     console.log('[Startup] Tidal token ready.\n');
   } catch (err) {
     console.error('[Startup] Failed to obtain initial Tidal token:', err.message);

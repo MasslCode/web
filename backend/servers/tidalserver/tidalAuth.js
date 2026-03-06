@@ -49,7 +49,7 @@ async function fetchNewTidalToken() {
 }
 
 export async function getTidalToken() {
-    const isValid = tokenCache.accessToken && Date.now() < tokenCache.expiresAt;
+    const isValid = cachedToken.accessToken && Date.now() < cachedToken.expiresAt;
     if (isValid) return cachedToken.accessToken;
 
     if (pendingTokenRequest) return pendingTokenRequest;
