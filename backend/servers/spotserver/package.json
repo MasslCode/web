@@ -7,7 +7,9 @@
   "scripts": {
     "start:spotifyserver": "node spotifyserver.js",
     "start": "npm run start:spotifyserver",
-    "start:all": "concurrently \"npm run start:spotifyserver\""
+    "start:all": "concurrently \"npm run start:spotifyserver\"",
+    "dev": "nodemon --exec ts-node spotifyserver.js"
+
   },
   "dependencies": {
     "axios": "^1.7.9",

@@ -8,7 +8,11 @@ const app = express();
 const PORT = process.env.PORT || 5000;
 
 app.use(express.json());
-app.use(cors());
+app.use(cors({
+  origin: process.env.NODE_ENV === 'production'
+    ? 'https://web-lemon-three.vercel.app'
+    : 'http://localhost:5173'
+}));
 
 // Endpoint to fetch albums
 app.get('/api/albums', async (req, res) => {

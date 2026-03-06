@@ -9,9 +9,13 @@ import { ensureSpotifyToken, getSpotifyToken } from "./spotifyAuth.js";
 dotenv.config();
 
 const app = express();
-const PORT = process.env.SPOTIFY_SERVER_PORT || 3001; 
+const PORT = process.env.SPOTIFY_SERVER_PORT || 3001;
 
-app.use(cors());
+app.use(cors({
+  origin: process.env.NODE_ENV === 'production'
+    ? 'https://web-lemon-three.vercel.app/'
+    : 'http://localhost:5371'
+}));
 
 app.use(ensureSpotifyToken);
 
