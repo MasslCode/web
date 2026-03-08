@@ -28,8 +28,8 @@ export default function ScoreDialog({open, album, onClose, albumID, onSuccess}: 
     const [loading, setLoading] = useState(false);
     const [rating, setRating] = useState<number | null>(null);
 
-    const BASE_URL = "https://spotifyserver-6pb2.onrender.com";
-    const BASE_URL_DB = "https://albums-ink9.onrender.com";
+    const BASE_URL = import.meta.env.VITE_API_MUSIC_BASE_URL;
+    const BASE_URL_DB = import.meta.env.VITE_API_BASE_URL;
 
     const handleSave = async () => {
         console.log("Saving album {IN handleSave of ScoreDialog.tsx}...");

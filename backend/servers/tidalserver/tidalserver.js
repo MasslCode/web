@@ -11,7 +11,7 @@ const TIDAL_API_URL = 'https://openapi.tidal.com/v2';
 app.use(cors({
     origin: process.env.NODE_ENV === 'production'
         ? 'https://web-lemon-three.vercel.app/'
-        : 'http://localhost:5371'
+        : 'http://localhost:5173'
 }));
 
 app.use(express.json());
@@ -23,16 +23,22 @@ async function tidalAxios(){
     baseURL: TIDAL_API_URL,
     headers: {
       'Authorization': `Bearer ${token}`,
-      'accept':        'application/vnd.tidal.v1+json',
-      'Content-Type':  'application/vnd.tidal.v1+json',
+      //lines below fail the api call. It seems they are not needed to pass on
+      //'accept':        'application/vnd.tidal.v1+json',
+      //'Content-Type':  'application/vnd.tidal.v1+json',
     },
   });
 }
 
 function handleError(res, err, context = 'Tidal API error') {
-  const status  = err.response?.status  ?? 500;
-  const message = err.response?.data    ?? err.message;
-  console.error(`[${context}]`, message);
+  const status  = err.response?.status ?? 500;
+  const message = err.response?.data ?? err.message ?? 'Unknown error';
+  
+  // Log the full error so we can see what Tidal actually returns
+  console.error(`[${context}] Status: ${status}`);
+  console.error(`[${context}] Message:`, JSON.stringify(message));
+  console.error(`[${context}] Full error:`, err.response?.data ?? err.stack);
+  
   res.status(status).json({ error: context, detail: message });
 }
 
@@ -40,17 +46,38 @@ app.get('/health', (_req, res) => {
   res.json({ status: 'ok', timestamp: new Date().toISOString() });
 });
 
-app.listen(PORT, async () => {
-  console.log(`\n🎵  Tidal server running on http://localhost:${PORT}`);
-  console.log(`    Health check → http://localhost:${PORT}/health\n`);
+app.get('/api/search-albums', async (req, res) => {
+  const { query, countryCode = 'AT', limit = 20 } = req.query;
 
-  // Kick off proactive background token refresh (checks every 60 s)
+  if (!query || query.trim().length === 0) {
+    return res.status(400).json({ error: 'Query param "query" is required.' });
+  }
+    const params = new URLSearchParams({
+      countryCode,
+      include: 'albums',
+    });
+    console.log('[search-albums] Params:', params.toString());
+  try {
+    const client   = await tidalAxios();
+    const response = await client.get(`/searchResults/${encodeURIComponent(query)}/relationships/albums?${params.toString()}`);
+
+    // Pull just the albums array out of the JSON:API response for convenience
+    const albums = response.data?.included ?? response.data?.data ?? response.data;
+    res.json(albums);
+  } catch (err) {
+    handleError(res, err, 'GET /api/search-albums');
+  }
+}
+);
+
+app.listen(PORT, async () => {
+  console.log(`\n🎵  Tidal server running on Port: ${PORT}`);
+
   startTokenRefreshDaemon();
 
-  // Eagerly fetch a token on startup so the first real request is instant
   try {
-    await getTidalToken();
-    console.log('[Startup] Tidal token ready.\n');
+    const token = await getTidalToken();
+    console.log('[Startup] Tidal token ready:\n', token);
   } catch (err) {
     console.error('[Startup] Failed to obtain initial Tidal token:', err.message);
   }

@@ -1,7 +1,7 @@
 /* eslint-disable react/prop-types */
 import { Box, Button } from '@mui/material';
 import Drawer from '@mui/material/Drawer';
-import { useState, ChangeEvent } from "react"
+import { useState, ChangeEvent, useEffect } from "react"
 import TextSearch from './TextSearch.tsx';
 import Albumlist from './Albumlist';
 
@@ -13,10 +13,24 @@ interface TempDrawerProps {
 export default function TempDrawer(props: TempDrawerProps) {
     const [open, setOpen] = useState(false);
     const [query, setQuery] = useState('');
+    const [debouncedQuery, setDebouncedQuery] = useState('');
 
     const toggleDrawer = (newOpen: boolean) => () => {
         setOpen(newOpen);
       };
+
+    useEffect(() => {
+  if (query.trim().length < 2) {
+    setDebouncedQuery('');
+    return;
+  }
+
+  const timer = setTimeout(() => {
+    setDebouncedQuery(query);
+  }, 400);
+
+  return () => clearTimeout(timer); // clears the timer if query changes before 300ms
+}, [query]);
 
     const handleQueryChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         setQuery(e.target.value);
@@ -33,7 +47,7 @@ export default function TempDrawer(props: TempDrawerProps) {
                     }}>
                     <h2>Search album online</h2>
                     <TextSearch query={query} onQueryChange={handleQueryChange} />
-                    <Albumlist query={query} onSuccess={props.onSuccess}/>
+                    <Albumlist query={debouncedQuery} onSuccess={props.onSuccess}/>
                 </Box>
             </Drawer>
         </div>

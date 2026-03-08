@@ -19,7 +19,7 @@ interface Song {
 
 export default function EditDialog({open, close, album, success, TransitionProps}: EditDialogProps)
 {
-    const BASE_URL_DB = "https://albums-ink9.onrender.com";
+    const BASE_URL_DB = import.meta.env.VITE_API_BASE_URL;
 
     const [loading, setLoading] = useState(false);
     const [songs, setSongs] = useState<Song[]>([]);

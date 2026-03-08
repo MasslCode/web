@@ -14,9 +14,9 @@ const PORT = process.env.SPOTIFY_SERVER_PORT || 3001;
 app.use(cors({
   origin: process.env.NODE_ENV === 'production'
     ? 'https://web-lemon-three.vercel.app/'
-    : 'http://localhost:5371'
+    : 'http://localhost:5173'
 }));
-
+app.use(express.json());
 app.use(ensureSpotifyToken);
 
 app.get("/api/search-albums", async (req, res) => {

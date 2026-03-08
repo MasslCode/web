@@ -33,35 +33,45 @@ export default function Albumlist({ query, onSuccess }: AlbumlistProps)
       setDialogOpen(false);
     }
 
-    const BASE_URL = "https://spotifyserver-6pb2.onrender.com";
+    const BASE_URL = import.meta.env.VITE_API_MUSIC_BASE_URL;
 
     useEffect(() => {
         const fetchAlbums = async () => {
             setLoading(true);
             try {
                 const response = await fetch(`${BASE_URL}/api/search-albums?query=${query}`);
-                const rawAlbums = await response.json();
+                const rawData = await response.json();
                 console.log(query);
-                console.log(rawAlbums);
-                interface RawAlbum {
-                  id: string;
-                  name: string;
-                  artists: { name: string }[];
-                  release_date: string;
-                  images: { url: string }[];
-                  total_tracks: number;
-                  album_type: string;
-                }
+                console.log(rawData);
 
-                const formattedAlbums = rawAlbums
-                  .filter((album: RawAlbum) => (album.total_tracks >= 5) && (album.album_type !== "compilation"))
-                  .map((album: RawAlbum) => ({
-                    id: album.id,
-                    title: album.name,
-                    artist: album.artists.map((artist) => artist.name).join(' - '),
-                    release_year: new Date(album.release_date).getFullYear(),
-                    cover_image: album.images[0]?.url,
-                  }));
+                const included = rawData?.included ?? [];
+
+                const artistsById: Record<string, string> = {};
+                included
+                  .filter((item: any) => item.type === 'artists')
+                  .forEach((artist: any) => {
+                    artistsById[artist.id] = artist.attributes?.name ?? 'Unknown Artist';
+                  });
+
+                const formattedAlbums = included
+                  .filter((item: any) =>
+                item.type === 'albums' &&
+                item.attributes?.numberOfTracks >= 5 &&
+                item.attributes?.type !== 'COMPILATION'
+              )
+                  .map((album: any) => {
+                // Resolve artist names via relationship IDs
+                const artistIds: string[] = album.relationships?.artists?.data?.map((a: any) => a.id) ?? [];
+                const artistNames = artistIds.map(id => artistsById[id] ?? 'Unknown').join(' - ');
+
+                return {
+                  id:           album.id,
+                  title:        album.attributes?.title,
+                  artist:       artistNames,
+                  release_year: new Date(album.attributes?.releaseDate).getFullYear(),
+                  cover_image:  album.attributes?.imageLinks?.[0]?.href,
+                };
+              });
                 console.log(formattedAlbums)
                 setAlbums(formattedAlbums);
             } catch (error) {
