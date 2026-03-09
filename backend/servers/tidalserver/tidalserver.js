@@ -54,7 +54,7 @@ app.get('/api/search-albums', async (req, res) => {
   }
     const params = new URLSearchParams({
       countryCode,
-      include: 'albums',
+      include: 'albums,coverArt',
     });
     console.log('[search-albums] Params:', params.toString());
   try {
@@ -62,13 +62,26 @@ app.get('/api/search-albums', async (req, res) => {
     const response = await client.get(`/searchResults/${encodeURIComponent(query)}/relationships/albums?${params.toString()}`);
 
     // Pull just the albums array out of the JSON:API response for convenience
-    const albums = response.data?.included ?? response.data?.data ?? response.data;
-    res.json(albums);
+    res.json(response.data);
   } catch (err) {
     handleError(res, err, 'GET /api/search-albums');
   }
 }
 );
+
+app.get('/api/album-cover/:id', async (req, res) => {
+  const { id } = req.params;
+  const { countryCode = 'AT' } = req.query;
+  try {
+    const client = await tidalAxios();
+    const response = await client.get(`albums/${id}/relationships/coverArt`, {
+      params: { countryCode }
+    });
+    res.json(response.data);
+  } catch (err) {
+    handleError(res, err, `GET /api/album-cover/${id}`);
+  }
+});
 
 app.listen(PORT, async () => {
   console.log(`\n🎵  Tidal server running on Port: ${PORT}`);
@@ -76,8 +89,8 @@ app.listen(PORT, async () => {
   startTokenRefreshDaemon();
 
   try {
-    const token = await getTidalToken();
-    console.log('[Startup] Tidal token ready:\n', token);
+    await getTidalToken();
+    console.log('[Startup] Tidal token ready\n');
   } catch (err) {
     console.error('[Startup] Failed to obtain initial Tidal token:', err.message);
   }

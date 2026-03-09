@@ -40,39 +40,53 @@ export default function Albumlist({ query, onSuccess }: AlbumlistProps)
             setLoading(true);
             try {
                 const response = await fetch(`${BASE_URL}/api/search-albums?query=${query}`);
-                const rawData = await response.json();
+                const rawAlbums = await response.json();
                 console.log(query);
-                console.log(rawData);
+                console.log(rawAlbums);
+                interface RawAlbum {
+                  id: string;
+                  type: string;
+                  attributes: {
+                    title: string;
+                    numberOfItems: number;
+                    type: string;
+                    albumType: string;
+                    releaseDate: string;
+                    imageLinks?: { href: string; meta: { width: number; height: number } }[];
+                    externalLinks?: { href: string; meta: { type: string } }[];
+                  };
+                  relationships: {
+                    artists: { links: { self: string } };
+                  };
+                }
 
-                const included = rawData?.included ?? [];
-
-                const artistsById: Record<string, string> = {};
-                included
-                  .filter((item: any) => item.type === 'artists')
-                  .forEach((artist: any) => {
-                    artistsById[artist.id] = artist.attributes?.name ?? 'Unknown Artist';
+                const included = rawAlbums?.included ?? [];
+                console.log('Total included items:', included.length);
+                console.log('First raw album:', JSON.stringify(included[0], null, 2));
+                included.forEach((album: any, i: number) => {
+                  console.log(`Album ${i}:`, {
+                    title:          album.attributes?.title,
+                    numberOfItems:  album.attributes?.numberOfItems,
+                    type:           album.attributes?.type,
+                    albumType:      album.attributes?.albumType,
+                    releaseDate:    album.attributes?.releaseDate,
                   });
-
+                });
                 const formattedAlbums = included
-                  .filter((item: any) =>
-                item.type === 'albums' &&
-                item.attributes?.numberOfTracks >= 5 &&
-                item.attributes?.type !== 'COMPILATION'
-              )
-                  .map((album: any) => {
-                // Resolve artist names via relationship IDs
-                const artistIds: string[] = album.relationships?.artists?.data?.map((a: any) => a.id) ?? [];
-                const artistNames = artistIds.map(id => artistsById[id] ?? 'Unknown').join(' - ');
-
-                return {
-                  id:           album.id,
-                  title:        album.attributes?.title,
-                  artist:       artistNames,
-                  release_year: new Date(album.attributes?.releaseDate).getFullYear(),
-                  cover_image:  album.attributes?.imageLinks?.[0]?.href,
-                };
-              });
-                console.log(formattedAlbums)
+                  .filter((album: RawAlbum) =>
+                    album.type === 'albums' &&
+                    album.attributes?.numberOfItems >= 5 &&
+                    album.attributes?.type !== 'COMPILATION'
+                  )
+                  .map((album: RawAlbum) => ({
+                    id:           album.id,
+                    title:        album.attributes?.title,
+                    artist:       '',
+                    release_year: new Date(album.attributes?.releaseDate).getFullYear(),
+                    cover_image:  '',
+                  }));
+                
+                console.log("Formatted Albums:", formattedAlbums);
                 setAlbums(formattedAlbums);
             } catch (error) {
                 console.error("Error fetching albums:" , error);
