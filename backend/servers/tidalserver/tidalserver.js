@@ -47,22 +47,27 @@ app.get('/health', (_req, res) => {
 });
 
 app.get('/api/search-albums', async (req, res) => {
-  const { query, countryCode = 'AT', limit = 20 } = req.query;
+  const { query, countryCode = 'AT', limit = 10 } = req.query;
 
   if (!query || query.trim().length === 0) {
     return res.status(400).json({ error: 'Query param "query" is required.' });
   }
     const params = new URLSearchParams({
       countryCode,
-      include: 'albums,coverArt',
+      include: 'albums,coverArt,albums.artists',
     });
     console.log('[search-albums] Params:', params.toString());
   try {
     const client   = await tidalAxios();
     const response = await client.get(`/searchResults/${encodeURIComponent(query)}/relationships/albums?${params.toString()}`);
 
+    const data = response.data;
+    const slicedData     = data?.data?.slice(0, limit) ?? [];
+    const allowedIds     = new Set(slicedData.map((a) => a.id));
+    const slicedIncluded = data?.included?.filter((a) => allowedIds.has(a.id)) ?? [];
+
     // Pull just the albums array out of the JSON:API response for convenience
-    res.json(response.data);
+    res.json({ ...data, data: slicedData, included: slicedIncluded });
   } catch (err) {
     handleError(res, err, 'GET /api/search-albums');
   }
@@ -72,12 +77,17 @@ app.get('/api/search-albums', async (req, res) => {
 app.get('/api/album-cover/:id', async (req, res) => {
   const { id } = req.params;
   const { countryCode = 'AT' } = req.query;
+  const params = new URLSearchParams({
+      countryCode,
+      include: 'coverArt',
+    });
   try {
     const client = await tidalAxios();
-    const response = await client.get(`albums/${id}/relationships/coverArt`, {
-      params: { countryCode }
-    });
-    res.json(response.data);
+    const response = await client.get(`albums/${id}/relationships/coverArt?${params.toString()}`);
+    const files = response.data?.included?.[0]?.attributes?.files ?? [];
+    const file = files.find((f) => f.meta?.width === 320) ?? files[0];
+
+    res.json({ url: file?.href ?? null });
   } catch (err) {
     handleError(res, err, `GET /api/album-cover/${id}`);
   }

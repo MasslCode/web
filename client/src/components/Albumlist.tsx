@@ -85,16 +85,29 @@ export default function Albumlist({ query, onSuccess }: AlbumlistProps)
                     release_year: new Date(album.attributes?.releaseDate).getFullYear(),
                     cover_image:  '',
                   }));
-                
-                console.log("Formatted Albums:", formattedAlbums);
                 setAlbums(formattedAlbums);
-            } catch (error) {
-                console.error("Error fetching albums:" , error);
-            } finally {
-                setLoading(false);
-            }
-        };
+                formattedAlbums.forEach((album: any, i: number) => {
+                setTimeout(async () => {
+                    try {
+                        const res = await fetch(`${BASE_URL}/api/album-cover/${album.id}?countryCode=AT`);
+                        const data = await res.json();
+                        if (data?.url) {
+                            setAlbums(prev => prev.map(a =>
+                                a.id === album.id ? { ...a, cover_image: data.url } : a
+                            ));
+                        }
+                    } catch {
+                        // silently skip failed covers
+                    }
+                }, i * 500); // 500ms stagger between each request
+            });
 
+              } catch (error) {
+                  console.error("Error fetching albums:", error);
+              } finally {
+                  setLoading(false);
+              }
+          };
         if (query) {
             fetchAlbums();
         }
