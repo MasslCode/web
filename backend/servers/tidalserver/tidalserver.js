@@ -42,54 +42,102 @@ function handleError(res, err, context = 'Tidal API error') {
   res.status(status).json({ error: context, detail: message });
 }
 
+// Helper: retry a function up to maxRetries times on 429
+async function withRetry(fn, maxRetries = 3, baseDelay = 500) {
+  for (let attempt = 0; attempt <= maxRetries; attempt++) {
+    try {
+      return await fn();
+    } catch (err) {
+      const is429 = err.response?.status === 429;
+      const isLast = attempt === maxRetries;
+
+      if (!is429 || isLast) throw err;
+
+      const delay = baseDelay * Math.pow(2, attempt); // 500ms, 1000ms, 2000ms
+      console.warn(`[retry] 429 on attempt ${attempt + 1}, retrying in ${delay}ms...`);
+      await new Promise(resolve => setTimeout(resolve, delay));
+    }
+  }
+}
+
 app.get('/health', (_req, res) => {
   res.json({ status: 'ok', timestamp: new Date().toISOString() });
 });
 
 app.get('/api/search-albums', async (req, res) => {
-  const { query, countryCode = 'AT', limit = 10 } = req.query;
+  const { query, countryCode = 'AT', limit = 15 } = req.query;
 
   if (!query || query.trim().length === 0) {
     return res.status(400).json({ error: 'Query param "query" is required.' });
   }
     const params = new URLSearchParams({
       countryCode,
-      include: 'albums,coverArt,albums.artists',
+      include: 'albums',
     });
     console.log('[search-albums] Params:', params.toString());
   try {
     const client   = await tidalAxios();
-    const response = await client.get(`/searchResults/${encodeURIComponent(query)}/relationships/albums?${params.toString()}`);
+    // Step 1: get albums
+    const params = new URLSearchParams({ countryCode, include: 'albums' });
+    const searchRes = await client.get(
+      `searchResults/${encodeURIComponent(query)}/relationships/albums?${params.toString()}`
+    );
 
-    const data = response.data;
-    const slicedData     = data?.data?.slice(0, limit) ?? [];
-    const allowedIds     = new Set(slicedData.map((a) => a.id));
-    const slicedIncluded = data?.included?.filter((a) => allowedIds.has(a.id)) ?? [];
+    const allIncluded = searchRes.data?.included ?? [];
+    const filtered = allIncluded.filter((a) =>
+      a.attributes?.numberOfItems >= 5 &&
+      (a.attributes?.type === 'ALBUM' || a.attributes?.type === 'EP')
+    );
+    const albums = filtered.slice(0, limit);
 
-    // Pull just the albums array out of the JSON:API response for convenience
-    res.json({ ...data, data: slicedData, included: slicedIncluded });
+    const enriched = [];
+    for (let i = 0; i < albums.length; i++) {
+    const album = albums[i];
+    try {
+      // Small delay between each album's enrichment to avoid rate limiting
+      if (i > 0) await new Promise(resolve => setTimeout(resolve, 150));
+
+      const [coverRes, artistRes] = await Promise.all([
+        withRetry(() => client.get(`albums/${album.id}/relationships/coverArt`, {
+          params: { countryCode, include: 'coverArt' }
+        })),
+        withRetry(() => client.get(`albums/${album.id}/relationships/artists`, {
+          params: { countryCode, include: 'artists' }
+        })),
+      ]);
+
+      const files      = coverRes.data?.included?.[0]?.attributes?.files ?? [];
+      const cover      = files.find((f) => f.meta?.width === 320) ?? files[0];
+      const artists    = artistRes.data?.included ?? [];
+      const artistNames = artists.map((a) => a.attributes?.name).join(' - ');
+
+      enriched.push({
+        id:            album.id,
+        title:         album.attributes?.title,
+        artist:        artistNames,
+        release_year:  new Date(album.attributes?.releaseDate).getFullYear(),
+        cover_image:   cover?.href ?? null,
+        numberOfItems: album.attributes?.numberOfItems,
+        type:          album.attributes?.type,
+      });
+    } catch (err) {
+      console.error(`[enrich] Failed for album ${album.id}:`, err.response?.status, err.message);
+      // Still include the album, just without cover/artist
+      enriched.push({
+        id:            album.id,
+        title:         album.attributes?.title,
+        artist:        '',
+        release_year:  new Date(album.attributes?.releaseDate).getFullYear(),
+        cover_image:   null,
+        numberOfItems: album.attributes?.numberOfItems,
+        type:          album.attributes?.type,
+      });
+    }
+  }
+
+    res.json(enriched);
   } catch (err) {
     handleError(res, err, 'GET /api/search-albums');
-  }
-}
-);
-
-app.get('/api/album-cover/:id', async (req, res) => {
-  const { id } = req.params;
-  const { countryCode = 'AT' } = req.query;
-  const params = new URLSearchParams({
-      countryCode,
-      include: 'coverArt',
-    });
-  try {
-    const client = await tidalAxios();
-    const response = await client.get(`albums/${id}/relationships/coverArt?${params.toString()}`);
-    const files = response.data?.included?.[0]?.attributes?.files ?? [];
-    const file = files.find((f) => f.meta?.width === 320) ?? files[0];
-
-    res.json({ url: file?.href ?? null });
-  } catch (err) {
-    handleError(res, err, `GET /api/album-cover/${id}`);
   }
 });
 

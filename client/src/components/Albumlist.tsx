@@ -36,81 +36,34 @@ export default function Albumlist({ query, onSuccess }: AlbumlistProps)
     const BASE_URL = import.meta.env.VITE_API_MUSIC_BASE_URL;
 
     useEffect(() => {
+        let cancelled = false;
         const fetchAlbums = async () => {
             setLoading(true);
             try {
                 const response = await fetch(`${BASE_URL}/api/search-albums?query=${query}`);
-                const rawAlbums = await response.json();
+                const formattedAlbums = await response.json();
                 console.log(query);
-                console.log(rawAlbums);
-                interface RawAlbum {
-                  id: string;
-                  type: string;
-                  attributes: {
-                    title: string;
-                    numberOfItems: number;
-                    type: string;
-                    albumType: string;
-                    releaseDate: string;
-                    imageLinks?: { href: string; meta: { width: number; height: number } }[];
-                    externalLinks?: { href: string; meta: { type: string } }[];
-                  };
-                  relationships: {
-                    artists: { links: { self: string } };
-                  };
-                }
-
-                const included = rawAlbums?.included ?? [];
-                console.log('Total included items:', included.length);
-                console.log('First raw album:', JSON.stringify(included[0], null, 2));
-                included.forEach((album: any, i: number) => {
-                  console.log(`Album ${i}:`, {
-                    title:          album.attributes?.title,
-                    numberOfItems:  album.attributes?.numberOfItems,
-                    type:           album.attributes?.type,
-                    albumType:      album.attributes?.albumType,
-                    releaseDate:    album.attributes?.releaseDate,
-                  });
-                });
-                const formattedAlbums = included
-                  .filter((album: RawAlbum) =>
-                    album.type === 'albums' &&
-                    album.attributes?.numberOfItems >= 5 &&
-                    album.attributes?.type !== 'COMPILATION'
-                  )
-                  .map((album: RawAlbum) => ({
-                    id:           album.id,
-                    title:        album.attributes?.title,
-                    artist:       '',
-                    release_year: new Date(album.attributes?.releaseDate).getFullYear(),
-                    cover_image:  '',
-                  }));
+                console.log(formattedAlbums);
+                if (cancelled) return;
                 setAlbums(formattedAlbums);
-                formattedAlbums.forEach((album: any, i: number) => {
-                setTimeout(async () => {
-                    try {
-                        const res = await fetch(`${BASE_URL}/api/album-cover/${album.id}?countryCode=AT`);
-                        const data = await res.json();
-                        if (data?.url) {
-                            setAlbums(prev => prev.map(a =>
-                                a.id === album.id ? { ...a, cover_image: data.url } : a
-                            ));
-                        }
-                    } catch {
-                        // silently skip failed covers
-                    }
-                }, i * 500); // 500ms stagger between each request
-            });
-
               } catch (error) {
+                  if (cancelled) return;
                   console.error("Error fetching albums:", error);
               } finally {
-                  setLoading(false);
+                  if (!cancelled) setLoading(false);
               }
           };
         if (query) {
             fetchAlbums();
         }
+        else
+        {
+            setAlbums([]);
+        }
+
+        return () => {
+        cancelled = true;
+        };
     }, [query]);
 
 return (
