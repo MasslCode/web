@@ -15,9 +15,10 @@ export default function Homepage()
     const [totalPages, setTotalPages] = useState(1);
     const [sortOption, setSortOption] = useState('RANKING_DESC');
 
-    const BASE_URL = "https://albums-ink9.onrender.com";
+    const BASE_URL = import.meta.env.VITE_API_BASE_URL;
     
         const fetchAlbumList = useCallback(async (page?: number, sort = sortOption) => {
+            console.log(BASE_URL);
             const validPage = typeof page === "number" && page > 0 ? page : 1;
             console.log("FETCHING albumlist with page:", validPage, "and sort:", sort);    
             setLoading(true);

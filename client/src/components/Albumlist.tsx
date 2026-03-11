@@ -33,47 +33,37 @@ export default function Albumlist({ query, onSuccess }: AlbumlistProps)
       setDialogOpen(false);
     }
 
-    const BASE_URL = "https://spotifyserver-6pb2.onrender.com";
+    const BASE_URL = import.meta.env.VITE_API_MUSIC_BASE_URL;
 
     useEffect(() => {
+        let cancelled = false;
         const fetchAlbums = async () => {
             setLoading(true);
             try {
                 const response = await fetch(`${BASE_URL}/api/search-albums?query=${query}`);
-                const rawAlbums = await response.json();
+                const formattedAlbums = await response.json();
                 console.log(query);
-                console.log(rawAlbums);
-                interface RawAlbum {
-                  id: string;
-                  name: string;
-                  artists: { name: string }[];
-                  release_date: string;
-                  images: { url: string }[];
-                  total_tracks: number;
-                  album_type: string;
-                }
-
-                const formattedAlbums = rawAlbums
-                  .filter((album: RawAlbum) => (album.total_tracks >= 5) && (album.album_type !== "compilation"))
-                  .map((album: RawAlbum) => ({
-                    id: album.id,
-                    title: album.name,
-                    artist: album.artists.map((artist) => artist.name).join(' - '),
-                    release_year: new Date(album.release_date).getFullYear(),
-                    cover_image: album.images[0]?.url,
-                  }));
-                console.log(formattedAlbums)
+                console.log(formattedAlbums);
+                if (cancelled) return;
                 setAlbums(formattedAlbums);
-            } catch (error) {
-                console.error("Error fetching albums:" , error);
-            } finally {
-                setLoading(false);
-            }
-        };
-
+              } catch (error) {
+                  if (cancelled) return;
+                  console.error("Error fetching albums:", error);
+              } finally {
+                  if (!cancelled) setLoading(false);
+              }
+          };
         if (query) {
             fetchAlbums();
         }
+        else
+        {
+            setAlbums([]);
+        }
+
+        return () => {
+        cancelled = true;
+        };
     }, [query]);
 
 return (
