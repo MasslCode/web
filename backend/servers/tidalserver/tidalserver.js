@@ -141,6 +141,34 @@ app.get('/api/search-albums', async (req, res) => {
   }
 });
 
+app.get('/api/fetch-songs', async (req, res) => {
+  const { albumId, countryCode = 'AT' } = req.query;
+
+  if (!albumId || albumId.trim().length === 0) {
+    return res.status(400).json({ error: 'Query param "albumId" is required.' });
+  }
+    const params = new URLSearchParams({
+      countryCode,
+      include: 'items',
+    });
+
+  try {
+    const client = await tidalAxios();
+    const response = await client.get(`albums/${albumId}/relationships/items?${params.toString()}`);
+    const songs = response.data?.included ?? [];
+    console.log(songs);
+    const formatted = songs.map((s) => ({
+      id: s.id,
+      title: s.attributes?.title,
+      duration_in_ISO8601: s.attributes?.duration ?? 0,
+      track_number: s.attributes?.trackNumber ?? 0,
+    }));
+    res.json(formatted);
+  } catch (error) {
+    handleError(res, err, 'GET /api/fetch-songs');
+  }
+});
+
 app.listen(PORT, async () => {
   console.log(`\n🎵  Tidal server running on Port: ${PORT}`);
 

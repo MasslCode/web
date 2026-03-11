@@ -4,6 +4,7 @@ import CloseIcon from '@mui/icons-material/Close';
 import { useEffect, useState } from "react"
 import { getColorForValue } from '../../../backend/colors.js';
 import SliderRating from "./SliderRating.tsx";
+import { isoToSeconds } from "../features/isoconverter.ts";
 
 interface ScoreDialogProps {
     open: boolean;
@@ -17,7 +18,7 @@ interface Song {
     id: number;
     album_id: number;
     title: string;
-    duration_in_sec: number;
+    duration_in_ISO8601: string;
     track_number: number;
 }
 
@@ -53,7 +54,7 @@ export default function ScoreDialog({open, album, onClose, albumID, onSuccess}: 
             songs: songs.map((song) => ({
                 id: song.id,
                 title: song.title,
-                duration_in_sec: song.duration_in_sec,
+                duration_in_ISO8601: song.duration_in_ISO8601,
                 track_number: song.track_number,
             })),
         };
@@ -103,8 +104,8 @@ export default function ScoreDialog({open, album, onClose, albumID, onSuccess}: 
                     const formattedSongs = rawSongs.map((song: any) => ({
                         id: song.id,
                         album_id: albumID,
-                        title: song.name,
-                        duration_in_sec: Math.round(song.duration_ms/1000),
+                        title: song.title,
+                        duration_in_sec: isoToSeconds(song.duration_in_ISO8601 ?? "PT0S"),
                         track_number: song.track_number,
                     }))
                     setSongs(formattedSongs);
