@@ -7,8 +7,9 @@
   "scripts": {
     "start:dbserver": "node servers/dbserver.js",
     "start:server": "node servers/server.js",
-    "start:spotifyserver": "node servers/spotifyserver.js",
+    "start:tidalserver": "node servers/tidalserver/tidalserver.js",
     "start": "npm run start:server",
+    "tidal": "npm run start:tidalserver",
     "start:all": "concurrently \"npm run start:dbserver\" \"npm run start:server\"",
     "dev": "concurrently \"nodemon --exec ts-node servers/dbserver.js\" \"nodemon servers/server.js\" \"nodemon servers/spotserver/spotifyserver.js\" \"nodemon servers/tidalserver/tidalserver.js\""
   },
