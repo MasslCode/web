@@ -9,7 +9,7 @@ const TIDAL_API_URL = 'https://openapi.tidal.com/v2';
 
 app.use(cors({
     origin: process.env.NODE_ENV === 'production'
-        ? 'https://web-lemon-three.vercel.app/'
+        ? 'https://web-lemon-three.vercel.app'
         : 'http://localhost:5173'
 }));
 
