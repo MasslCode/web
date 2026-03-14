@@ -1,5 +1,4 @@
 import dotenv from 'dotenv'; 
-import { cache } from 'react';
 
 dotenv.config();
 const TIDAL_TOKEN_URL = 'https://auth.tidal.com/v1/oauth2/token';
