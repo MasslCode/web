@@ -1,6 +1,5 @@
 import express from 'express';
-import cors from 'cors';
-import dotenv from 'dotenv';
+import cors from 'cors';;
 import { getTidalToken, startTokenRefreshDaemon } from './tidalAuth.js';
 import axios from 'axios';
 const app = express();
