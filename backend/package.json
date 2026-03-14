@@ -11,7 +11,7 @@
     "start": "npm run start:server",
     "tidal": "npm run start:tidalserver",
     "start:all": "concurrently \"npm run start:dbserver\" \"npm run start:server\"",
-    "dev": "concurrently \"nodemon --exec ts-node servers/dbserver.js\" \"nodemon servers/server.js\" \"nodemon servers/spotserver/spotifyserver.js\" \"nodemon servers/tidalserver/tidalserver.js\""
+    "dev": "concurrently \"nodemon --exec ts-node servers/dbserver.js\" \"nodemon servers/server.js\" \"nodemon servers/tidalserver/tidalserver.js\""
   },
   "dependencies": {
     "axios": "^1.7.9",
@@ -19,7 +19,8 @@
     "dotenv": "^16.0.3",
     "express": "^4.22.1",
     "mysql2": "^3.1.0",
-    "pg": "^8.10.0"
+    "pg": "^8.10.0",
+    "concurrently": "^9.1.2"
   },
   "devDependencies": {
     "concurrently": "^9.1.2"
