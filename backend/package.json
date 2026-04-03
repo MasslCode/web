@@ -11,7 +11,7 @@
     "start": "npm run start:server",
     "tidal": "npm run start:tidalserver",
     "start:all": "concurrently \"npm run start:dbserver\" \"npm run start:server\"",
-    "dev": "concurrently \"nodemon --exec ts-node servers/dbserver.js\" \"nodemon servers/server.js\" \"nodemon servers/tidalserver/tidalserver.js\""
+    "dev": "concurrently \"nodemon servers/dbserver.js\" \"nodemon servers/server.js\" \"nodemon servers/tidalserver/tidalserver.js\""
   },
   "dependencies": {
     "axios": "^1.7.9",
