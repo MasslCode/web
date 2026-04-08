@@ -160,6 +160,18 @@ app.put('/api/edit-album', async (req, res) => {
   }
 });
 
+app.get('/api/lookup-albums', async (req, res) => {
+  const { lookupString } = req.query;
+  console.log("looking up albums with search string: ", lookupString);
+  try {
+    const result = await pool.query('SELECT * FROM albums WHERE title ILIKE $1 OR artist ILIKE $1 LIMIT 20', [`%${lookupString}%`]);
+    res.status(200).json(result.rows);
+  } catch (error) {
+    console.error('Error fetching albums:', error);
+    res.status(500).json({ error: 'Failed to fetch albums with the given search string' });
+  }
+});
+
 app.listen(PORT, () => {
   console.log(`Server running on PORT: ${PORT}`);
 });

@@ -1,5 +1,5 @@
 /* eslint-disable react/prop-types */
-import { Card, CardContent, Box, Skeleton, Fade, Grid2 } from '@mui/material';
+import { Card, CardContent, Skeleton, Fade } from '@mui/material';
 import Albumcard from './Albumcard.tsx';
 import EditDialog from './EditDialog.tsx';
 import { SetStateAction, useState } from 'react';
@@ -15,7 +15,8 @@ export default function Albumdisplay({ albums, loading, currentPage, success }: 
 {
     const [selectedAlbum, setSelectedAlbum] = useState(null);
 
-    const cardSkeletons = Array.from({ length: 20 });
+    const skeletonCount = albums.length > 0 ? albums.length : 20;
+    const cardSkeletons = Array.from({ length: skeletonCount });
 
     const handleOpenDialog = (album: SetStateAction<null>) => {
         setSelectedAlbum(album);
@@ -26,39 +27,45 @@ export default function Albumdisplay({ albums, loading, currentPage, success }: 
     }
 
     return (
-        <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', padding: 3 }}>
-            <Grid2 container spacing={4} justifyContent="center" >
-                {loading && albums.length === 0 ? cardSkeletons.map((_, index) => (
-                    <Grid2 key={index} size={{ xs: 12, sm: 6, md: 4, lg: 2.4 }}>
-                        <Card className="group rounded-xl shadow-lg flex flex-col max-w-xs sm:max-w-sm">
-                            <Skeleton animation="wave" variant="rectangular"></Skeleton>
-                            <CardContent sx={{ width: '100%', textAlign: 'center', flexGrow: 1 }}>
-                                <Skeleton animation="wave" variant="text" height={40} width="80%" sx={{ display: 'block', margin: '0 auto 1rem' }}></Skeleton>
-                                <Skeleton animation="wave" variant="text" height={20} width="60%" sx={{ display: 'block', margin: '0 auto 1rem' }}></Skeleton>
-                                <Skeleton animation="wave" variant="text" height={20} width="40%" sx={{ display: 'block', margin: '0 auto' }}></Skeleton>
+        <div className="flex flex-col items-center w-full py-3">
+            {loading && albums.length === 0 && (
+                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 w-full">
+                    {cardSkeletons.map((_, index) => (
+                        <Card key={index} className="rounded-xl shadow-lg p-4 flex flex-col w-full">
+                            <div className="w-full aspect-square">
+                                <Skeleton animation="wave" variant="rectangular" width="100%" height="100%" className="rounded-lg" />
+                            </div>
+                            <CardContent className="flex flex-col flex-1 px-0">
+                                <div className="h-[2.86rem] flex items-center justify-center">
+                                    <Skeleton animation="wave" variant="text" height={36} width="80%" />
+                                </div>
+                                <Skeleton animation="wave" variant="text" height={24} width="60%" className="mx-auto mt-1" />
+                                <div className="flex flex-col items-center mt-auto">
+                                    <Skeleton animation="wave" variant="text" height={24} width="40%" />
+                                </div>
+                                <div className="mt-2 flex justify-center min-h-[2.5rem]">
+                                    <Skeleton animation="wave" variant="rounded" height={36} width={64} />
+                                </div>
                             </CardContent>
                         </Card>
-                    </Grid2>
-                ))
-                : null}
-            <Fade in={!loading} timeout={600} key={currentPage}>
-                <Box sx={{ width: "90%" }}> 
-                    <Grid2 container spacing={4} justifyContent="center">
-                    {albums.map((album, index) => (
-                    <Grid2 key={index} size={{ xs: 12, sm: 6, md: 4, lg: 2.4 }}>
-                        <Albumcard album={album} onEditClick={() => handleOpenDialog(album)}></Albumcard>
-                    </Grid2>
                     ))}
-                </Grid2>
-            </Box>
-        </Fade>
-    </Grid2>
-        <EditDialog
-            open={Boolean(selectedAlbum)}
-            album={selectedAlbum}
-            close={handleCloseDialog}
-            success={success}
-        />
-    </Box>
+                </div>
+            )}
+            <Fade in={!loading} timeout={600} key={currentPage}>
+                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 w-full">
+                    {albums.map((album, index) => (
+                        <div className="px-5">
+                            <Albumcard key={index} album={album} onEditClick={() => handleOpenDialog(album)} />
+                        </div>
+                    ))}
+                </div>
+            </Fade>
+            <EditDialog
+                open={Boolean(selectedAlbum)}
+                album={selectedAlbum}
+                close={handleCloseDialog}
+                success={success}
+            />
+        </div>
     );
 }
