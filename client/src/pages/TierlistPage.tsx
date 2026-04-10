@@ -1,3 +1,4 @@
+import { Progress } from "@/components/ui/progress";
 import { Box, Typography, CircularProgress, Grid2 } from "@mui/material";
 import { useEffect, useState } from "react";
 
@@ -39,14 +40,14 @@ export default function TierlistPage(){
 
   if (loading) {
     return (
-      <Box className="bg-[#e3e3b3] min-h-screen flex items-center justify-center" >
-        <CircularProgress />
-      </Box>
+      <div className="bg-[#e3e3b3] min-h-screen">
+        <Progress indeterminate={loading} className={loading ? "visible" : "invisible"} />
+      </div>      
     );
   }
   
   return (
-    <Box p={4} className="bg-[#e3e3b3]">
+    <Box p={4} className="bg-[#e3e3b3] min-h-screen">
       <Typography variant="h3" gutterBottom>Tier List</Typography>
       {[...Array(10)].map((_, i) => {
         const rating = 10 - i; // Start from 10 down to 1

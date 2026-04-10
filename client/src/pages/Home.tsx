@@ -73,7 +73,7 @@ export default function Homepage()
 
     return (
         <div className="bg-[#e3e3b3] min-h-screen">
-            {loading && <Progress indeterminate className="fixed top-0 left-0 z-50 rounded-none" />}
+            <Progress indeterminate={loading} className={loading ? "visible" : "invisible"} />
             <div>
             <TempDrawer id="drawer1" onSuccess={fetchAlbumList}/>
             <div className="flex flex-col items-center w-full">
