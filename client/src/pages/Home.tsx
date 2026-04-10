@@ -1,11 +1,11 @@
 import { useEffect, useState, useCallback, ChangeEvent } from 'react';
 import '../assets/Home.css';
-import CircularProgress from '@mui/material/CircularProgress';
-//import { useState } from 'react';
 import TempDrawer from "../components/TempDrawer.tsx"
 import Albumdisplay from '../components/Albumdisplay.tsx';
 import AlbumsSort from '../components/Albumssort.tsx';
-import { Pagination, Box } from '@mui/material';
+import { Pagination } from '@mui/material';
+import AlbumSearch from '@/components/AlbumSearch.tsx';
+import { Progress } from '@/components/ui/progress';
 
 export default function Homepage()
 {
@@ -39,9 +39,28 @@ export default function Homepage()
             }
         }, [sortOption]);
 
+    const handleSearch = useCallback(async (query: string) => {
+        if (!query) {
+            fetchAlbumList(1, sortOption);
+            return;
+        }
+        setLoading(true);
+        try {
+            const response = await fetch(`${BASE_URL}/api/lookup-albums?lookupString=${encodeURIComponent(query)}`);
+            const data = await response.json();
+            setAlbums(data);
+            setTotalPages(1);
+            setCurrentPage(1);
+        } catch (error) {
+            console.error("Error searching albums:", error);
+        } finally {
+            setLoading(false);
+        }
+    }, [BASE_URL, sortOption, fetchAlbumList]);
+
     useEffect(() => {
-        fetchAlbumList(currentPage, sortOption);
-    }, [fetchAlbumList, currentPage, sortOption]);
+        fetchAlbumList(1);
+    }, [fetchAlbumList]);
 
     const handlePageChange = (_: ChangeEvent<unknown>, value: number) => {
         fetchAlbumList(value);
@@ -53,22 +72,21 @@ export default function Homepage()
       };
 
     return (
-        <div className="bg-[#e3e3b3]">
+        <div className="bg-[#e3e3b3] min-h-screen">
+            <Progress indeterminate={loading} className={loading ? "visible" : "invisible"} />
             <div>
             <TempDrawer id="drawer1" onSuccess={fetchAlbumList}/>
-            <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', width: '100%' }}>
-                <Box sx={{ width: '80%', display: 'flex', alignItems: 'center', position: 'relative', mb: 2 }}>
+            <div className="flex flex-col items-center w-full">
+                <div className="relative flex items-center w-4/5 mb-2">
                     <AlbumsSort sortOption={sortOption} onSortChange={setSortOption}/>
-                    {loading ? (
-                        <Box sx={{ position: 'absolute', left: '50%', transform: 'translateX(-50%)' }}>
-                            <CircularProgress />
-                        </Box>
-                    ) : (
-                        <div></div>
-                )}
-                </Box>
-                <Albumdisplay albums={albums} loading={loading} currentPage={currentPage} success={fetchAlbumList}/>
-            </Box>
+                    <div className="absolute left-1/2 -translate-x-1/2">
+                        <AlbumSearch onSearch={handleSearch} />
+                    </div>
+                </div>
+                <div className="w-full px-30">
+                    <Albumdisplay albums={albums} loading={loading} currentPage={currentPage} success={fetchAlbumList}/>
+                </div>
+            </div>
             </div>
             <Pagination
                 count={totalPages}

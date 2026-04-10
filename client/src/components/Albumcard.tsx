@@ -13,7 +13,7 @@ export default function Albumcard({album, onEditClick }: AlbumcardProps)
     const [buttonVisible, setButtonVisible] = useState(true);
     
     return (
-        <Card className="group rounded-xl shadow-lg p-4 bg-[#b0b076] flex flex-col w-full max-w-xs sm:max-w-sm border-2 border-[#525925] animate-glow"
+        <Card className="group rounded-xl shadow-lg p-4 bg-[#b0b076] flex flex-col w-full border-2 border-[#525925] animate-glow"
             sx={{ backgroundColor: '#b0b076' }}>
             {!flipped ? (
             <>
