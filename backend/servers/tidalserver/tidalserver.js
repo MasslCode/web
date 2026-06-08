@@ -84,7 +84,7 @@ app.get('/api/search-albums', async (req, res) => {
 
     const allIncluded = searchRes.data?.included ?? [];
     const filtered = allIncluded.filter((a) =>
-      a.attributes?.numberOfItems >= 5 &&
+      a.attributes?.numberOfItems >= 3 &&
       (a.attributes?.type === 'ALBUM' || a.attributes?.type === 'EP')
     );
     const albums = filtered.slice(0, limit);
