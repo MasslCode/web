@@ -41,14 +41,20 @@ export default function Albumlist({ query, onSuccess }: AlbumlistProps)
             setLoading(true);
             try {
                 const response = await fetch(`${BASE_URL}/api/search-albums?query=${query}`);
-                const formattedAlbums = await response.json();
-                console.log(query);
-                console.log(formattedAlbums);
+                const body = await response.json();
                 if (cancelled) return;
-                setAlbums(formattedAlbums);
+
+                if (!response.ok || !Array.isArray(body)) {
+                    console.error("Error fetching albums:", response.status, body);
+                    setAlbums([]);
+                    return;
+                }
+
+                setAlbums(body);
               } catch (error) {
                   if (cancelled) return;
                   console.error("Error fetching albums:", error);
+                  setAlbums([]);
               } finally {
                   if (!cancelled) setLoading(false);
               }

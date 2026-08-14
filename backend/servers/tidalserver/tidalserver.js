@@ -69,25 +69,37 @@ app.get('/api/search-albums', async (req, res) => {
   if (!query || query.trim().length === 0) {
     return res.status(400).json({ error: 'Query param "query" is required.' });
   }
+  try {
+    const client   = await tidalAxios();
+    // Step 1: get albums.
+    // Search moved off the ID path onto a filter param, so the query text is no
+    // longer part of the URL path:
+    //   GET /v2/searchResults?filter[query]=...&countryCode=...&include=albums
     const params = new URLSearchParams({
+      'filter[query]': query,
       countryCode,
       include: 'albums',
     });
     console.log('[search-albums] Params:', params.toString());
-  try {
-    const client   = await tidalAxios();
-    // Step 1: get albums
-    const params = new URLSearchParams({ countryCode, include: 'albums' });
-    const searchRes = await client.get(
-      `searchResults/${encodeURIComponent(query)}/relationships/albums?${params.toString()}`
-    );
+
+    const searchRes = await withRetry(() => client.get(`searchResults?${params.toString()}`));
 
     const allIncluded = searchRes.data?.included ?? [];
     const filtered = allIncluded.filter((a) =>
       a.attributes?.numberOfItems >= 3 &&
       (a.attributes?.type === 'ALBUM' || a.attributes?.type === 'EP')
     );
-    const albums = filtered.slice(0, limit);
+
+    // A 200 with nothing usable means the response shape moved again — make that
+    // visible instead of silently returning an empty list.
+    if (allIncluded.length > 0 && filtered.length === 0) {
+      console.warn(
+        `[search-albums] ${allIncluded.length} included resources, 0 matched the album filter.`,
+        'Sample:', JSON.stringify(allIncluded[0])
+      );
+    }
+
+    const albums = filtered.slice(0, Number(limit));
 
     const enriched = [];
     for (let i = 0; i < albums.length; i++) {
@@ -163,7 +175,7 @@ app.get('/api/fetch-songs', async (req, res) => {
       track_number: s.attributes?.trackNumber ?? 0,
     }));
     res.json(formatted);
-  } catch (error) {
+  } catch (err) {
     handleError(res, err, 'GET /api/fetch-songs');
   }
 });
