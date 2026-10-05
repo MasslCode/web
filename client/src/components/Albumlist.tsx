@@ -1,30 +1,37 @@
 /* eslint-disable react/prop-types */
 import { Typography, List, ListItemButton } from "@mui/material";
-import { useEffect, useState } from "react"
+import { useEffect, useRef, useState } from "react"
 import ScoreDialog from "./ScoreDialog.tsx";
 import CircularProgress from '@mui/material/CircularProgress';
+import type { MusicAlbum } from '@/lib/music';
+import { albumPlaceholder, handleCoverError } from '@/lib/albumCover';
+import { songLoader } from '@/lib/songLoader.js';
 
 interface AlbumlistProps {
   query: string;
   onSuccess: (album: any) => void;
 }
 
-interface Album {
-  id: number;
-  title: string;
-  artist: string;
-  release_year: number;
-  cover_image: string;
-}
-
 export default function Albumlist({ query, onSuccess }: AlbumlistProps)
 {
     const [dialogOpen, setDialogOpen] = useState(false);
-    const [selectedAlbum, setSelectedAlbum] = useState<Album | null>(null);
-    const [albums, setAlbums] = useState<Album[]>([]);
+    const [selectedAlbum, setSelectedAlbum] = useState<MusicAlbum | null>(null);
+    const [albums, setAlbums] = useState<MusicAlbum[]>([]);
     const [loading, setLoading] = useState(false);
+    const [error, setError] = useState<string | null>(null);
+    const hoverTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-    const handleAlbumClick = (album: any) => {
+    const cancelHoverPrefetch = () => {
+      if (hoverTimer.current) clearTimeout(hoverTimer.current);
+      hoverTimer.current = null;
+    };
+
+    const scheduleHoverPrefetch = (albumId: string) => {
+      cancelHoverPrefetch();
+      hoverTimer.current = setTimeout(() => songLoader.prefetch(BASE_URL, albumId), 200);
+    };
+
+    const handleAlbumClick = (album: MusicAlbum) => {
       setSelectedAlbum(album);
       setDialogOpen(true);
     };
@@ -37,50 +44,63 @@ export default function Albumlist({ query, onSuccess }: AlbumlistProps)
 
     useEffect(() => {
         let cancelled = false;
+        const controller = new AbortController();
+        let firstAlbumTimer: ReturnType<typeof setTimeout> | undefined;
+        setError(null);
         const fetchAlbums = async () => {
             setLoading(true);
+            setAlbums([]);
             try {
-                const response = await fetch(`${BASE_URL}/api/search-albums?query=${query}`);
+                const response = await fetch(`${BASE_URL}/api/search-albums?query=${encodeURIComponent(query.trim())}`, { signal: controller.signal });
                 const body = await response.json();
                 if (cancelled) return;
 
                 if (!response.ok || !Array.isArray(body)) {
                     console.error("Error fetching albums:", response.status, body);
+                    setError(body.error || 'Unable to search albums. Please try again.');
                     setAlbums([]);
                     return;
                 }
 
                 setAlbums(body);
+                // Warm just the top result after the user pauses on this search.
+                if (body[0]) firstAlbumTimer = setTimeout(() => songLoader.prefetch(BASE_URL, body[0].id), 600);
               } catch (error) {
                   if (cancelled) return;
                   console.error("Error fetching albums:", error);
+                  setError('Unable to search albums. Please try again.');
                   setAlbums([]);
               } finally {
                   if (!cancelled) setLoading(false);
               }
           };
-        if (query) {
+        if (query.trim()) {
             fetchAlbums();
         }
         else
         {
             setAlbums([]);
+            setLoading(false);
         }
 
         return () => {
         cancelled = true;
+        controller.abort();
+        clearTimeout(firstAlbumTimer);
+        cancelHoverPrefetch();
         };
-    }, [query]);
+    }, [query, BASE_URL]);
 
 return (
     <div>
-      {albums.length === 0 && !loading ? (
+      {error && <Typography role="alert" color="error">{error}</Typography>}
+      {albums.length === 0 && !loading && !error ? (
         <p>No albums found.</p>
       ) : (
         <div>
         {albums.map((album, index) => (
             <List 
-              key={index} 
+              key={album.id}
               sx={{ 
                 width: '100%', 
                 maxWidth: 360, 
@@ -92,6 +112,9 @@ return (
               }}>
               <ListItemButton
                 onClick={() => handleAlbumClick(album)}
+                onMouseEnter={() => scheduleHoverPrefetch(album.id)}
+                onMouseLeave={cancelHoverPrefetch}
+                onFocus={() => songLoader.prefetch(BASE_URL, album.id)}
                 sx={{ 
                   display: 'flex', 
                   alignItems: 'flex-start', 
@@ -100,7 +123,10 @@ return (
                     backgroundColor: 'rgba(248, 215, 108, 0.16)',
                     }, 
                   }}>
-                <img src={album.cover_image} alt={`${album.title} cover`} style={{ width: "55px", height: "55px", borderRadius: "4px", objectFit: "cover" }} />
+                <img src={album.cover_thumbnail || album.cover_image || albumPlaceholder}
+                  loading={index === 0 ? 'eager' : 'lazy'} fetchPriority={index === 0 ? 'high' : 'auto'} decoding="async"
+                  width={55} height={55} onError={handleCoverError} alt={`${album.title} cover`}
+                  style={{ width: "55px", height: "55px", flexShrink: 0, borderRadius: "4px", objectFit: "cover", backgroundImage: `url(${albumPlaceholder})`, backgroundSize: 'cover' }} />
               <div style={{ display: 'flex', flexDirection: 'column' }}>
                 <Typography variant="body1" sx={{ fontWeight: 'bold', fontSize: '1rem', marginBottom: '4px' }}>{album.title}</Typography>
                 <Typography variant="body2" sx={{ color: 'text.secondary', fontSize: '0.9rem' }}>{album.artist}</Typography>

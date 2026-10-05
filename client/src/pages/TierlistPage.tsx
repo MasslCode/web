@@ -1,6 +1,7 @@
 import { Progress } from "@/components/ui/progress";
 import { Box, Typography, CircularProgress, Grid2 } from "@mui/material";
 import { useEffect, useState } from "react";
+import { albumPlaceholder, handleCoverError } from '@/lib/albumCover';
 
 interface Album {
   id: string;
@@ -66,7 +67,8 @@ export default function TierlistPage(){
                   <Grid2 key={album.id}>
                     <Box
                       component="img"
-                      src={album.cover_image}
+                      src={album.cover_image || albumPlaceholder}
+                      onError={handleCoverError}
                       alt={album.title}
                       sx={{
                         width: 100,

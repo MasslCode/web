@@ -2,6 +2,7 @@
 import express from 'express';
 import pool from './dbserver.js';
 import cors from 'cors';
+import { saveAlbum } from './saveAlbum.js';
 
 const app = express();
 
@@ -66,55 +67,13 @@ app.get('/api/albums', async (req, res) => {
 });
 
 app.post('/api/save-album', async (req, res) => {
-  console.log("endpoint save working, req body:", req.body);
     const { album, songs } = req.body;
 
-    if(!album || !songs) {
+    if(!album || !Array.isArray(songs)) {
       return res.status(400).json({ error: 'Album and songs are required. Check if either or both of the data is missing'});
     }
   try {
-    const albumQuery = `INSERT INTO albums (id, title, artist, release_year, average_rating, cover_image)
-                        VALUES ($1, $2, $3, $4, $5, $6)
-                        ON CONFLICT (id) DO UPDATE
-                        SET title = EXCLUDED.title,
-                            artist = EXCLUDED.artist,
-                            release_year = EXCLUDED.release_year,
-                            average_rating = EXCLUDED.average_rating,
-                            cover_image = EXCLUDED.cover_image`;
-
-    console.log("Starting insert query for album");
-
-    await pool.query(albumQuery, [
-      album.id,
-      album.title,
-      album.artist,
-      album.release_year,
-      album.average_rating,
-      album.cover_image,
-    ]);
-
-    console.log("After album insert");
-
-    console.log("Starting insert query for songs");
-    
-    const songQuery = `INSERT INTO songs (id, album_id, title, duration_in_sec, track_number)
-                         VALUES ($1, $2, $3, $4, $5)
-                         ON CONFLICT (id) DO UPDATE
-                         SET album_id = EXCLUDED.album_id,
-                             title = EXCLUDED.title,
-                             duration_in_sec = EXCLUDED.duration_in_sec,
-                             track_number = EXCLUDED.track_number`;
-
-    for (const song of songs) {
-      await pool.query(songQuery, [
-        song.id,
-        album.id,
-        song.title,
-        song.duration_in_sec,
-        song.track_number,
-      ]);
-    }
-    console.log("Queries finished. Checking for success...");
+    await saveAlbum(pool, album, songs);
     res.status(200).json({ message: 'Album and songs saved successfully!' });
   } catch (error) {
     console.error('Error adding album and songs:', error);
@@ -126,7 +85,7 @@ app.get('/api/albums/:albumID/songs', async (req, res) => {
   const albumID = req.params.albumID;
   console.log("get songs from db endpoint reached with album id: ", albumID);
   try {
-    const result = await pool.query('SELECT * FROM songs WHERE album_id = $1', [albumID]);
+    const result = await pool.query('SELECT * FROM songs WHERE album_id = $1 ORDER BY track_number ASC, id ASC', [albumID]);
     res.status(200).json(result.rows);
   } catch (error) {
     console.error('Error fetching songs:', error);

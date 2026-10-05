@@ -53,9 +53,9 @@ export default function Albumdisplay({ albums, loading, currentPage, success }: 
             )}
             <Fade in={!loading} timeout={600} key={currentPage}>
                 <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 w-full">
-                    {albums.map((album, index) => (
-                        <div className="px-5">
-                            <Albumcard key={index} album={album} onEditClick={() => handleOpenDialog(album)} />
+                    {albums.map((album) => (
+                        <div key={album.id} className="px-5">
+                            <Albumcard album={album} onEditClick={() => handleOpenDialog(album)} />
                         </div>
                     ))}
                 </div>

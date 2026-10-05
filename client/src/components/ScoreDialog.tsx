@@ -1,45 +1,35 @@
 /* eslint-disable react/prop-types */
-import { Button, Dialog, DialogActions, DialogContent, DialogTitle, IconButton, List, ListItem, Typography, Box } from "@mui/material";
+import { Button, Dialog, DialogActions, DialogContent, DialogTitle, IconButton, List, ListItem, Typography, Box, CircularProgress } from "@mui/material";
 import CloseIcon from '@mui/icons-material/Close';
 import { useEffect, useState } from "react"
-import { getColorForValue } from '../../../backend/colors.js';
 import SliderRating from "./SliderRating.tsx";
-import { isoToSeconds } from "../features/isoconverter.ts";
+import type { MusicAlbum, MusicSong } from '@/lib/music';
+import { albumPlaceholder, handleCoverError } from '@/lib/albumCover';
+import { songLoader } from '@/lib/songLoader.js';
+import { AlbumRuntime, SongDuration } from './AlbumTiming';
 
 interface ScoreDialogProps {
     open: boolean;
-    album: { title: string; artist: string; release_year: number; cover_image: string };
+    album: MusicAlbum;
     onClose: () => void;
-    albumID: number;
+    albumID: string;
     onSuccess: (album: any) => void;
-}
-
-interface Song {
-    id: number;
-    album_id: number;
-    title: string;
-    duration_in_ISO8601: string;
-    track_number: number;
 }
 
 export default function ScoreDialog({open, album, onClose, albumID, onSuccess}: ScoreDialogProps)
 {
-    const [songs, setSongs] = useState<Song[]>([]);
-    const [songColors, setSongColors] = useState<string[]>([]);
+    const [songs, setSongs] = useState<MusicSong[]>([]);
     const [loading, setLoading] = useState(false);
+    const [saving, setSaving] = useState(false);
+    const [songsReady, setSongsReady] = useState(false);
+    const [error, setError] = useState<string | null>(null);
     const [rating, setRating] = useState<number | null>(null);
 
     const BASE_URL = import.meta.env.VITE_API_MUSIC_BASE_URL;
     const BASE_URL_DB = import.meta.env.VITE_API_BASE_URL;
 
     const handleSave = async () => {
-        console.log("Saving album {IN handleSave of ScoreDialog.tsx}...");
-        if (rating === null) {
-            console.warn('Rating is required');
-            return;
-        }
-
-        console.log(rating);
+        if (rating === null || !songsReady || saving) return;
         
         const payload = {
             album: {
@@ -54,12 +44,12 @@ export default function ScoreDialog({open, album, onClose, albumID, onSuccess}: 
             songs: songs.map((song) => ({
                 id: song.id,
                 title: song.title,
-                duration_in_ISO8601: song.duration_in_ISO8601,
+                duration_in_sec: song.duration_in_sec,
                 track_number: song.track_number,
             })),
         };
-        console.log("Payload: ", payload);
-        setLoading(true);
+        setSaving(true);
+        setError(null);
         try {
             const response = await fetch(`${BASE_URL_DB}/api/save-album`, {
                 method: 'POST',
@@ -74,49 +64,36 @@ export default function ScoreDialog({open, album, onClose, albumID, onSuccess}: 
                 }              
                 onClose(); // Close the dialog after saving
               } else {
-                console.error('Failed to save album:', response.statusText);
+                const body = await response.json();
+                setError(body.error || 'Unable to save this album. Please try again.');
               }
         } catch (error) {
             console.error('Error saving album:', error);
+            setError('Unable to save this album. Please try again.');
         } finally {
-            setLoading(false);
+            setSaving(false);
         }
     }
         useEffect(() => {
+            if (!open) return;
+            let cancelled = false;
+            const cachedSongs = songLoader.getCached(BASE_URL, albumID);
+            setSongs(cachedSongs || []);
+            setSongsReady(Boolean(cachedSongs));
+            setLoading(!cachedSongs);
+            setRating(null);
+            setError(null);
             const fetchSongs = async () => {
-                try {                   
-                    console.log(albumID);
-                    setLoading(true);
-                    const response = await fetch(`${BASE_URL}/api/fetch-songs?albumId=${albumID}`);
-                    if (!response.ok) {
-                        if (response.status === 503) 
-                        {
-                          const responseBody = await response.json();
-                          const retryAfter = responseBody.retryAfter;
-                          console.warn(`Rate-limited. Retrying after ${retryAfter} seconds.`);
-                          setTimeout(() => fetchSongs(), retryAfter * 1000);
-                          return;
-                        }
-                        throw new Error(`HTTP error! status: ${response.status}`);
-                      }
-                    const rawSongs = await response.json();
-                    console.log(rawSongs);
-                    const formattedSongs = rawSongs.map((song: any) => ({
-                        id: song.id,
-                        album_id: albumID,
-                        title: song.title,
-                        duration_in_sec: isoToSeconds(song.duration_in_ISO8601 ?? "PT0S"),
-                        track_number: song.track_number,
-                    }))
-                    setSongs(formattedSongs);
-                    console.log(formattedSongs);
-
-                    const defaultColors = new Array(formattedSongs.length).fill('black');
-                    setSongColors(defaultColors);
+                try {
+                    const body = await songLoader.load(BASE_URL, albumID);
+                    if (cancelled) return;
+                    setSongs(body);
+                    setSongsReady(true);
                 } catch (error) {
-                    console.error("Error fetching our API endpoint:", error);
+                    if (cancelled) return;
+                    setError(error instanceof Error ? error.message : 'Unable to load tracks. Please try again.');
                 } finally {
-                    setLoading(false);
+                    if (!cancelled) setLoading(false);
                 }
             };
 
@@ -124,7 +101,10 @@ export default function ScoreDialog({open, album, onClose, albumID, onSuccess}: 
             {
                 fetchSongs();
             }
-        }, [albumID, open]);
+            return () => {
+                cancelled = true;
+            };
+        }, [albumID, open, BASE_URL]);
 
         if(!open) return null;
         
@@ -177,7 +157,8 @@ export default function ScoreDialog({open, album, onClose, albumID, onSuccess}: 
                 }}>
                 <Box
                     component="img"
-                    src={album?.cover_image}
+                    src={album.cover_thumbnail || album.cover_image || albumPlaceholder}
+                    onError={handleCoverError}
                     alt="cover not found"
                     sx={{
                         width: 100,
@@ -190,10 +171,13 @@ export default function ScoreDialog({open, album, onClose, albumID, onSuccess}: 
                 <Box>
                     <Typography variant="body1" sx={{ fontWeight: 'bold', fontSize: '1rem', marginBottom: '4px' }}>{album?.title}</Typography>
                     <Typography variant="body2" sx={{ color: 'text.secondary', fontSize: '0.9rem', marginBottom: "10px" }}>{album?.artist}</Typography>
+                    {songsReady && !loading && <AlbumRuntime songs={songs} />}
                 </Box>
               </Box>
+              {loading && <Box display="flex" justifyContent="center"><CircularProgress size={24} aria-label="Loading tracks" /></Box>}
+              {error && <Typography role="alert" color="error">{error}</Typography>}
                 <List>
-                    {songs.map((song, index) => (
+                    {songs.map((song) => (
                   <ListItem
                         key={song.id}
                         sx={{
@@ -207,10 +191,13 @@ export default function ScoreDialog({open, album, onClose, albumID, onSuccess}: 
                         sx={{ 
                             fontWeight: 'bold', 
                             fontSize: '1.1rem',
-                            color: getColorForValue(songColors[index]),
+                            color: 'black',
+                            minWidth: 0,
+                            overflowWrap: 'anywhere',
                             }}>
                         {song.title}
                     </Typography>
+                    <SongDuration seconds={song.duration_in_sec} />
                   </ListItem>
                   ))}
                 </List>
@@ -219,7 +206,7 @@ export default function ScoreDialog({open, album, onClose, albumID, onSuccess}: 
             
             <DialogActions>
                 <Button onClick={onClose}> Cancel </Button>
-                <Button variant="contained" onClick={handleSave}> Save </Button>
+                <Button variant="contained" onClick={handleSave} disabled={loading || saving || !songsReady || rating === null}> {saving ? 'Saving...' : 'Save'} </Button>
             </DialogActions>               
         </Dialog> 
     );
