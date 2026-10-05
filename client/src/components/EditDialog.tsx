@@ -2,19 +2,22 @@ import { Dialog, DialogActions, DialogTitle, Button, DialogContent, Typography, 
 import { useCallback, useEffect, useState } from "react";
 import { TransitionProps as MuiTransitionProps } from "@mui/material/transitions";
 import SliderRating from "./SliderRating.tsx";
+import { albumPlaceholder, handleCoverError } from '@/lib/albumCover';
+import { AlbumRuntime, SongDuration } from './AlbumTiming';
 
 
 interface EditDialogProps {
     open: boolean;
     close: () => void;
-    album: { id: number; title: string; cover_image: string; average_rating: number } | null;
+    album: { id: string; title: string; cover_image: string | null; average_rating: number } | null;
     success: (album: any) => void;
     TransitionProps?: MuiTransitionProps;
 }
 
 interface Song {
-    id: number;
+    id: string;
     title: string;
+    duration_in_sec?: number | null;
 }
 
 export default function EditDialog({open, close, album, success, TransitionProps}: EditDialogProps)
@@ -122,7 +125,8 @@ export default function EditDialog({open, close, album, success, TransitionProps
             <DialogContent dividers>
                 <Box
                     component="img"
-                    src={album?.cover_image}
+                    src={album?.cover_image || albumPlaceholder}
+                    onError={handleCoverError}
                     alt="cover not found"
                     sx={{
                         width: 200,
@@ -134,6 +138,7 @@ export default function EditDialog({open, close, album, success, TransitionProps
                     }}
                 />
                 <Typography variant="h4">Songs</Typography>
+                {!loading && songs.length > 0 && <AlbumRuntime songs={songs} />}
 
                 {loading ? (
                     <Box display="flex" justifyContent="center" alignItems="center" height={100}>
@@ -146,8 +151,9 @@ export default function EditDialog({open, close, album, success, TransitionProps
                 ) : (
                     <List dense>
                         {songs.map(song => (
-                            <ListItem key={song.id}>
-                                {song.title}
+                            <ListItem key={song.id} sx={{ justifyContent: 'space-between', alignItems: 'center' }}>
+                                <Typography variant="body2" sx={{ minWidth: 0, overflowWrap: 'anywhere' }}>{song.title}</Typography>
+                                <SongDuration seconds={song.duration_in_sec} />
                             </ListItem>
                         ))}
                     </List>

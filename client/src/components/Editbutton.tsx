@@ -5,7 +5,7 @@ import EditDialog from "./EditDialog.tsx";
 import { useState, SetStateAction } from "react";
 
 interface Album {
-    id: number;
+    id: string;
     title: string;
     cover_image: string;
     average_rating: number;

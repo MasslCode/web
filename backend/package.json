@@ -7,11 +7,13 @@
   "scripts": {
     "start:dbserver": "node servers/dbserver.js",
     "start:server": "node servers/server.js",
-    "start:tidalserver": "node servers/tidalserver/tidalserver.js",
+    "start:musicserver": "node servers/musicbrainzserver.js",
     "start": "npm run start:server",
-    "tidal": "npm run start:tidalserver",
-    "start:all": "concurrently \"npm run start:dbserver\" \"npm run start:server\"",
-    "dev": "concurrently \"nodemon servers/dbserver.js\" \"nodemon servers/server.js\" \"nodemon servers/tidalserver/tidalserver.js\""
+    "music": "npm run start:musicserver",
+    "start:all": "concurrently \"npm run start:server\" \"npm run start:musicserver\"",
+    "dev": "concurrently \"nodemon servers/server.js\" \"nodemon servers/musicbrainzserver.js\"",
+    "test": "node --test tests/*.test.js",
+    "check:music": "node scripts/check-musicbrainz.js"
   },
   "dependencies": {
     "axios": "^1.7.9",

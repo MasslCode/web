@@ -2,6 +2,7 @@
 import { Card, CardMedia, CardContent, Typography, Box, Button } from '@mui/material';
 import { motion } from "framer-motion"
 import { useState } from 'react';
+import { albumPlaceholder, handleCoverError } from '@/lib/albumCover';
 
 interface AlbumcardProps {
     album: { id: string; title: string; cover_image: string; average_rating: number, artist: string } | null;
@@ -20,7 +21,8 @@ export default function Albumcard({album, onEditClick }: AlbumcardProps)
             <CardMedia
                 component="img"
                 className="w-full aspect-square rounded-lg shadow-md object-cover"
-                image={album?.cover_image || "https://via.placeholder.com/150"}
+                image={album?.cover_image || albumPlaceholder}
+                onError={handleCoverError}
                 alt={album?.title}
             />
             <CardContent className="flex flex-col flex-1">
