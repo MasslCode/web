@@ -8,6 +8,7 @@
     "start:dbserver": "node servers/dbserver.js",
     "start:server": "node servers/server.js",
     "start:musicserver": "node servers/musicbrainzserver.js",
+    "start:tidalserver": "npm run start:musicserver",
     "start": "npm run start:server",
     "music": "npm run start:musicserver",
     "start:all": "concurrently \"npm run start:server\" \"npm run start:musicserver\"",

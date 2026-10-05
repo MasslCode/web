@@ -123,8 +123,10 @@ return (
                     backgroundColor: 'rgba(248, 215, 108, 0.16)',
                     }, 
                   }}>
+                {/* React 18 needs lowercase fetchpriority; spread keeps React's JSX types compatible. */}
                 <img src={album.cover_thumbnail || album.cover_image || albumPlaceholder}
-                  loading={index === 0 ? 'eager' : 'lazy'} fetchPriority={index === 0 ? 'high' : 'auto'} decoding="async"
+                  loading={index === 0 ? 'eager' : 'lazy'}
+                  {...{ fetchpriority: index === 0 ? 'high' : 'auto' }} decoding="async"
                   width={55} height={55} onError={handleCoverError} alt={`${album.title} cover`}
                   style={{ width: "55px", height: "55px", flexShrink: 0, borderRadius: "4px", objectFit: "cover", backgroundImage: `url(${albumPlaceholder})`, backgroundSize: 'cover' }} />
               <div style={{ display: 'flex', flexDirection: 'column' }}>

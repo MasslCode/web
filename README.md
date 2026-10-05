@@ -62,11 +62,43 @@ npm run build --prefix client
 For an optional live search and tracklist check against MusicBrainz (without
 accessing the collection database), run `npm run check:music --prefix backend`.
 
-For deployment, start the collection service with `npm run start:server` and the
-music service with `npm run start:musicserver`, both from `backend/`. The music
-service replaces the old `start:tidalserver` command. If reusing the existing
-Render music service (currently named `tidalserver`), its hostname can stay the
-same; redeploy the new code and update its start command. Otherwise, set
-`VITE_API_MUSIC_BASE_URL` in the frontend deployment to the new service URL and
-rebuild it. Production music services use `PORT` unless `MUSIC_SERVER_PORT` is
-explicitly configured. Tidal credentials are no longer used.
+For deployment, configure each Render service under **Settings > Build & Deploy**:
+
+| Setting | Music service (`tidalserver`) | Collection service (`albums`) |
+| --- | --- | --- |
+| Root Directory | `backend` | `backend` |
+| Build Command | `npm ci` | `npm ci` |
+| Start Command | `npm run start:musicserver` | `npm run start:server` |
+
+Render runs build and start commands relative to the Root Directory
+([Render monorepo documentation](https://render.com/docs/monorepo-support)).
+`tidalserver` is the service name and hostname, not a repository directory.
+The error `Root directory "tidalserver" does not exist` means that setting must
+be changed to `backend`. Updating the start command alone cannot fix it.
+The old `npm run start:tidalserver` command remains an alias for the MusicBrainz
+server to support existing deployment settings.
+
+Set `NODE_ENV=production` on both services, keep the collection service's existing
+`DATABASE_URL`, and remove any explicit `MUSIC_SERVER_PORT` on the music service
+so it listens on Render's assigned `PORT`. Tidal credentials are no longer used.
+Redeploy both backend services with the current code before deploying the
+frontend, because track loading and saving now use `duration_in_sec`.
+A failed music deployment can leave the old Tidal server running, which returns
+`duration_in_ISO8601`; the new frontend then shows unavailable track and album
+durations even though search and track titles still work.
+
+The music hostname can stay `https://tidalserver.onrender.com`, so the existing
+frontend `VITE_API_MUSIC_BASE_URL` needs no change. If using a new hostname, update
+that variable in the frontend deployment and rebuild it.
+
+After redeployment, the music service's `/health` endpoint must return
+`{"status":"ok","provider":"musicbrainz"}`. Verify the deployed provider,
+search, track durations and cache with this read-only check:
+
+```powershell
+npm run check:music --prefix backend -- https://tidalserver.onrender.com
+```
+
+Refresh the frontend after redeployment to discard cached tracklists from the
+old server. MusicBrainz can still lack durations for individual tracks; these
+remain marked unavailable rather than being counted as zero.
