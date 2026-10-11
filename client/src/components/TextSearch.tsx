@@ -9,6 +9,7 @@ export default function TextSearch({ query, onQueryChange }: TextSearchProps)
 {
     return (
         <TextField
+        fullWidth
         sx={{
             backgroundColor: 'rgb(205, 211, 240)'
         }}

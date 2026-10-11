@@ -5,11 +5,18 @@ import { createMusicBrainzClient } from '../servers/musicbrainz/client.js';
 import { buildSearchQuery, createMusicBrainzService, formatAlbum, formatSongs } from '../servers/musicbrainz/service.js';
 import { createMusicApp } from '../servers/musicbrainz/app.js';
 import { saveAlbum } from '../servers/saveAlbum.js';
+import { musicServerPort } from '../servers/musicbrainz/config.js';
 
 const groupId = 'b1392450-e666-3926-a536-22c65f834433';
 const earlyRelease = '11111111-1111-4111-8111-111111111111';
 const lateRelease = '22222222-2222-4222-8222-222222222222';
 const trackId = '33333333-3333-4333-8333-333333333333';
+
+test('production uses the hosting port even with a stale development override', () => {
+  assert.equal(musicServerPort({ NODE_ENV: 'production', PORT: '10000', MUSIC_SERVER_PORT: '3002' }), '10000');
+  assert.equal(musicServerPort({ NODE_ENV: 'development', PORT: '5000', MUSIC_SERVER_PORT: '3002' }), '3002');
+  assert.equal(musicServerPort({ NODE_ENV: 'production' }), 3002);
+});
 
 test('search treats user terms as text and searches both title and artist', () => {
   const query = buildSearchQuery('Radiohead OK Computer');
@@ -206,6 +213,9 @@ test('HTTP routes validate inputs and return useful upstream errors', async (t) 
   await once(server, 'listening');
   t.after(() => new Promise((resolve) => server.close(resolve)));
   const base = `http://127.0.0.1:${server.address().port}`;
+  assert.deepEqual(await (await fetch(`${base}/health`)).json(), {
+    status: 'ok', provider: 'musicbrainz', apiVersion: 1, durationUnit: 'seconds',
+  });
   for (const url of ['/api/search-albums', '/api/search-albums?query=x&limit=-1',
     '/api/search-albums?query=x&limit=101', '/api/search-albums?query=x&limit=abc',
     '/api/search-albums?query=x&query=y', '/api/fetch-songs?albumId=123']) {

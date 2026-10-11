@@ -10,7 +10,9 @@ export function createMusicApp(service) {
       : 'http://localhost:5173',
   }));
 
-  app.get('/health', (_req, res) => res.json({ status: 'ok', provider: 'musicbrainz' }));
+  app.get('/health', (_req, res) => res.json({
+    status: 'ok', provider: 'musicbrainz', apiVersion: 1, durationUnit: 'seconds',
+  }));
 
   function handleError(res, error) {
     const upstreamStatus = error.response?.status;

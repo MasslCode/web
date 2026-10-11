@@ -48,8 +48,9 @@ export default function TierlistPage(){
   }
   
   return (
-    <Box p={4} className="bg-[#e3e3b3] min-h-screen">
-      <Typography variant="h3" gutterBottom>Tier List</Typography>
+    <Box className="bg-[#e3e3b3] min-h-screen">
+    <Box sx={{ maxWidth: 1440, mx: 'auto', p: { xs: 2, sm: 3, lg: 4 } }}>
+      <Typography variant="h3" sx={{ fontSize: { xs: '2rem', sm: '3rem' } }} gutterBottom>Tier List</Typography>
       {[...Array(10)].map((_, i) => {
         const rating = 10 - i; // Start from 10 down to 1
         const tierAlbums = getAlbumsByRating(rating);
@@ -71,8 +72,9 @@ export default function TierlistPage(){
                       onError={handleCoverError}
                       alt={album.title}
                       sx={{
-                        width: 100,
-                        height: 100,
+                        width: { xs: 80, sm: 100 },
+                        height: { xs: 80, sm: 100 },
+                        display: 'block',
                         borderRadius: 1,
                         objectFit: 'cover',
                         border: '2px solid #000000ff',
@@ -85,6 +87,7 @@ export default function TierlistPage(){
           </Box>
         );
       })}
+    </Box>
     </Box>
   );
 }

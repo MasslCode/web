@@ -26,8 +26,11 @@ try {
   const request = (path) => fetch(`${base}${path}`, { signal: AbortSignal.timeout(60000) });
   const health = await request('/health');
   assert.equal(health.status, 200, 'Music API health check failed');
-  assert.equal((await health.json()).provider, 'musicbrainz',
+  const contract = await health.json();
+  assert.equal(contract.provider, 'musicbrainz',
     'This service is still running the old music API. Deploy the MusicBrainz backend before the frontend.');
+  assert.equal(contract.apiVersion, 1, 'Deploy the current backend with the versioned music API contract.');
+  assert.equal(contract.durationUnit, 'seconds', 'The music API must return track durations in seconds.');
   const search = await request('/api/search-albums?query=Radiohead%20OK%20Computer&limit=5');
   assert.equal(search.status, 200, JSON.stringify(await search.clone().json()));
   const albums = await search.json();
