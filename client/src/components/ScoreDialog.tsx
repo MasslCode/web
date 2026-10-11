@@ -7,6 +7,7 @@ import type { MusicAlbum, MusicSong } from '@/lib/music';
 import { albumPlaceholder, handleCoverError } from '@/lib/albumCover';
 import { songLoader } from '@/lib/songLoader.js';
 import { AlbumRuntime, SongDuration } from './AlbumTiming';
+import { albumDialogSx } from './albumDialogLayout';
 
 interface ScoreDialogProps {
     open: boolean;
@@ -112,20 +113,14 @@ export default function ScoreDialog({open, album, onClose, albumID, onSuccess}: 
         <Dialog 
             open={open}
             onClose={onClose}
-            sx={{ 
-                '& .MuiDialog-paper': {
-                    width: 'auto',
-                    maxWidth: '90vw',
-                    maxHeight: '90vh',
-                    overflow: 'hidden',
-                }
-            }}>
+            sx={albumDialogSx}>
             <DialogTitle
                 sx={{
                     display: 'flex',
                     flexDirection: 'column',
                     gap: 2,
                     padding: 2,
+                    paddingRight: 7,
                     fontSize: '1.5rem',
                 }}>
              Add album to collection
@@ -152,6 +147,7 @@ export default function ScoreDialog({open, album, onClose, albumID, onSuccess}: 
               <Box
                 sx={{
                     display: 'flex',
+                    gap: 2,
                     alignItems: 'center',
                     marginBottom: 2,
                 }}>
@@ -161,14 +157,14 @@ export default function ScoreDialog({open, album, onClose, albumID, onSuccess}: 
                     onError={handleCoverError}
                     alt="cover not found"
                     sx={{
-                        width: 100,
-                        height: 100,
+                        width: { xs: 80, sm: 100 },
+                        height: { xs: 80, sm: 100 },
+                        flexShrink: 0,
                         borderRadius: 1,
                         objectFit: 'cover',
-                        marginRight: 2,
                     }}
                 />
-                <Box>
+                <Box sx={{ minWidth: 0, overflowWrap: 'anywhere' }}>
                     <Typography variant="body1" sx={{ fontWeight: 'bold', fontSize: '1rem', marginBottom: '4px' }}>{album?.title}</Typography>
                     <Typography variant="body2" sx={{ color: 'text.secondary', fontSize: '0.9rem', marginBottom: "10px" }}>{album?.artist}</Typography>
                     {songsReady && !loading && <AlbumRuntime songs={songs} />}

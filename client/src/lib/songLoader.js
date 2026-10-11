@@ -1,5 +1,7 @@
 // Shared by the drawer's speculative loads and the dialog's explicit loads.
 // Keeping this dependency-free also lets Node exercise cache and race behavior.
+import { normalizeSongDurations } from './songDurations.js';
+
 export function createSongLoader({ fetcher = (...args) => fetch(...args), now = Date.now, cacheTTL = 30 * 60 * 1000 } = {}) {
   const cache = new Map();
   const pending = new Map();
@@ -24,10 +26,11 @@ export function createSongLoader({ fetcher = (...args) => fetch(...args), now = 
         const body = await response.json();
         if (!response.ok) throw new Error(body?.error || 'Unable to load tracks. Please try again.');
         if (!Array.isArray(body) || !body.length) throw new Error('No tracklist is available for this album.');
+        const songs = normalizeSongDurations(body);
         cache.delete(url);
-        cache.set(url, { songs: body, expires: now() + cacheTTL });
+        cache.set(url, { songs, expires: now() + cacheTTL });
         if (cache.size > 100) cache.delete(cache.keys().next().value);
-        return body;
+        return songs;
       }).finally(() => {
         clearTimeout(timeout);
         pending.delete(url);

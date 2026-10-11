@@ -1,9 +1,11 @@
-import { Dialog, DialogActions, DialogTitle, Button, DialogContent, Typography, Box, CircularProgress, List, ListItem } from "@mui/material";
-import { useCallback, useEffect, useState } from "react";
+import { Alert, Dialog, DialogActions, DialogTitle, Button, DialogContent, Typography, Box, CircularProgress, List, ListItem } from "@mui/material";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { TransitionProps as MuiTransitionProps } from "@mui/material/transitions";
 import SliderRating from "./SliderRating.tsx";
 import { albumPlaceholder, handleCoverError } from '@/lib/albumCover';
 import { AlbumRuntime, SongDuration } from './AlbumTiming';
+import { albumDialogSx } from './albumDialogLayout';
+import { normalizeSongDurations } from '@/lib/songDurations.js';
 
 
 interface EditDialogProps {
@@ -27,8 +29,30 @@ export default function EditDialog({open, close, album, success, TransitionProps
     const [loading, setLoading] = useState(false);
     const [songs, setSongs] = useState<Song[]>([]);
     const [rating, setRating] = useState<number>(album?.average_rating || 0);
+    const [saving, setSaving] = useState(false);
+    const [saveError, setSaveError] = useState<string | null>(null);
+    const pendingSave = useRef<AbortController | null>(null);
+
+    useEffect(() => {
+        setSaveError(null);
+        setSaving(false);
+        return () => {
+            pendingSave.current?.abort();
+            pendingSave.current = null;
+        };
+    }, [open, album?.id]);
+
+    const handleClose = () => {
+        if (!pendingSave.current) close();
+    };
 
     const handleEditSave = async () => {
+        if (!open || !album?.id || pendingSave.current) return;
+        const controller = new AbortController();
+        pendingSave.current = controller;
+        setSaving(true);
+        setSaveError(null);
+        const timeout = setTimeout(() => controller.abort(), 30000);
         try {
             const response = await fetch(`${BASE_URL_DB}/api/edit-album`, {
                 method: "PUT",
@@ -39,23 +63,33 @@ export default function EditDialog({open, close, album, success, TransitionProps
                     id: album?.id,
                     average_rating: rating.toFixed(0)
                 }),
+                signal: controller.signal,
             });
 
+            if (pendingSave.current !== controller) return;
             if (!response.ok) {
-                const errorData = await response.json();
-                console.error("Server error response:", errorData);
-            throw new Error("Failed to update album. PUT request failed.");
-        }
-            const data = await response.json();
-            console.log("Album updated: ", data);
-            if(success) {
-                success(album);
-                console.log("onsavesuccess called...");
-            }              
-            close(); // Close the dialog after saving
+                const errorData = await response.json().catch(() => null);
+                if (pendingSave.current !== controller) return;
+                const message = response.status < 500 && typeof errorData?.error === 'string'
+                    ? errorData.error.trim() : '';
+                setSaveError(message || 'Unable to save your rating. Please try again.');
+                return;
+            }
         } catch (error) {
-            console.error("Error updating album:", error);
+            if (pendingSave.current !== controller) return;
+            setSaveError(controller.signal.aborted
+                ? 'Saving took too long. Please try again.'
+                : 'Unable to save your rating. Check your connection and try again.');
+            return;
+        } finally {
+            clearTimeout(timeout);
+            if (pendingSave.current === controller) {
+                pendingSave.current = null;
+                setSaving(false);
+            }
         }
+        success(album);
+        close();
     };
 
     const fetchSongs = useCallback (async (albumid: any) => {
@@ -72,8 +106,8 @@ export default function EditDialog({open, close, album, success, TransitionProps
                 throw new Error('Failed to fetch songs');
                 }
 
-                const songData = await response.json();
-                setSongs(songData);
+                const songData: Song[] = await response.json();
+                setSongs(normalizeSongDurations(songData));
             } catch (error) {
                 console.error("Error fetching songs:", error);
                 setSongs([]);
@@ -102,16 +136,11 @@ export default function EditDialog({open, close, album, success, TransitionProps
     return (
         <Dialog
             open={open}
-            onClose={close}
+            onClose={handleClose}
+            disableEscapeKeyDown={saving}
+            PaperProps={{ 'aria-busy': saving }}
             TransitionProps={TransitionProps}
-            sx={{ 
-                '& .MuiDialog-paper': {
-                    width: '30vw',
-                    maxWidth: '90vw',
-                    maxHeight: '90vh',
-                    overflow: 'hidden',
-                }
-            }}>
+            sx={albumDialogSx}>
             <DialogTitle
                 sx={{
                     display: 'flex',
@@ -129,11 +158,14 @@ export default function EditDialog({open, close, album, success, TransitionProps
                     onError={handleCoverError}
                     alt="cover not found"
                     sx={{
-                        width: 200,
-                        height: 200,
+                        width: '100%',
+                        maxWidth: 200,
+                        aspectRatio: '1',
+                        height: 'auto',
+                        display: 'block',
                         borderRadius: 1,
                         objectFit: 'cover',
-                        marginRight: 2,
+                        marginBottom: 2,
                         textAlign: 'center',
                     }}
                 />
@@ -151,7 +183,7 @@ export default function EditDialog({open, close, album, success, TransitionProps
                 ) : (
                     <List dense>
                         {songs.map(song => (
-                            <ListItem key={song.id} sx={{ justifyContent: 'space-between', alignItems: 'center' }}>
+                            <ListItem key={song.id} sx={{ px: 0, gap: 1, justifyContent: 'space-between', alignItems: 'center' }}>
                                 <Typography variant="body2" sx={{ minWidth: 0, overflowWrap: 'anywhere' }}>{song.title}</Typography>
                                 <SongDuration seconds={song.duration_in_sec} />
                             </ListItem>
@@ -160,12 +192,19 @@ export default function EditDialog({open, close, album, success, TransitionProps
                 )}
             <Box mt={3}>
                 <Typography gutterBottom>Rate this album (1–10)</Typography>
-                <SliderRating value={rating ?? 0} onChange={(val) => setRating(val)} min={1} max={10} />
+                <SliderRating value={rating ?? 0} onChange={(val) => setRating(val)} min={1} max={10} disabled={saving} />
             </Box>
             </DialogContent>
+            {saveError && (
+                <Box sx={{ px: 2, pt: 1, flexShrink: 0 }}>
+                    <Alert severity="error" role="alert" sx={{ overflowWrap: 'anywhere' }}>{saveError}</Alert>
+                </Box>
+            )}
             <DialogActions>
-                <Button variant="contained" color="error" onClick={close}> Cancel </Button>
-                <Button variant="contained" color="success" onClick={handleEditSave}> Save </Button>
+                <Button variant="contained" color="error" onClick={handleClose} disabled={saving}> Cancel </Button>
+                <Button variant="contained" color="success" onClick={handleEditSave} disabled={saving || !album?.id}>
+                    {saving ? <span role="status">Saving…</span> : 'Save'}
+                </Button>
             </DialogActions>
         </Dialog>
     );

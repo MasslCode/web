@@ -17,6 +17,7 @@ export default function Albumdisplay({ albums, loading, currentPage, success }: 
 
     const skeletonCount = albums.length > 0 ? albums.length : 20;
     const cardSkeletons = Array.from({ length: skeletonCount });
+    const gridClassName = 'grid grid-cols-1 min-[480px]:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 sm:gap-5 w-full';
 
     const handleOpenDialog = (album: SetStateAction<null>) => {
         setSelectedAlbum(album);
@@ -29,13 +30,13 @@ export default function Albumdisplay({ albums, loading, currentPage, success }: 
     return (
         <div className="flex flex-col items-center w-full py-3">
             {loading && albums.length === 0 && (
-                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 w-full">
+                <div className={gridClassName}>
                     {cardSkeletons.map((_, index) => (
-                        <Card key={index} className="rounded-xl shadow-lg p-4 flex flex-col w-full">
+                        <Card key={index} className="rounded-xl shadow-lg flex flex-col w-full min-w-0" sx={{ p: { xs: 1.5, sm: 2 } }}>
                             <div className="w-full aspect-square">
                                 <Skeleton animation="wave" variant="rectangular" width="100%" height="100%" className="rounded-lg" />
                             </div>
-                            <CardContent className="flex flex-col flex-1 px-0">
+                            <CardContent className="flex flex-col flex-1" sx={{ px: 0, py: 1.5, '&:last-child': { pb: 0 } }}>
                                 <div className="h-[2.86rem] flex items-center justify-center">
                                     <Skeleton animation="wave" variant="text" height={36} width="80%" />
                                 </div>
@@ -52,9 +53,9 @@ export default function Albumdisplay({ albums, loading, currentPage, success }: 
                 </div>
             )}
             <Fade in={!loading} timeout={600} key={currentPage}>
-                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 w-full">
+                <div className={gridClassName}>
                     {albums.map((album) => (
-                        <div key={album.id} className="px-5">
+                        <div key={album.id} className="min-w-0">
                             <Albumcard album={album} onEditClick={() => handleOpenDialog(album)} />
                         </div>
                     ))}

@@ -129,7 +129,7 @@ return (
                   {...{ fetchpriority: index === 0 ? 'high' : 'auto' }} decoding="async"
                   width={55} height={55} onError={handleCoverError} alt={`${album.title} cover`}
                   style={{ width: "55px", height: "55px", flexShrink: 0, borderRadius: "4px", objectFit: "cover", backgroundImage: `url(${albumPlaceholder})`, backgroundSize: 'cover' }} />
-              <div style={{ display: 'flex', flexDirection: 'column' }}>
+              <div style={{ display: 'flex', flexDirection: 'column', minWidth: 0, overflowWrap: 'anywhere' }}>
                 <Typography variant="body1" sx={{ fontWeight: 'bold', fontSize: '1rem', marginBottom: '4px' }}>{album.title}</Typography>
                 <Typography variant="body2" sx={{ color: 'text.secondary', fontSize: '0.9rem' }}>{album.artist}</Typography>
               </div>

@@ -1,5 +1,6 @@
 /* eslint-disable react/prop-types */
-import { Box, Button } from '@mui/material';
+import { Box, Button, IconButton } from '@mui/material';
+import CloseIcon from '@mui/icons-material/Close';
 import Drawer from '@mui/material/Drawer';
 import { useState, ChangeEvent, useEffect } from "react"
 import TextSearch from './TextSearch.tsx';
@@ -38,14 +39,18 @@ export default function TempDrawer(props: TempDrawerProps) {
     
     return (
         <div id={props.id}>
-            <Button onClick={toggleDrawer(true)}>Search for an album online</Button>
-            <Drawer open={open} onClose={toggleDrawer(false)}>
+            <Button sx={{ minHeight: 44 }} onClick={toggleDrawer(true)}>Search for an album online</Button>
+            <Drawer open={open} onClose={toggleDrawer(false)} sx={{ '& .MuiDrawer-paper': { width: '100%', maxWidth: 360, boxSizing: 'border-box', backgroundColor: 'rgb(155, 167, 219)' } }}>
                 <Box sx={{
-                    width: 300, 
+                    width: '100%',
+                    minWidth: 0,
                     padding: 2,
                     backgroundColor: 'rgb(155, 167, 219)'
                     }}>
-                    <h2>Search album online</h2>
+                    <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 1, mb: 2 }}>
+                        <h2>Search album online</h2>
+                        <IconButton aria-label="Close online album search" onClick={toggleDrawer(false)} sx={{ width: 44, height: 44 }}><CloseIcon /></IconButton>
+                    </Box>
                     <TextSearch query={query} onQueryChange={handleQueryChange} />
                     <Albumlist query={debouncedQuery} onSuccess={props.onSuccess}/>
                 </Box>
@@ -53,4 +58,3 @@ export default function TempDrawer(props: TempDrawerProps) {
         </div>
     );
 }
-

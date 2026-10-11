@@ -19,7 +19,7 @@ export default function AlbumsSort({sortOption, onSortChange}: AlbumsSortProps)
         onSortChange(event.target.value);
     }
     return (
-        <FormControl sx={{ margin: 1, minWidth: 160 }}>
+        <FormControl sx={{ minWidth: 160, width: { xs: '100%', sm: 180 }, flexShrink: 0 }}>
             <InputLabel id="sort-select-label">Sort by</InputLabel>
             <Select
                 labelId='sort-select-label'
@@ -30,7 +30,7 @@ export default function AlbumsSort({sortOption, onSortChange}: AlbumsSortProps)
                 sx={{ textAlign: 'left' }}>
                 {sortOptions.map((option) => (
                     <MenuItem key={option.value} value={option.value}>
-                        <Box sx={{ display: 'flex', alignment: 'center', gap: 1}}>
+                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1}}>
                             <Typography variant="body2">
                                 {option.label}
                             </Typography>

@@ -3,6 +3,7 @@ import express from 'express';
 import pool from './dbserver.js';
 import cors from 'cors';
 import { saveAlbum } from './saveAlbum.js';
+import { createCollectionRouter } from './collection.js';
 
 const app = express();
 
@@ -15,56 +16,7 @@ app.use(cors({
     : 'http://localhost:5173'
 }));
 
-// Endpoint to fetch albums
-app.get('/api/albums', async (req, res) => {
-  let { page = 1, limit, sort } = req.query;
-  try {
-    let result;
-    let totalPages;
-    page = parseInt(page, 10);
-    limit = limit ? parseInt(limit, 10) : undefined;
-
-    if (limit && limit > 0)
-    {
-      const offset = (page - 1) * limit;
-
-      if(sort === "RANKING_DESC")
-      {
-       result = await pool.query('SELECT * FROM albums ORDER BY average_rating DESC, added_at DESC LIMIT $1 OFFSET $2', [limit, offset]);
-      }
-      else if(sort === "RANKING_ASC")
-      {
-       result = await pool.query('SELECT * FROM albums ORDER BY average_rating ASC, added_at DESC LIMIT $1 OFFSET $2', [limit, offset]);
-      }
-      else if(sort === "DATE_ADDED_ASC")
-      {
-       result = await pool.query('SELECT * FROM albums ORDER BY added_at ASC, average_rating DESC LIMIT $1 OFFSET $2', [limit, offset]);
-      }
-      else if(sort === "DATE_ADDED_DESC")
-      {
-       result = await pool.query('SELECT * FROM albums ORDER BY added_at DESC, average_rating DESC LIMIT $1 OFFSET $2', [limit, offset]);
-      }
-      else
-      {
-      console.log("unexpected sorting call, defaulting to rating desc");
-      result = await pool.query('SELECT * FROM albums ORDER BY average_rating DESC, added_at DESC LIMIT $1 OFFSET $2', [limit, offset]);
-      }
-
-      const albumCount = await pool.query('SELECT COUNT(*) FROM albums');
-      const totalCount = parseInt(albumCount.rows[0].count, 10);
-      totalPages = Math.ceil(totalCount / limit);
-    }
-    else
-    {
-       result = await pool.query('SELECT * FROM albums ORDER BY average_rating DESC, added_at DESC');
-    }
-    
-    res.json({ albums: result.rows, totalPages }); // Send the rows as JSON
-  } catch (error) {
-    console.error('Error fetching albums:', error);
-    res.status(500).json({ error: 'Database query failed.' });
-  }
-});
+app.use('/api', createCollectionRouter(pool));
 
 app.post('/api/save-album', async (req, res) => {
     const { album, songs } = req.body;
@@ -116,18 +68,6 @@ app.put('/api/edit-album', async (req, res) => {
   } catch (error) {
     console.error('Error updating album:', error);
     return res.status(500).json({ error: 'Database error' });
-  }
-});
-
-app.get('/api/lookup-albums', async (req, res) => {
-  const { lookupString } = req.query;
-  console.log("looking up albums with search string: ", lookupString);
-  try {
-    const result = await pool.query('SELECT * FROM albums WHERE title ILIKE $1 OR artist ILIKE $1 LIMIT 20', [`%${lookupString}%`]);
-    res.status(200).json(result.rows);
-  } catch (error) {
-    console.error('Error fetching albums:', error);
-    res.status(500).json({ error: 'Failed to fetch albums with the given search string' });
   }
 });
 

@@ -14,8 +14,8 @@ export default function Albumcard({album, onEditClick }: AlbumcardProps)
     const [buttonVisible, setButtonVisible] = useState(true);
     
     return (
-        <Card className="group rounded-xl shadow-lg p-4 bg-[#b0b076] flex flex-col w-full border-2 border-[#525925] animate-glow"
-            sx={{ backgroundColor: '#b0b076' }}>
+        <Card className="group rounded-xl shadow-lg bg-[#b0b076] flex flex-col w-full min-w-0 h-full border-2 border-[#525925] animate-glow"
+            sx={{ backgroundColor: '#b0b076', p: { xs: 1.5, sm: 2 } }}>
             {!flipped ? (
             <>
             <CardMedia
@@ -25,15 +25,17 @@ export default function Albumcard({album, onEditClick }: AlbumcardProps)
                 onError={handleCoverError}
                 alt={album?.title}
             />
-            <CardContent className="flex flex-col flex-1">
+            <CardContent className="flex flex-col flex-1 min-w-0" sx={{ px: 0, py: 1.5, '&:last-child': { pb: 0 } }}>
                 <div className="h-[2.86rem]">
                 <Typography className="text-[#0d0d0c] font-semibold text-center break-words line-clamp-2"
                     variant="h6"
                     component="div"
+                    title={album?.title}
                     gutterBottom
                     sx={{
                         fontSize: '1.1rem',
                         lineHeight: 1.3,
+                        overflowWrap: 'anywhere',
                     }}>
                 {album?.title}
                 </Typography>
@@ -52,6 +54,7 @@ export default function Albumcard({album, onEditClick }: AlbumcardProps)
             {buttonVisible && (
                 <Button
                 variant="contained"
+                sx={{ minHeight: 44 }}
                 onClick={(e) => {
                     e.stopPropagation();
                     onEditClick();
